@@ -1,0 +1,765 @@
+% ============================================================
+%  Slide Deck 2 -- Background: The Hedge Fund Fraud Landscape
+%  AI-Based Detection of Hedge Fund Fraud
+% ============================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Color definitions ----
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255, 127, 14}
+\definecolor{mlgreen}{RGB}{44, 160, 44}
+\definecolor{mlred}{RGB}{214, 39, 40}
+\definecolor{mlgray}{RGB}{127, 127, 127}
+\definecolor{lightgray}{RGB}{240, 240, 240}
+\definecolor{midgray}{RGB}{180, 180, 180}
+
+% ---- Apply custom colors to Madrid theme ----
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% ---- Navigation / itemize ----
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% ---- Custom commands ----
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+\newcommand{\chartplaceholder}[2][5cm]{%
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth, max height=#1}
+\framebox[\textwidth][c]{%
+\rule{0pt}{#1}%
+\textcolor{midgray}{[#2]}%
+}
+\end{adjustbox}
+\end{center}
+}
+
+% ---- Notation ----
+\input{../notation}
+
+% ---- Title metadata ----
+\title{Background: The Hedge Fund Fraud Landscape}
+\subtitle{Section 2 -- AI-Based Detection of Hedge Fund Fraud}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+% ============================================================
+\begin{document}
+
+% ----------------------------------------------------------
+% SLIDE 1 -- Title
+% ----------------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 2 -- Outline
+% ----------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\compactlist
+\item Fraud Taxonomy Overview (5 types, difficulty 1--5)
+\item Performance Fabrication
+\item Allocation Fraud
+\item Strategy Misrepresentation
+\item Market Manipulation
+\item Regulatory Fraud
+\item Data Ecosystem: Four Layers
+\item Return Data and Database Biases
+\item Regulatory Filings (EDGAR, Forms ADV/D/13F)
+\item Alternative Data
+\item Synthetic Data
+\item Regulatory Context: United States
+\item Regulatory Context: European Union
+\item Supervisory Technology (SupTech)
+\item Section Summary and Key Takeaways
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 3 -- Fraud Taxonomy Overview
+% ----------------------------------------------------------
+\begin{frame}{Fraud Taxonomy Overview}
+\begin{center}
+\small
+\begin{tabular}{lccp{5.5cm}}
+\toprule
+\textbf{Fraud Type} & \textbf{Difficulty} & \textbf{Key Case} & \textbf{Observable Signals} \\
+\midrule
+Performance fabrication & 3/5 & Madoff (2008) & Serial correlation, Benford violations, implausible Sharpe ratios \\
+Allocation fraud & 4/5 & Petters (2008) & Cross-account return dispersion, win-rate asymmetry \\
+Strategy misrepresentation & 3/5 & Platinum Partners (2016) & Style drift, factor exposure shifts, textual inconsistencies \\
+Market manipulation & 5/5 & SAC Capital (2013) & Order-flow anomalies, network centrality, timing patterns \\
+Regulatory fraud & 2/5 & Lancer Mgmt.\ (2003) & Filing inconsistencies, text anomalies, omission detection \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item Difficulty scale: 1 (straightforward with available data) to 5 (requires privileged real-time data)
+\item Ordered from most frequently studied to most difficult to detect
+\end{itemize}
+\bottomnote{Source: Paper Table 1; Section 2.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 4 -- Performance Fabrication
+% ----------------------------------------------------------
+\begin{frame}{Performance Fabrication (Difficulty 3/5)}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\textbf{Definition}
+\begin{itemize}\compactlist
+\item Deliberate misstatement of investment returns
+\item Forms: Ponzi schemes, return smoothing, \nav{} manipulation
+\item Inflating reported value of illiquid positions (OTC derivatives, distressed debt, private placements)
+\end{itemize}
+\vspace{2mm}
+\textbf{Paradigmatic Case: Madoff}
+\begin{itemize}\compactlist
+\item Fabricated returns for $\geq$20 years
+\item \textbf{Only 7 losing months} across 14 years
+\item Nearly perfect 45-degree equity curve
+\item Sharpe ratio exceeded plausible bounds
+\end{itemize}
+
+\column{0.42\textwidth}
+\textbf{Detection Signals}
+\begin{itemize}\compactlist
+\item Serial correlation $\rhoone$ anomalies
+\item Benford's law violations
+\item Distributional ``kink'' at zero (Bollen \& Pool, 2012): $\sim$8\% of TASS funds flagged
+\item Implausibly high Sharpe ratios
+\item Low return volatility relative to stated strategy
+\end{itemize}
+\vspace{2mm}
+\textcolor{mlblue}{Individual signals are noisy, but their \textbf{combination} via ML offers substantially improved discriminatory power}
+\end{columns}
+\bottomnote{Source: Gregoriou (2009); Markopolos (2010); Bollen \& Pool (2012); paper Section 2.1.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 5 -- Performance Fabrication Detection Signals
+% ----------------------------------------------------------
+\begin{frame}{Performance Fabrication: Statistical Red Flags}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Getmansky et al.\ (2004)}
+\begin{itemize}\compactlist
+\item Econometric model: serial correlation from managed pricing of illiquid assets
+\item Typical $\rhoone = 0.3$--$0.5$ for illiquid positions
+\item \textbf{Abnormally high} $\rhoone$ for funds claiming liquid assets $\Rightarrow$ NAV manipulation signal
+\end{itemize}
+\vspace{2mm}
+\textbf{Bollen \& Pool (2012)}
+\begin{itemize}\compactlist
+\item Distributional discontinuity at zero: excess small positive returns, deficit of small negatives
+\item Correctly identified $\sim$50\% of funds that subsequently faced SEC enforcement
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Benford's Law}
+\begin{itemize}\compactlist
+\item Tests leading-digit frequency: $P(d) = \log_{10}(1 + 1/d)$
+\item Applied retroactively to Madoff: anomalies in 9/10 tests
+\item Limited power for short histories ($<60$ months)
+\item Defeated by knowledgeable fraudster who engineers digit conformity
+\end{itemize}
+\vspace{2mm}
+\textbf{Key Insight}
+\begin{itemize}\compactlist
+\item Each test captures \textit{one} dimension
+\item \textcolor{mlblue}{ML classifiers combine signals} for multi-dimensional detection
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Nigrini (2012); Getmansky et al.\ (2004); Bollen \& Pool (2012); paper Section 2.1.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 6 -- Allocation Fraud
+% ----------------------------------------------------------
+\begin{frame}{Allocation Fraud (Difficulty 4/5)}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\textbf{Definition}
+\begin{itemize}\compactlist
+\item Systematically directing profitable trades to \textbf{favored accounts} (proprietary, co-investment)
+\item Routing losing trades to \textbf{client accounts}
+\item Cherry-picking: delaying allocation until daily P\&L known
+\end{itemize}
+\vspace{2mm}
+\textbf{SEC Evidence}
+\begin{itemize}\compactlist
+\item Favored accounts: \textbf{91\%} profitable trade allocations
+\item Client accounts: only \textbf{31\%}
+\item Disparity cannot arise by chance
+\end{itemize}
+
+\column{0.42\textwidth}
+\textbf{Detection Challenges}
+\begin{itemize}\compactlist
+\item Requires \textbf{trade-level data} (order timestamps, fill assignments)
+\item Rarely available in public databases
+\item HFR/TASS report only monthly fund-level returns
+\item Intra-fund allocation patterns entirely obscured
+\end{itemize}
+\vspace{2mm}
+\textbf{Possible Approaches}
+\begin{itemize}\compactlist
+\item Cross-account return dispersion analysis
+\item Win-rate asymmetry statistics
+\item Network-based adviser--account mapping from filings (largely unexplored)
+\end{itemize}
+\end{columns}
+\bottomnote{Source: SEC enforcement data; paper Section 2.1.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 7 -- Strategy Misrepresentation
+% ----------------------------------------------------------
+\begin{frame}{Strategy Misrepresentation (Difficulty 3/5)}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Definition}
+\begin{itemize}\compactlist
+\item Actual investment behavior diverges materially from stated strategy without adequate disclosure
+\item Includes:
+  \begin{itemize}\compactlist
+  \item Undisclosed \textbf{style drift} (e.g., equity L/S $\to$ illiquid credit)
+  \item Leverage misreporting
+  \item \textbf{AI-washing}: falsely claiming AI-driven decisions
+  \end{itemize}
+\end{itemize}
+\vspace{2mm}
+\textbf{Key Case: Platinum Partners (2016)}
+
+\column{0.45\textwidth}
+\textbf{Detection Methods}
+\begin{itemize}\compactlist
+\item \textbf{Change-point detection} (Patton \& Ramadorai, 2015): structural breaks in risk exposures often precede fund failure
+\item Rolling-window factor regressions $\Rightarrow$ style drift detection
+\item \textbf{NLP on Form ADV}: compare stated strategy descriptions vs.\ quantitative factor exposures
+\item Cross-modal consistency checking: text vs.\ numbers
+\end{itemize}
+\vspace{2mm}
+\textbf{Challenge}: distinguishing intentional misrepresentation from legitimate adaptive portfolio management
+\end{columns}
+\bottomnote{Source: Patton \& Ramadorai (2015); Fung \& Hsieh (2001); paper Section 2.1.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 8 -- Market Manipulation
+% ----------------------------------------------------------
+\begin{frame}{Market Manipulation (Difficulty 5/5)}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Forms}
+\begin{itemize}\compactlist
+\item \textbf{Front-running} client orders
+\item \textbf{Insider trading} (incl.\ ``shadow trading'' on economically related securities)
+\item \textbf{Spoofing}: large orders placed and rapidly cancelled
+\end{itemize}
+\vspace{2mm}
+\textbf{Key Case: SAC Capital (2013)}
+\begin{itemize}\compactlist
+\item Guilty plea to insider trading charges
+\item \textbf{\$1.8 billion} penalty
+\end{itemize}
+
+\column{0.45\textwidth}
+\textbf{Why Most Difficult}
+\begin{itemize}\compactlist
+\item Requires \textbf{real-time, tick-level} trade and order-book data
+\item Not available in standard hedge fund databases
+\item Detection needs:
+  \begin{itemize}\compactlist
+  \item Network analysis of communication patterns
+  \item Temporal analysis of orders vs.\ MNPI events
+  \item Cross-market surveillance for shadow trading
+  \end{itemize}
+\end{itemize}
+\vspace{2mm}
+\textbf{SEC MIDAS}
+\begin{itemize}\compactlist
+\item Processes $\sim$1 billion records/day
+\item Academic research constrained by data access
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Lewis (2012); SEC MIDAS; paper Section 2.1.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 9 -- Regulatory Fraud
+% ----------------------------------------------------------
+\begin{frame}{Regulatory Fraud (Difficulty 2/5)}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Definition}
+\begin{itemize}\compactlist
+\item Materially false or misleading information in mandatory filings
+\item Key filings:
+  \begin{itemize}\compactlist
+  \item \textbf{Form ADV}: uniform registration (Investment Advisers Act)
+  \item \textbf{Form D}: Reg D offering notices
+  \item \textbf{Form 13F}: quarterly holdings (\$100M+ managers)
+  \end{itemize}
+\item Ranges from deliberate misstatements to material omissions (disciplinary history, conflicts)
+\end{itemize}
+
+\column{0.45\textwidth}
+\textbf{Why Most Tractable}
+\begin{itemize}\compactlist
+\item Data are \textbf{structured / semi-structured}
+\item \textbf{Publicly accessible} via \edgar{}
+\item Amenable to traditional text analysis \textit{and} modern NLP
+\item Cross-referencing filings with external data (e.g., AUM vs.\ implied fund flows)
+\end{itemize}
+\vspace{2mm}
+\textbf{Key Results}
+\begin{itemize}\compactlist
+\item Dimmock \& Gerken (2012): Form ADV predicts SEC enforcement actions
+\item Brown et al.\ (2008): filing data contain fraud-relevant signals complementing return-based tests
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Dimmock \& Gerken (2012); Brown et al.\ (2008); paper Section 2.1.5}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 10 -- Fraud Taxonomy Chart
+% ----------------------------------------------------------
+\begin{frame}{Fraud Taxonomy: Visual Summary}
+
+\chartplaceholder[5.5cm]{Chart: 01\_fraud\_taxonomy -- Radar or matrix chart showing five fraud types with detection difficulty, data requirements, and AI method suitability}
+
+\bottomnote{Source: Paper Table 1; Section 2.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 11 -- Data Ecosystem Overview
+% ----------------------------------------------------------
+\begin{frame}{Data Ecosystem: Four Layers}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{Layer 1: Return Data}
+\begin{itemize}\compactlist
+\item Lipper TASS, HFR, BarclayHedge, Morningstar
+\item Monthly return series, self-reported characteristics
+\item 7,000+ live and defunct funds in TASS
+\end{itemize}
+\end{block}
+\begin{block}{Layer 2: Regulatory Filings}
+\begin{itemize}\compactlist
+\item SEC EDGAR: Forms ADV, D, 13F
+\item Structured (XML) + free-text (PDF)
+\item Post-Dodd-Frank: \$150M+ must register
+\end{itemize}
+\end{block}
+
+\column{0.48\textwidth}
+\begin{block}{Layer 3: Alternative Data}
+\begin{itemize}\compactlist
+\item News/social media sentiment, satellite imagery, web traffic, litigation records
+\item Market: \textbf{\$7.5B} (2023), projected \$273B by 2032
+\end{itemize}
+\end{block}
+\begin{block}{Layer 4: Synthetic Data}
+\begin{itemize}\compactlist
+\item Addresses extreme class imbalance
+\item SMOTE, GANs, VAEs
+\item Privacy-preserving generation for cross-institutional collaboration
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{2mm}
+\textcolor{mlblue}{Detection effectiveness is bounded by data quality, coverage, and granularity}
+\bottomnote{Source: Paper Section 2.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 12 -- Return Data Biases
+% ----------------------------------------------------------
+\begin{frame}{Return Data: Three Critical Biases}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{block}{Survivorship Bias}
+\begin{itemize}\compactlist
+\item Defunct funds exit live databases
+\item Overstates average returns by $\sim$\textbf{+242 bp/year}
+\item Fung \& Hsieh (2009)
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Backfill Bias}
+\begin{itemize}\compactlist
+\item Retroactive submission of favorable pre-reporting history
+\item Overstates returns by $\sim$\textbf{+442 bp/year}
+\item Also called ``instant history bias''
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Selection Bias}
+\begin{itemize}\compactlist
+\item Voluntary reporting
+\item Strong track records more likely to report
+\item Distressed/fraudulent funds may stop reporting before detection
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{3mm}
+\textcolor{mlred}{\textbf{Pernicious asymmetry for fraud detection:}} detected frauds enter graveyard; undetected frauds remain in live data, contaminating the ``clean'' training class.
+\bottomnote{Source: Fung \& Hsieh (2009); Agarwal et al.\ (2011); paper Section 2.2.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 13 -- Regulatory Filings
+% ----------------------------------------------------------
+\begin{frame}{Regulatory Filings (EDGAR)}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Key Filing Types}
+\begin{itemize}\compactlist
+\item \textbf{Form ADV Part 1}: structured XML via IARD
+  \begin{itemize}\compactlist
+  \item Business, ownership, clients, disciplinary history
+  \end{itemize}
+\item \textbf{Form ADV Part 2} (``brochure''): free-text PDF
+  \begin{itemize}\compactlist
+  \item Strategies, fees, risk factors, conflicts
+  \item No standardized structure
+  \end{itemize}
+\item \textbf{Form 13F}: quarterly equity holdings (\$100M+ managers)
+  \begin{itemize}\compactlist
+  \item Machine-readable but contains known errors
+  \end{itemize}
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Practical Challenges}
+\begin{itemize}\compactlist
+\item Merging data across filing types
+\item Linking to commercial return databases (TASS $\leftrightarrow$ SEC CRD numbers)
+\item Substantial data engineering effort
+\end{itemize}
+\vspace{2mm}
+\textbf{Value for Fraud Detection}
+\begin{itemize}\compactlist
+\item Cross-validation: return-based flags vs.\ filing-derived signals
+\item Auditor changes, custody arrangements, disciplinary histories
+\item Post-Dodd-Frank: dramatically expanded disclosure universe
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Brown et al.\ (2008); Dimmock \& Gerken (2012); paper Section 2.2.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 14 -- Alternative Data
+% ----------------------------------------------------------
+\begin{frame}{Alternative Data}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Sources}
+\begin{itemize}\compactlist
+\item News and social media sentiment
+\item Satellite imagery and geolocation data
+\item Web traffic analytics
+\item Patent filings and litigation records
+\end{itemize}
+\vspace{2mm}
+\textbf{Market Size}
+\begin{itemize}\compactlist
+\item $\sim$\textbf{\$7.5 billion} (2023)
+\item Projected \textbf{\$273 billion} by 2032
+\item Driven by adoption among investment managers and regulators
+\end{itemize}
+
+\column{0.45\textwidth}
+\textbf{Fraud Detection Uses}
+\begin{itemize}\compactlist
+\item Flag reputational signals \textit{before} regulatory actions
+\item Independently verify economic claims (e.g., satellite foot traffic vs.\ reported performance)
+\item Triangulate plausibility of stated strategies/returns
+\end{itemize}
+\vspace{2mm}
+\textbf{Risks}
+\begin{itemize}\compactlist
+\item Sentiment signals are noisy, susceptible to manipulation
+\item Acquisition/processing costs are substantial
+\item Privacy concerns (intersect with \euaiact{})
+\item Indirect relationship to fund-level fraud signals
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 2.2.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 15 -- Synthetic Data
+% ----------------------------------------------------------
+\begin{frame}{Synthetic Data for Class Imbalance}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{The Problem}
+\begin{itemize}\compactlist
+\item Extreme class imbalance: confirmed frauds = small fraction of total
+\item \numfraudcases{} confirmed cases vs.\ 10,000+ funds
+\item Difficult to train supervised classifiers
+\end{itemize}
+\vspace{2mm}
+\textbf{Methods}
+\begin{itemize}\compactlist
+\item \textbf{SMOTE}: interpolation between existing positive examples (most widely used)
+\item \textbf{GANs}: learn distributional properties of known fraudulent funds
+\item \textbf{VAEs}: probabilistic generation with calibrated uncertainty
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Validation Challenges}
+\begin{itemize}\compactlist
+\item Must preserve statistical dependencies and temporal dynamics
+\item Cannot amplify artifacts of training data
+\item Generative models $>$ interpolation for realism and diversity
+\end{itemize}
+\vspace{2mm}
+\textbf{Privacy-Preserving Generation}
+\begin{itemize}\compactlist
+\item Regulators cannot share enforcement-labelled data
+\item Differentially private generative models could enable synthetic dataset release
+\item Preserves aggregate statistics while protecting identities
+\item Remains largely aspirational in hedge fund domain
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Chawla et al.\ (2002); paper Section 2.2.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 16 -- Data Ecosystem Chart
+% ----------------------------------------------------------
+\begin{frame}{Data Ecosystem: Visual Summary}
+
+\chartplaceholder[5.5cm]{Chart: 02\_data\_ecosystem -- Four-layer data architecture diagram showing Return Data, Regulatory Filings, Alternative Data, and Synthetic Data with coverage, frequency, and fraud-type mappings}
+
+\bottomnote{Source: Paper Section 2.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 17 -- US Regulatory Framework
+% ----------------------------------------------------------
+\begin{frame}{Regulatory Context: United States}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Dodd-Frank Act (2010)}
+\begin{itemize}\compactlist
+\item Eliminated ``private adviser exemption''
+\item Advisers with \aum{} $\geq$\$150M must register with SEC
+\item Dramatically expanded universe of funds subject to disclosure
+\item Created filing data underpinning many detection approaches
+\end{itemize}
+\vspace{2mm}
+\textbf{SEC Divisions}
+\begin{itemize}\compactlist
+\item \textbf{DERA} (est.\ 2009): quantitative analysis for enforcement \& rulemaking
+\item \textbf{MIDAS} (since 2013): $\sim$1B records/day from all equity exchanges
+\item \textbf{CRQA}: trading pattern databases from past enforcement, prioritizes future exams
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Whistleblower Program}
+\begin{itemize}\compactlist
+\item Established under Dodd-Frank \S922
+\item Response to failure to act on Markopolos warnings
+\item Over \textbf{\$1.5 billion} awarded to whistleblowers
+\item Thousands of tips complementing algorithmic detection
+\end{itemize}
+\vspace{2mm}
+\textbf{Hybrid Detection Paradigm}
+\begin{itemize}\compactlist
+\item Human intelligence (tips) $+$ machine intelligence (quantitative screening)
+\item \textcolor{mlblue}{Underexplored synergy between these two channels}
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Brown et al.\ (2008); SEC (2023); paper Section 2.3.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 18 -- EU Regulatory Framework
+% ----------------------------------------------------------
+\begin{frame}{Regulatory Context: European Union}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{\aifmd{} (2011)}
+\begin{itemize}\compactlist
+\item Harmonized framework for alternative investment fund managers
+\item Reporting obligations, leverage limits, investor disclosure
+\item Structured data analogous to US Form ADV regime
+\end{itemize}
+\vspace{2mm}
+\textbf{\euaiact{} (Regulation 2024/1689)}
+\begin{itemize}\compactlist
+\item Entered into force August 2024
+\item AI for fraud detection classified as \textbf{high-risk}
+\item Mandatory requirements:
+  \begin{itemize}\compactlist
+  \item Risk management systems
+  \item Data governance standards
+  \item Technical documentation
+  \item Human oversight
+  \item Transparency obligations (Art.\ 13)
+  \end{itemize}
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Implications for Model Selection}
+\begin{itemize}\compactlist
+\item Art.\ 13: outputs must be ``sufficiently transparent to enable deployers to interpret''
+\item \textcolor{mlred}{Opaque models} (deep neural networks) may require post-hoc explainability (\shap{}, \lime{})
+\item \textcolor{mlgreen}{Interpretable models} (logistic regression, decision trees) may be preferred despite potentially lower performance
+\end{itemize}
+\vspace{2mm}
+\textbf{Accuracy vs.\ Explainability Tension}
+\begin{itemize}\compactlist
+\item Detection system that cannot articulate basis for suspicion $\Rightarrow$ limited regulatory use
+\item EU AI Act codifies this intuition into law
+\item Similar requirements likely to emerge globally
+\end{itemize}
+\end{columns}
+\bottomnote{Source: EU AI Act (2024); paper Section 2.3.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 19 -- SupTech
+% ----------------------------------------------------------
+\begin{frame}{Supervisory Technology (SupTech)}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Definition}
+\begin{itemize}\compactlist
+\item Advanced analytics and AI used by \textbf{financial regulators and central banks} to enhance oversight
+\item Shift from \textit{reactive enforcement} (investigate after losses) to \textit{proactive surveillance} (detect anomalies before escalation)
+\end{itemize}
+\vspace{2mm}
+\textbf{Adopters}
+\begin{itemize}\compactlist
+\item SEC (DERA, CRQA, MIDAS)
+\item Bank of England
+\item Monetary Authority of Singapore
+\item De Nederlandsche Bank
+\end{itemize}
+
+\column{0.45\textwidth}
+\textbf{Approach}
+\begin{itemize}\compactlist
+\item Establish baseline behavioral profiles for regulated entities
+\item Flag deviations exceeding statistical thresholds
+\item Conceptually similar to Bollen \& Pool (2012) but at institutional scale
+\end{itemize}
+\vspace{2mm}
+\textbf{Challenges}
+\begin{itemize}\compactlist
+\item \textcolor{mlred}{False positives} consume scarce examination resources
+\item Sophisticated fraudsters may reverse-engineer detection criteria
+\item Shortage of staff with combined regulatory + ML expertise
+\item \textbf{Cross-border coordination} limited: Cayman Islands registration, NY management, EU investors, Asian venues
+\end{itemize}
+\end{columns}
+\bottomnote{Source: FSB (2017); BIS (2024); paper Section 2.3.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 20 -- Regulatory Comparison Chart
+% ----------------------------------------------------------
+\begin{frame}{Regulatory Landscape: Comparison}
+
+\chartplaceholder[5.5cm]{Chart: 03\_regulatory\_landscape -- Side-by-side comparison of US (Dodd-Frank, SEC/DERA/MIDAS) vs.\ EU (AIFMD, EU AI Act) regulatory frameworks with SupTech adoption indicators}
+
+\bottomnote{Source: Paper Section 2.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 21 -- Section Summary
+% ----------------------------------------------------------
+\begin{frame}{Section Summary}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Fraud Taxonomy}
+\begin{itemize}\compactlist
+\item 5 types: performance fabrication, allocation fraud, strategy misrepresentation, market manipulation, regulatory fraud
+\item Difficulty ranges from 2/5 (regulatory) to 5/5 (market manipulation)
+\item Each type requires different data and detection approaches
+\end{itemize}
+\vspace{2mm}
+\textbf{Data Ecosystem}
+\begin{itemize}\compactlist
+\item 4 layers: return data, regulatory filings, alternative data, synthetic data
+\item Severe biases: survivorship (+242 bp), backfill (+442 bp), selection
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Regulatory Context}
+\begin{itemize}\compactlist
+\item US: Dodd-Frank expanded disclosure; SEC investing in computational enforcement
+\item EU: AIFMD for fund oversight; EU AI Act imposes high-risk requirements on detection AI
+\item SupTech: proactive surveillance emerging but faces cross-border and capacity challenges
+\end{itemize}
+\vspace{2mm}
+\textcolor{mlblue}{\textbf{These foundations establish \textit{what} must be detected, \textit{which} data are available, and \textit{what constraints} govern AI systems.}}
+\end{columns}
+\bottomnote{Source: Paper Section 2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 22 -- Key Takeaways
+% ----------------------------------------------------------
+\begin{frame}{Key Takeaways}
+\begin{enumerate}\compactlist
+\item Hedge fund fraud spans \textbf{five distinct types} with fundamentally different data requirements and detection difficulty
+\item The data ecosystem is \textbf{rich but biased} -- survivorship, backfill, and selection biases directly affect model training
+\item Post-Dodd-Frank regulatory filings create a \textbf{valuable structured data source} that did not exist before 2012
+\item The \textbf{alternative data revolution} (\$7.5B market) opens new detection avenues but introduces noise and privacy concerns
+\item \textbf{Extreme class imbalance} (\numfraudcases{} confirmed cases) necessitates synthetic data generation
+\item The \euaiact{} imposes \textbf{mandatory transparency requirements} on high-risk AI fraud detection systems
+\item SupTech represents a paradigm shift from reactive to \textbf{proactive surveillance}, but cross-border coordination remains limited
+\item \textbf{No single data layer or detection method} is sufficient -- multi-modal AI integration is essential
+\end{enumerate}
+\bottomnote{Source: Paper Section 2}
+\end{frame}
+
+\end{document}

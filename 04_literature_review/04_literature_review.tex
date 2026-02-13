@@ -1,0 +1,665 @@
+% ============================================================
+%  Slide Deck 4 -- Review of AI-Based Detection Methods
+%  AI-Based Detection of Hedge Fund Fraud
+% ============================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Color definitions ----
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255, 127, 14}
+\definecolor{mlgreen}{RGB}{44, 160, 44}
+\definecolor{mlred}{RGB}{214, 39, 40}
+\definecolor{mlgray}{RGB}{127, 127, 127}
+\definecolor{lightgray}{RGB}{240, 240, 240}
+\definecolor{midgray}{RGB}{180, 180, 180}
+
+% ---- Apply custom colors to Madrid theme ----
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% ---- Navigation / itemize ----
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% ---- Custom commands ----
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+\newcommand{\chartplaceholder}[2][5cm]{%
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth, max height=#1}
+\framebox[\textwidth][c]{%
+\rule{0pt}{#1}%
+\textcolor{midgray}{[#2]}%
+}
+\end{adjustbox}
+\end{center}
+}
+
+% ---- Notation ----
+\input{../notation}
+
+% ---- Title metadata ----
+\title{Review of AI-Based Detection Methods}
+\subtitle{Section 4 -- AI-Based Detection of Hedge Fund Fraud}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+% ============================================================
+\begin{document}
+
+% ----------------------------------------------------------
+% SLIDE 1 -- Title
+% ----------------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 2 -- Outline
+% ----------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\compactlist
+\item Classical Statistical Approaches
+\item Tree-Based and Ensemble Methods
+\item Why Trees Dominate Hedge Fund Detection
+\item Deep Learning Approaches
+\item Deep Learning Limitations
+\item NLP for Financial Filings
+\item Graph Neural Networks for Fund Networks
+\item Semi-Supervised and Self-Supervised Methods
+\item Synthetic Data and Data Augmentation
+\item Critical Assessment of the Literature
+\item Summary: Field at Early Stage
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 3 -- Classical Statistical
+% ----------------------------------------------------------
+\begin{frame}{Classical Statistical and Rule-Based Approaches}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Benford's Law (Nigrini, 2012)}
+\begin{itemize}\compactlist
+\item Applied retrospectively to Madoff: anomalies in \textbf{9/10 tests}
+\item Fabricators are poor intuitive generators of logarithmic digit distributions
+\item Requires large samples; limited power for $<120$--$240$ monthly observations
+\item \textcolor{mlred}{Aware fraudsters can engineer conformity}
+\end{itemize}
+\vspace{2mm}
+\textbf{Serial Correlation (Getmansky et al., 2004)}
+\begin{itemize}\compactlist
+\item MA($k$) model: smoothing component from managed pricing
+\item 30--40\% of TASS funds show significant positive $\rhoone$
+\item Smoothing parameters now standard ML features
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Bollen \& Pool (2012) -- Distributional ``Kink''}
+\begin{itemize}\compactlist
+\item Discontinuity at zero: excess small positives, deficit of small negatives
+\item Correctly identified $\sim$\textbf{50\%} of funds subsequently facing SEC enforcement
+\end{itemize}
+\vspace{2mm}
+\textbf{Operational Risk / Filing-Based}
+\begin{itemize}\compactlist
+\item Brown et al.\ (2008): \textbf{omega-score} from Form ADV data -- governance and organizational risk
+\item Dimmock \& Gerken (2012): logistic regression on SEC filing data -- past violations, ownership, custody $\Rightarrow$ \auc{} $\approx 0.65$--$0.70$
+\end{itemize}
+\vspace{2mm}
+\textcolor{mlblue}{\textbf{Collective limitation:} each method detects one specific signature of one fraud type. High false positive rates when deployed independently.}
+\end{columns}
+\bottomnote{Source: Paper Section 4.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 4 -- Tree-Based / Ensemble
+% ----------------------------------------------------------
+\begin{frame}{Tree-Based and Ensemble Methods}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Random Forests}
+\begin{itemize}\compactlist
+\item Aggregate hundreds of independently grown trees
+\item Robust to overfitting, tolerant of missing data
+\item Handle mixed feature types (numerical + categorical) without standardization
+\end{itemize}
+\vspace{2mm}
+\textbf{Gradient Boosting}
+\begin{itemize}\compactlist
+\item XGBoost, LightGBM, CatBoost
+\item Sequential tree construction correcting residuals
+\item Built-in class imbalance handling: weighting, stratified subsampling, cost-sensitive learning
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Key Results}
+\begin{itemize}\compactlist
+\item \textbf{Bao et al.\ (2020)}: RUSBoost on 28,000+ firm-years linked to AAERs
+  \begin{itemize}\compactlist
+  \item \auc{} = \textbf{0.725}, outperforming logistic regression
+  \item Accounting fraud, but methodology transferable
+  \end{itemize}
+\item \textbf{Stacking ensembles} (Hilal et al., 2022):
+  \begin{itemize}\compactlist
+  \item XGBoost + LightGBM + CatBoost via meta-learner
+  \item \fone{} $\approx$ \textbf{0.88} -- highest among individual method families
+  \end{itemize}
+\end{itemize}
+\vspace{2mm}
+\textbf{Principal Limitation}
+\begin{itemize}\compactlist
+\item Relies on supervised training: only \numfraudcases{} confirmed hedge fund fraud cases
+\item Positive class is \textit{heterogeneous}: Ponzi $\neq$ NAV manipulation $\neq$ style drift
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Bao et al.\ (2020); Hilal et al.\ (2022); paper Section 4.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 5 -- Why Trees Dominate
+% ----------------------------------------------------------
+\begin{frame}{Why Trees Dominate Hedge Fund Detection}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{\shap{} Compatibility}
+\begin{itemize}\compactlist
+\item Exact \shap{} computation for tree-based models (Lundberg \& Lee, 2017)
+\item Per-feature attribution: ``flagged because $\rhoone$ is 2.3$\sigma$ above peer median, auditor has 2 prior sanctions, readability deteriorating''
+\item Maps directly to SEC investigative categories
+\item Satisfies EU AI Act transparency requirements
+\end{itemize}
+\vspace{2mm}
+\textbf{Class Imbalance Handling}
+\begin{itemize}\compactlist
+\item Native mechanisms: sample weighting, cost-sensitive learning
+\item RUSBoost: random undersampling + AdaBoost
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Mixed Feature Types}
+\begin{itemize}\compactlist
+\item Numerical (return statistics) + categorical (strategy class, auditor ID, jurisdiction)
+\item No feature standardization required
+\item CatBoost: native categorical support
+\end{itemize}
+\vspace{2mm}
+\textbf{Robustness}
+\begin{itemize}\compactlist
+\item Tolerant of outliers and missing values
+\item Stable performance across varying hyperparameters (vs.\ deep learning sensitivity)
+\item Can ingest full concatenated 5-family feature vector without dimensionality reduction
+\end{itemize}
+\vspace{2mm}
+\textcolor{mlblue}{Trees provide the best trade-off between \textbf{performance, interpretability, and practical robustness} for current hedge fund data conditions.}
+\end{columns}
+\bottomnote{Source: Lundberg \& Lee (2017); paper Section 4.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 6 -- Deep Learning
+% ----------------------------------------------------------
+\begin{frame}{Deep Learning Approaches}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{LSTM Networks}
+\begin{itemize}\compactlist
+\item Gated memory cells: long-range sequential dependencies
+\item Detect gradual shifts in serial correlation, regime-dependent anomalies
+\item Fraud escalates over months/years: sequential nature matches
+\end{itemize}
+\vspace{2mm}
+\textbf{CNN via Gramian Angular Fields}
+\begin{itemize}\compactlist
+\item Encode returns as 2D images (Gramian, recurrence plots)
+\item Spatial pattern recognition on visual representations
+\item Hybrid CNN-LSTM: local features + temporal aggregation
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Transformers}
+\begin{itemize}\compactlist
+\item Self-attention across arbitrary sequence positions
+\item Long-range dependencies without vanishing gradients
+\item Link suspicious patterns across years of sparse monthly data
+\item Attention weights $\Rightarrow$ intrinsic explainability
+\end{itemize}
+\vspace{2mm}
+\textbf{Autoencoders}
+\begin{itemize}\compactlist
+\item Most directly applicable under label scarcity
+\item Trained on normal behavior; high reconstruction error = anomaly
+\item \auc{} $\approx$ \textbf{0.79} on hedge fund returns (Chalapathy \& Chawla, 2019)
+\item No fraud labels needed; sidesteps data poisoning vulnerability
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Hochreiter \& Schmidhuber (1997); Chalapathy \& Chawla (2019); paper Section 4.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 7 -- Deep Learning Limitations
+% ----------------------------------------------------------
+\begin{frame}{Deep Learning Limitations in Hedge Fund Context}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Data Scarcity}
+\begin{itemize}\compactlist
+\item Modern architectures need thousands to millions of examples
+\item Hedge fund universe: $\sim$10,000--15,000 funds
+\item At most 120--240 monthly observations per fund
+\item \textcolor{mlred}{Fewer than 100 positive (fraud) examples}
+\end{itemize}
+\vspace{2mm}
+\textbf{Overfitting Risk}
+\begin{itemize}\compactlist
+\item Models with millions of parameters trained on $<100$ positives
+\item May memorize specific fraud fingerprints rather than learn generalizable patterns
+\item Common practice: single train-test split (inadequate)
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Opacity / Explainability}
+\begin{itemize}\compactlist
+\item Predictions resist human interpretation
+\item EU AI Act mandates transparency for high-risk AI
+\item Post-hoc methods (\shap{}, \lime{}) add complexity but do not fully resolve
+\end{itemize}
+\vspace{2mm}
+\textbf{Hyperparameter Sensitivity}
+\begin{itemize}\compactlist
+\item Small changes in architecture, learning rate, regularization $\Rightarrow$ qualitatively different results
+\item Undermines reproducibility and reliability of performance claims
+\end{itemize}
+\vspace{3mm}
+\textcolor{mlblue}{\textbf{Verdict:} deep learning has theoretical appeal but faces severe practical constraints in the current data regime. Best used in combination with tree-based methods or as anomaly detectors (autoencoders).}
+\end{columns}
+\bottomnote{Source: Paper Section 4.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 8 -- NLP
+% ----------------------------------------------------------
+\begin{frame}{NLP for Financial Filings}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Domain-Specific Lexicons}
+\begin{itemize}\compactlist
+\item Loughran \& McDonald (2011): general sentiment lexicons perform poorly on financial text
+\item ``Liability,'' ``tax,'' ``depreciation'' = negative in general, neutral in finance
+\item Financial-domain dictionary: more accurate sentiment classification
+\end{itemize}
+\vspace{2mm}
+\textbf{Transformer Models}
+\begin{itemize}\compactlist
+\item \textbf{FinBERT}: 87\% accuracy on financial sentiment
+\item \textbf{SEC-BERT}: pre-trained on EDGAR filings; improved NER and document classification for regulatory text
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Detection Applications}
+\begin{itemize}\compactlist
+\item Vague/evasive language in strategy descriptions
+\item Changes in filing complexity over time $\to$ associated with subsequent regulatory action
+\item Boilerplate deviation: unusual departure from peer templates
+\item Cross-modal: text strategy vs.\ quantitative factor exposures
+\end{itemize}
+\vspace{2mm}
+\textbf{Multi-Modal Fusion}
+\begin{itemize}\compactlist
+\item NLP + quantitative returns: \textbf{+3--5\% \auc{}} (Ahmed et al., 2024)
+\item Logic: text claims conservative equity L/S but returns load on leveraged distressed credit $\Rightarrow$ stronger signal
+\end{itemize}
+\vspace{2mm}
+\textbf{Limitation}: filings are heavily boilerplate; low signal-to-noise ratio; fraudsters use compliance counsel to match expected patterns
+\end{columns}
+\bottomnote{Source: Loughran \& McDonald (2011); Araci (2019); Ahmed et al.\ (2024); paper Section 4.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 9 -- GNN
+% ----------------------------------------------------------
+\begin{frame}{Graph Neural Networks for Fund Networks}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Architectures}
+\begin{itemize}\compactlist
+\item \textbf{GCN} (Kipf \& Welling, 2017): spectral convolutions, neighborhood aggregation
+\item \textbf{GAT} (Velickovic et al., 2018): attention-weighted neighbor contributions
+\item \textbf{GraphSAGE} (Hamilton et al., 2017): inductive learning -- score new funds without retraining (cold-start)
+\item \textbf{Temporal knowledge graphs}: time-stamped edges for evolving relationships
+\end{itemize}
+\vspace{2mm}
+\textbf{Results from Adjacent Domains}
+\begin{itemize}\compactlist
+\item Wang et al.\ (2019): semi-supervised GNN on transaction networks -- \auc{} = \textbf{0.87}
+\item Liu et al.\ (2021): ``camouflage'' problem -- fraud detection even when immediate neighborhood appears benign
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Hedge Fund Application}
+\begin{itemize}\compactlist
+\item Service provider network: auditor, administrator, custodian, prime broker
+\item Small/unregistered auditors, lack of independent administrators $\Rightarrow$ elevated risk
+\item Dynamic signals: sudden auditor change, administrator linked to multiple sanctioned funds, manager ``phoenix'' pattern
+\end{itemize}
+\vspace{2mm}
+\textbf{Strengths}
+\begin{itemize}\compactlist
+\item Captures relational info inaccessible to tabular methods
+\item ``Guilt by association,'' network centrality, structural equivalence
+\end{itemize}
+\vspace{2mm}
+\textbf{Limitations}
+\begin{itemize}\compactlist
+\item Graph construction requires entity resolution (largely unaddressed)
+\item Incomplete relationship data
+\item Computational cost scales with graph size
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Wang et al.\ (2019); Liu et al.\ (2021); paper Section 4.5}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 10 -- Semi-Supervised
+% ----------------------------------------------------------
+\begin{frame}{Semi-Supervised and Self-Supervised Methods}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Label Propagation / Self-Training}
+\begin{itemize}\compactlist
+\item Extend sparse labels through the data manifold
+\item Effective when $<5\%$ of data carry labels (characteristic of hedge fund context)
+\item Self-training: iteratively label most confident predictions, retrain
+\end{itemize}
+\vspace{2mm}
+\textbf{Contrastive Learning}
+\begin{itemize}\compactlist
+\item Learn representations maximizing agreement between augmented views of same fund
+\item Minimize agreement between different funds
+\item Separate normal from anomalous without explicit fraud labels
+\item Downstream classification with very few labeled examples
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Self-Supervised Pre-Training}
+\begin{itemize}\compactlist
+\item Objectives on unlabeled returns:
+  \begin{itemize}\compactlist
+  \item Masked return prediction
+  \item Temporal order prediction
+  \item Next-period forecasting
+  \end{itemize}
+\item Creates general-purpose fund behavior representations
+\item Fine-tune for fraud with minimal labels (pre-train $\to$ fine-tune paradigm)
+\end{itemize}
+\vspace{2mm}
+\textbf{Transfer Learning}
+\begin{itemize}\compactlist
+\item Adapt models from banking/insurance/accounting fraud
+\item Degree of cross-domain transferability = open empirical question
+\end{itemize}
+\vspace{2mm}
+\textbf{Limitation}: sensitive to distributional shifts; labeled examples may not represent full fraud population
+\end{columns}
+\bottomnote{Source: Pang et al.\ (2021); paper Section 4.6}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 11 -- Synthetic Data
+% ----------------------------------------------------------
+\begin{frame}{Synthetic Data and Data Augmentation}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{SMOTE and Variants}
+\begin{itemize}\compactlist
+\item Most widely used: interpolation between existing positives in feature space
+\item \textcolor{mlred}{Problem}: interpolating between a Ponzi scheme and a valuation fraud generates implausible patterns
+\item Borderline-SMOTE, ADASYN: concentrate near decision boundary (partial fix)
+\end{itemize}
+\vspace{2mm}
+\textbf{Conditional GANs}
+\begin{itemize}\compactlist
+\item Condition on fraud type or attributes
+\item Capture complex dependencies (returns $\times$ filings $\times$ operations)
+\item More realistic than interpolation
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{VAEs}
+\begin{itemize}\compactlist
+\item Better-calibrated uncertainty estimates
+\item Advantageous when confidence of generated examples matters
+\end{itemize}
+\vspace{2mm}
+\textbf{Validation Circularity}
+\begin{itemize}\compactlist
+\item Generator learns to resemble \textit{known} fraud
+\item If known examples are not representative $\Rightarrow$ synthetic data perpetuates biases
+\item Ensuring realism \textit{without} assuming we know what fraud looks like: fundamental challenge
+\end{itemize}
+\vspace{2mm}
+\textbf{Synthetic Benchmarks}
+\begin{itemize}\compactlist
+\item Calibrated simulation (Fiore et al., 2019)
+\item Avoids confidentiality constraints
+\item Hedge-fund-specific benchmark = open priority (OP1)
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Chawla et al.\ (2002); Fiore et al.\ (2019); paper Section 4.7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 12 -- Method Families Chart
+% ----------------------------------------------------------
+\begin{frame}{Method Families: Comparative Overview}
+
+\chartplaceholder[5.5cm]{Chart: 01\_method\_families -- Comparative visualization of method families: classical, tree-based, deep learning, NLP, GNN, semi-supervised, synthetic -- showing performance ranges, data requirements, interpretability, and maturity in hedge fund context}
+
+\bottomnote{Source: Paper Section 4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 13 -- Critical Assessment: Reproducibility
+% ----------------------------------------------------------
+\begin{frame}{Critical Assessment: Reproducibility Crisis}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Proprietary Data}
+\begin{itemize}\compactlist
+\item Majority of studies use \textbf{proprietary datasets}: licensed databases, internal regulatory records, bespoke compilations
+\item Results cannot be independently verified
+\item Performance metrics must be \textbf{taken on trust}
+\item Contrasts sharply with credit card fraud detection: public benchmarks enable rigorous comparison
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{No Standard Benchmark}
+\begin{itemize}\compactlist
+\item Each study assembles its own data, defines its own fraud labels
+\item Reports results on non-overlapping fund populations
+\item \textcolor{mlred}{Cross-study comparison is effectively impossible}
+\item An \auc{} of 0.79 in one study cannot be compared to 0.72 in another when:
+  \begin{itemize}\compactlist
+  \item Datasets differ
+  \item Label definitions differ
+  \item Feature sets differ
+  \item Evaluation protocols differ
+  \end{itemize}
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 4.8}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 14 -- Critical Assessment: Benchmarks, Domain
+% ----------------------------------------------------------
+\begin{frame}{Critical Assessment: Benchmark Gap and Domain Specificity}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Domain Specificity}
+\begin{itemize}\compactlist
+\item Most impressive claims (\fone{} $> 0.85$, \auc{} $> 0.90$) originate from \textbf{adjacent domains}:
+  \begin{itemize}\compactlist
+  \item Credit card fraud
+  \item Payment fraud
+  \item Banking fraud
+  \end{itemize}
+\item These domains have abundant labeled data and well-characterized fraud
+\item \textcolor{mlred}{Transferability to hedge funds is uncertain:}
+  \begin{itemize}\compactlist
+  \item Sparse data
+  \item Heterogeneous fraud types
+  \item Sophisticated adversaries
+  \end{itemize}
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Class Imbalance Handling}
+\begin{itemize}\compactlist
+\item Treatment varies enormously across studies
+\item Often inadequately reported:
+  \begin{itemize}\compactlist
+  \item SMOTE applied without impact evaluation
+  \item Ad hoc cost ratios for cost-sensitive learning
+  \item Some report only \textbf{accuracy} -- meaningless under severe imbalance (classifying all as non-fraud $>$ 97\%)
+  \end{itemize}
+\item No standardized protocols for handling \textit{or} reporting class imbalance
+\end{itemize}
+\vspace{2mm}
+\textcolor{mlblue}{\textbf{Studies reporting high performance on general financial fraud benchmarks likely overestimate effectiveness for hedge fund surveillance.}}
+\end{columns}
+\bottomnote{Source: Bolton \& Hand (2002); Phua et al.\ (2010); paper Section 4.8}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 15 -- Critical Assessment: Evaluation, Publication
+% ----------------------------------------------------------
+\begin{frame}{Critical Assessment: Evaluation Protocols and Publication Bias}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Temporal Evaluation Gap}
+\begin{itemize}\compactlist
+\item Proper: train on period $t$, evaluate on period $t+1$ (temporal split)
+\item \textcolor{mlred}{Many studies use random cross-validation}
+\item Allows future information to leak into training set
+\item \textbf{Inflates reported performance}
+\item In a domain with concept drift, temporal evaluation is a \textit{necessity}, not a refinement
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Publication Bias}
+\begin{itemize}\compactlist
+\item Positive results preferentially published
+\item Studies reporting high detection rates more likely to reach peer-reviewed venues
+\item True performance landscape is \textbf{less optimistic} than published literature suggests
+\item Potential remedies:
+  \begin{itemize}\compactlist
+  \item Registered reports
+  \item Pre-registered analysis plans
+  \item Commitment to publish regardless of outcome
+  \item Not yet standard practice in this field
+  \end{itemize}
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 4.8}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 16 -- Critical Assessment: Overfitting
+% ----------------------------------------------------------
+\begin{frame}{Critical Assessment: Overfitting Risk}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\textbf{The Small-Sample Problem}
+\begin{itemize}\compactlist
+\item Only $\sim$\numfraudcases{} labeled fraud cases in the historical record
+\item Even moderate-complexity models risk \textbf{memorizing} idiosyncratic characteristics of specific schemes
+\item A model achieving high performance on 20 held-out fraud cases may simply have learned fingerprints of specific Ponzi schemes, valuation frauds, style misrepresentations in its training set
+\item \textcolor{mlred}{Without capacity to detect novel fraud types}
+\end{itemize}
+
+\column{0.42\textwidth}
+\textbf{Amplifying Factors}
+\begin{itemize}\compactlist
+\item Common practice: single train-test split (rather than multiple independent evaluations)
+\item Heterogeneous positive class: Ponzi $\neq$ NAV manipulation $\neq$ insider trading
+\item Pooled fraud labels $\Rightarrow$ compromise decision boundary
+\item May fail to detect any individual fraud type with high sensitivity
+\end{itemize}
+\vspace{3mm}
+\textbf{Mitigation Needed}
+\begin{itemize}\compactlist
+\item Fraud-type-specific evaluation
+\item Multiple temporal splits
+\item Synthetic augmentation with validation
+\item Ensemble of type-specific detectors
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 4.8}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 17 -- Literature Gaps Chart
+% ----------------------------------------------------------
+\begin{frame}{Literature Gaps: Visual Summary}
+
+\chartplaceholder[5.5cm]{Chart: 02\_literature\_gaps -- Heatmap or gap analysis showing method families vs.\ critical challenges (reproducibility, benchmark, domain specificity, class imbalance, evaluation protocol, publication bias, overfitting) with gap severity indicators}
+
+\bottomnote{Source: Paper Section 4.8}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 18 -- Summary
+% ----------------------------------------------------------
+\begin{frame}{Summary: Field at Early Stage of Scientific Maturity}
+\begin{enumerate}\compactlist
+\item \textbf{Classical methods} (Benford, serial correlation, omega-score) provide foundational features but each captures only one fraud dimension
+\item \textbf{Tree-based ensembles} dominate: best performance (\fone{} $\sim 0.88$), \shap{}-compatible, robust to class imbalance
+\item \textbf{Deep learning} offers theoretical appeal (temporal patterns, nonlinear representations) but faces severe data scarcity ($<100$ positives) and overfitting risk
+\item \textbf{NLP} (FinBERT 87\%, SEC-BERT) enables text-quant cross-modal detection; multi-modal fusion adds \textbf{+3--5\% \auc{}}
+\item \textbf{GNNs} capture relational ``guilt by association'' (\auc{} 0.87 in adjacent domains) but hedge fund application remains empirically underexplored
+\item \textbf{Semi-supervised / self-supervised} methods directly address label scarcity through contrastive learning and pre-train/fine-tune paradigms
+\item \textbf{Synthetic data} (GANs, VAEs) address class imbalance but face validation circularity
+\item \textcolor{mlred}{\textbf{Critical gaps:}} no standard benchmark, reproducibility crisis, evaluation protocol inconsistencies, publication bias, and high overfitting risk with \numfraudcases{} cases
+\end{enumerate}
+\bottomnote{Source: Paper Section 4}
+\end{frame}
+
+\end{document}

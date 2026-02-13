@@ -1,0 +1,62 @@
+[
+  {
+    "question": "How many databases were searched for the systematic review?",
+    "options": [
+      "a) 3",
+      "b) 4",
+      "c) 5",
+      "d) 7"
+    ],
+    "correct_answer": "c",
+    "explanation": "The systematic review searched five databases: Web of Science, Scopus, IEEE Xplore, PubMed, and arXiv. This multi-database approach ensures comprehensive coverage of academic literature.",
+    "section_reference": "Section 8: Reproducibility"
+  },
+  {
+    "question": "What does SALSA stand for in the review methodology?",
+    "options": [
+      "a) Systematic Analysis of Literature and Scientific Assessment",
+      "b) Search, AppraisaL, Synthesis, Analysis",
+      "c) Statistical Analysis for Literature Survey Approach",
+      "d) Structured Assessment of Literature Sources and Articles"
+    ],
+    "correct_answer": "b",
+    "explanation": "The SALSA framework structures the systematic review into four phases: Search (identification), AppraisaL (quality assessment), Synthesis (data extraction), and Analysis (findings integration).",
+    "section_reference": "Section 8: Review Methodology"
+  },
+  {
+    "question": "How many initial papers were found in the database searches?",
+    "options": [
+      "a) ~100",
+      "b) ~200",
+      "c) ~350",
+      "d) ~500"
+    ],
+    "correct_answer": "d",
+    "explanation": "The initial database search identified approximately 500 papers. After removing duplicates, screening titles/abstracts, and full-text review, the final systematic corpus contained 105 papers.",
+    "section_reference": "Section 8: Search Funnel"
+  },
+  {
+    "question": "What is the final systematic corpus size after all screening stages?",
+    "options": [
+      "a) 80",
+      "b) 105",
+      "c) 169",
+      "d) 297"
+    ],
+    "correct_answer": "b",
+    "explanation": "After title/abstract screening, full-text assessment, and quality appraisal, exactly 105 papers were included in the final systematic corpus for detailed analysis and synthesis.",
+    "section_reference": "Section 8: Final Corpus"
+  },
+  {
+    "question": "What is the primary SEC data access system mentioned?",
+    "options": [
+      "a) EDGAR",
+      "b) MIDAS",
+      "c) DERA",
+      "d) CRQA"
+    ],
+    "correct_answer": "a",
+    "explanation": "EDGAR (Electronic Data Gathering, Analysis, and Retrieval) is the SEC's primary system for accessing public filings, including Form ADV disclosures from hedge funds and investment advisers.",
+    "section_reference": "Section 8: Data Sources"
+  }
+]

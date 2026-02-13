@@ -1,0 +1,58 @@
+[
+  {
+    "question": "How many fraud categories are in the taxonomy?",
+    "options": ["a) 3", "b) 4", "c) 5", "d) 7"],
+    "correct_answer": "c",
+    "explanation": "The taxonomy organizes hedge fund fraud into five categories: performance fabrication, allocation fraud, strategy misrepresentation, market manipulation, and regulatory fraud.",
+    "section_reference": "Section 2.1"
+  },
+  {
+    "question": "Which fraud type has the highest detection difficulty?",
+    "options": ["a) Performance Fabrication", "b) Allocation Fraud", "c) Market Manipulation", "d) Regulatory Fraud"],
+    "correct_answer": "c",
+    "explanation": "Market manipulation has a detection difficulty rating of 5/5, the highest among all fraud types, as it requires privileged real-time data and advanced methods to detect.",
+    "section_reference": "Section 2.1"
+  },
+  {
+    "question": "What is the estimated survivorship bias in hedge fund databases?",
+    "options": ["a) 42 basis points/year", "b) 142 basis points/year", "c) 242 basis points/year", "d) 442 basis points/year"],
+    "correct_answer": "c",
+    "explanation": "Survivorship bias, estimated at approximately 242 basis points per year, arises because defunct funds exit live databases, resulting in return overstatement.",
+    "section_reference": "Section 2.2"
+  },
+  {
+    "question": "What is the estimated backfill bias?",
+    "options": ["a) 142bp/year", "b) 242bp/year", "c) 342bp/year", "d) 442bp/year"],
+    "correct_answer": "d",
+    "explanation": "Backfill bias, estimated at 442 basis points per year, results from the retroactive inclusion of favorable pre-reporting return histories when funds begin reporting to databases.",
+    "section_reference": "Section 2.2"
+  },
+  {
+    "question": "Which regulatory change followed the 2008 financial crisis in the US?",
+    "options": ["a) Sarbanes-Oxley", "b) Dodd-Frank Title IV", "c) Glass-Steagall", "d) Basel III"],
+    "correct_answer": "b",
+    "explanation": "The Dodd-Frank Act's Title IV, passed in 2010, mandated that hedge fund advisers register with the SEC and file Form ADV, substantially improving transparency and entity resolution capabilities.",
+    "section_reference": "Section 2.3"
+  },
+  {
+    "question": "Under the EU AI Act, how is fraud detection classified?",
+    "options": ["a) Low-risk", "b) Limited-risk", "c) High-risk", "d) Unacceptable risk"],
+    "correct_answer": "c",
+    "explanation": "Financial fraud detection systems fall under the EU AI Act's high-risk classification (Annex III), subjecting them to stringent transparency, human oversight, and risk management requirements.",
+    "section_reference": "Section 2.3"
+  },
+  {
+    "question": "How many layers does the data ecosystem have?",
+    "options": ["a) 2", "b) 3", "c) 4", "d) 5"],
+    "correct_answer": "c",
+    "explanation": "The hedge fund data ecosystem spans four layers: return data from commercial databases, regulatory filings, alternative data from news and social media, and synthetic data generated for class imbalance.",
+    "section_reference": "Section 2.2"
+  },
+  {
+    "question": "What does SupTech stand for?",
+    "options": ["a) Superior Technology", "b) Supervisory Technology", "c) Supplementary Technology", "d) Supply Technology"],
+    "correct_answer": "b",
+    "explanation": "SupTech (Supervisory Technology) refers to the use of technology by regulatory authorities to enhance their supervisory capabilities, including AI-based fraud detection systems.",
+    "section_reference": "Section 2.3"
+  }
+]

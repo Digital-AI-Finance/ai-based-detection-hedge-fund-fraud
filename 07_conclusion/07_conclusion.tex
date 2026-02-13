@@ -1,0 +1,484 @@
+% ============================================================
+%  Slide Deck 7 -- Conclusion and Key Takeaways
+%  AI-Based Detection of Hedge Fund Fraud
+% ============================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Color definitions ----
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255,127,14}
+\definecolor{mlgreen}{RGB}{44,160,44}
+\definecolor{mlred}{RGB}{214,39,40}
+\definecolor{mlgray}{RGB}{127,127,127}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{midgray}{RGB}{180,180,180}
+
+% ---- Apply custom colors to Madrid theme ----
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% ---- Navigation / itemize ----
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% ---- Custom commands ----
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+\newcommand{\chartplaceholder}[2][5cm]{%
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth, max height=#1}
+\framebox[\textwidth][c]{%
+\rule{0pt}{#1}%
+\textcolor{midgray}{[#2]}%
+}
+\end{adjustbox}
+\end{center}
+}
+
+% ---- Notation ----
+\input{../notation}
+
+% ---- Title metadata ----
+\title{AI-Based Detection of Hedge Fund Fraud}
+\subtitle{Section 7 -- Conclusion and Key Takeaways}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+% ============================================================
+\begin{document}
+
+% ----------------------------------------------------------
+% SLIDE 1 -- Title
+% ----------------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 2 -- Outline
+% ----------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\compactlist
+\item C1 Summary: Detection Pipeline Taxonomy
+\item C2 Summary: Adversarial and Regulatory Readiness
+\item C3 Summary: Research Roadmap
+\item Contributions Chart
+\item Key Takeaways for Practitioners
+\item Key Takeaways for Regulators
+\item Key Takeaways for Researchers
+\item Takeaways Chart
+\item The Co-Evolution of Fraud and Detection
+\item From Supervised to Adversarial Learning
+\item The Collaboration Imperative
+\item The Field at an Inflection Point
+\item Thank You / Questions
+\item Selected References
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 3 -- C1 Summary
+% ----------------------------------------------------------
+\begin{frame}{C1: Detection Pipeline Taxonomy -- Five Stages}
+\begin{block}{Contribution C1}
+A \textbf{unified five-stage detection pipeline} framework that systematically maps hedge fund fraud types to appropriate AI detection methods.
+\end{block}
+\vspace{2mm}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{Data Ingestion}}: return series, regulatory filings, alternative data, relational networks
+\item \textcolor{mlblue}{\textbf{Feature Engineering}}: statistical, distributional, NLP-derived, graph-based features
+\item \textcolor{mlblue}{\textbf{Model Selection}}: method family guided by fraud typology and data availability
+\item \textcolor{mlblue}{\textbf{Explainability}}: post-hoc (\shap{}, \lime{}) or inherently interpretable architectures
+\item \textcolor{mlblue}{\textbf{Deployment}}: operational integration, monitoring, feedback loops
+\end{enumerate}
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item Makes explicit that \textbf{no single method covers all fraud types}
+\item Effective surveillance requires a \textbf{multi-stage architecture} with method selection guided by specific fraud typology
+\item Engineering blueprint for operational surveillance systems
+\end{itemize}
+\bottomnote{Source: Paper Section 3 / Section 7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 4 -- C2 Summary
+% ----------------------------------------------------------
+\begin{frame}{C2: Adversarial and Regulatory Readiness Assessment}
+\begin{block}{Contribution C2}
+Systematic evaluation of adversarial vulnerabilities and regulatory compliance of current AI methods for hedge fund fraud detection.
+\end{block}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Adversarial Assessment}
+\begin{itemize}\compactlist
+\item Mean \auc{} degradation: \textcolor{mlred}{\textbf{\aucdeg{}}} under adversarial perturbation
+\item Some techniques: $>$25\% degradation under informed adversaries
+\item Adversaries are PhD-level quants, not generic attackers
+\item Most detection models \textbf{untested} against hedge-fund-specific adversaries
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Regulatory Assessment}
+\begin{itemize}\compactlist
+\item \euaiact{} classifies fraud detection as \textbf{high-risk AI} (transparency, human oversight, risk management)
+\item SEC signaling increasing attention to AI governance
+\item Explainability--performance trade-off: best performers are most opaque
+\item Detection performance on historical data is \textbf{necessary but not sufficient}
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 5 / Section 7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 5 -- C3 Summary
+% ----------------------------------------------------------
+\begin{frame}{C3: Research Roadmap -- 10 Open Problems}
+\begin{block}{Contribution C3}
+Ten concrete open problems, each uniquely challenging in the hedge fund context, with suggested approaches, evaluation protocols, and feasibility assessments.
+\end{block}
+\vspace{2mm}
+{\footnotesize
+\begin{columns}[T]
+\column{0.32\textwidth}
+\textbf{Data (OP1--3)}
+\begin{itemize}\compactlist
+\item OP1: Benchmark datasets
+\item OP2: Cross-jurisdictional integration
+\item OP3: Real-time alternative data
+\end{itemize}
+
+\column{0.32\textwidth}
+\textbf{Methods (OP4--7)}
+\begin{itemize}\compactlist
+\item OP4: Extreme class imbalance
+\item OP5: Cold-start detection
+\item OP6: Concept drift
+\item OP7: Multi-modal fusion
+\end{itemize}
+
+\column{0.32\textwidth}
+\textbf{Deployment (OP8--10)}
+\begin{itemize}\compactlist
+\item OP8: Adversarial robustness
+\item OP9: Explainability
+\item OP10: Human-AI collaboration
+\end{itemize}
+\end{columns}
+}
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item \textbf{OP1} (benchmarks) and \textbf{OP4} (class imbalance) are \textcolor{mlred}{critical preconditions} that unlock progress on nearly all other problems
+\item OP2 and OP10 require \textbf{institutional partnerships} beyond any single research group
+\end{itemize}
+\bottomnote{Source: Paper Section 6 / Section 7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 6 -- Contributions Chart
+% ----------------------------------------------------------
+\begin{frame}{Three Contributions: Visual Summary}
+
+\chartplaceholder[5cm]{Chart: 01\_contributions\_summary -- Three-panel visual summarizing C1 (pipeline taxonomy with 5 stages), C2 (adversarial/regulatory assessment with key metrics), and C3 (research roadmap with 10 open problems grouped by category)}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item C1 provides the \textbf{organizational backbone} for C2 (method evaluation) and C3 (research priorities)
+\item Together: a comprehensive analytical framework from survey to actionable agenda
+\end{itemize}
+\bottomnote{Source: Paper Section 7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 7 -- Takeaways: Practitioners
+% ----------------------------------------------------------
+\begin{frame}{Key Takeaways for Practitioners}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{Ensemble methods offer the best current balance}} of performance, interpretability, and deployment readiness
+  \begin{itemize}\compactlist
+  \item Gradient boosting, stacking ensembles, random forests
+  \item Augment with \shap{} for investigation-ready outputs
+  \item Accessible entry point without specialized hardware or deep learning expertise
+  \end{itemize}
+\vspace{2mm}
+\item \textcolor{mlblue}{\textbf{Multi-stage pipeline with fraud-type-guided method selection}} is essential
+  \begin{itemize}\compactlist
+  \item Performance fabrication: serial correlation tests, Benford's law, Sharpe ratio plausibility (difficulty 3/5)
+  \item Regulatory fraud: NLP on filings (difficulty 2/5)
+  \item Market manipulation: order-level trade data, cross-account analysis (difficulty 5/5)
+  \item Allocation fraud: win-rate asymmetry, timestamp analysis (difficulty 4/5)
+  \end{itemize}
+\vspace{2mm}
+\item \textcolor{mlblue}{\textbf{Adversarial robustness testing should be standard practice}}
+  \begin{itemize}\compactlist
+  \item Mean \aucdeg{} degradation \textbf{understates} risk (generic perturbations, not domain-tailored)
+  \item Domain-specific red-teaming: financial experts construct evasive return series
+  \end{itemize}
+\end{enumerate}
+\bottomnote{Source: Paper Section 7 -- Takeaways for Practitioners}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 8 -- Takeaways: Regulators
+% ----------------------------------------------------------
+\begin{frame}{Key Takeaways for Regulators}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{AI addresses the scale mismatch}} between regulatory resources and industry size
+  \begin{itemize}\compactlist
+  \item SEC Division of Examinations inspects only a fraction of funds per year
+  \item AI processes thousands of return series, filings, and alternative data simultaneously
+  \item \textbf{But}: models must satisfy emerging explainability requirements
+  \item EU AI Act: ``sufficiently transparent'' outputs for high-risk systems
+  \item May need to favor inherently interpretable architectures (neural additive models, explanation-augmented boosting) over black-box deep learning
+  \item A fraud alert that \textbf{cannot be explained} to an enforcement attorney is of limited operational value
+  \end{itemize}
+\vspace{3mm}
+\item \textcolor{mlblue}{\textbf{Cross-jurisdictional data sharing is a prerequisite}} for effective detection
+  \begin{itemize}\compactlist
+  \item Sophisticated fraudsters exploit regulatory arbitrage \textbf{deliberately}
+  \item No single jurisdiction possesses a complete picture
+  \item \textbf{Federated learning} offers a technical path: shared models without exchanging raw data
+  \item Technical foundations exist; what remains is \textbf{institutional coordination}
+  \end{itemize}
+\end{enumerate}
+\bottomnote{Source: Paper Section 7 -- Takeaways for Regulators}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 9 -- Takeaways: Researchers
+% ----------------------------------------------------------
+\begin{frame}{Key Takeaways for Researchers}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{Benchmark datasets are the most critical enabler}}
+  \begin{itemize}\compactlist
+  \item Absence has fragmented the literature, prevented reproducible comparisons, impeded advancement
+  \item Two-track approach: synthetic generation + differentially private regulatory data release
+  \item Researchers with access to commercial databases or regulatory data can make a \textbf{foundational contribution}
+  \end{itemize}
+\vspace{2mm}
+\item \textcolor{mlblue}{\textbf{Multi-modal fusion is underexplored and high-potential}}
+  \begin{itemize}\compactlist
+  \item Most methods operate on a single modality in isolation
+  \item Sophisticated fraud exhibits anomalies across \textbf{multiple modalities simultaneously}
+  \item Attention-based multi-modal transformers, cross-modal contrastive learning, hierarchical fusion
+  \end{itemize}
+\vspace{2mm}
+\item \textcolor{mlblue}{\textbf{Adversarial robustness with domain-specific threat models}} deserves far more attention
+  \begin{itemize}\compactlist
+  \item Current literature focuses on image classification and unsophisticated adversaries
+  \item Hedge fund fraud: highly quantitative adversary with economic constraints fundamentally different from $\ell_p$-norm budgets
+  \item Certified bounds, game-theoretic modeling, red-teaming with domain experts
+  \end{itemize}
+\end{enumerate}
+\bottomnote{Source: Paper Section 7 -- Takeaways for Researchers}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 10 -- Takeaways Chart
+% ----------------------------------------------------------
+\begin{frame}{Audience-Specific Takeaways: Visual Summary}
+
+\chartplaceholder[5cm]{Chart: 02\_takeaways\_by\_audience -- Three-column visual mapping key takeaways to Practitioners (ensembles, multi-stage pipeline, adversarial testing), Regulators (scale mismatch, explainability, federated learning), and Researchers (benchmarks, multi-modal fusion, adversarial robustness)}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item Each audience has distinct priorities, but \textbf{all three} must collaborate for operational progress
+\end{itemize}
+\bottomnote{Source: Paper Section 7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 11 -- Co-Evolution of Fraud and Detection
+% ----------------------------------------------------------
+\begin{frame}{The Co-Evolution of Fraud and Detection}
+\begin{block}{An Arms Race}
+The history of financial fraud detection is a history of \textbf{co-evolution} between detection methods and evasion strategies.
+\end{block}
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item Statistical anomaly detection $\Rightarrow$ \textit{engineered statistically plausible fabricated returns}
+\item Benford's law analysis $\Rightarrow$ \textit{digit distributions that pass Benford tests}
+\item Return smoothing detection $\Rightarrow$ \textit{sophisticated NAV manipulation with plausible serial correlation}
+\item \textbf{AI/ML deployment} $\Rightarrow$ \textit{adaptive strategies designed to evade ML models} (inevitable)
+\end{itemize}
+\vspace{3mm}
+\textcolor{mlred}{$\Rightarrow$ The research community must focus not only on methods that perform well on \textbf{historical data} but on methods that remain effective under \textbf{strategic manipulation} by sophisticated adversaries.}
+\bottomnote{Source: Paper Section 7 -- The Co-Evolution of Fraud and Detection}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 12 -- Paradigm Shift
+% ----------------------------------------------------------
+\begin{frame}{From Supervised to Adversarial Learning}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{Standard Supervised Paradigm}
+\begin{itemize}\compactlist
+\item Data distribution assumed \textbf{stationary}
+\item Train on historical labeled examples
+\item Evaluate on held-out test set
+\item Implicit assumption: future data looks like past data
+\item \textcolor{mlred}{Ignores adversarial dynamics entirely}
+\end{itemize}
+\end{block}
+
+\column{0.48\textwidth}
+\begin{block}{Adversarial Learning Paradigm}
+\begin{itemize}\compactlist
+\item Defender and fraudster engaged in a \textbf{repeated game}
+\item Data distribution shifts in response to detection
+\item Must model adversary's strategic behavior
+\item Robustness guarantees under worst-case manipulation
+\item \textcolor{mlgreen}{Accounts for the reality of sophisticated adversaries}
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{3mm}
+\textcolor{mlblue}{This paradigm shift -- from i.i.d.\ assumption to adversarial game -- is essential for operational deployment in the hedge fund context.}
+\bottomnote{Source: Paper Section 7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 13 -- Collaboration Imperative
+% ----------------------------------------------------------
+\begin{frame}{The Collaboration Imperative}
+\begin{block}{No Single Community Has Data, Methods, and Operational Context}
+The ten open problems represent not merely technical challenges but \textbf{institutional ones}.
+\end{block}
+\vspace{3mm}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\textbf{Regulatory Agencies}
+\begin{itemize}\compactlist
+\item Enforcement-labeled data
+\item Cross-border relationships
+\item Operational evaluation environments
+\item Regulatory sandboxes
+\end{itemize}
+
+\column{0.32\textwidth}
+\textbf{Academic Researchers}
+\begin{itemize}\compactlist
+\item Deep learning methods
+\item Adversarial robustness
+\item Explainability
+\item Federated learning
+\end{itemize}
+
+\column{0.32\textwidth}
+\textbf{Industry Practitioners}
+\begin{itemize}\compactlist
+\item Strategy evolution knowledge
+\item Operational due diligence
+\item Fund management realities
+\item Domain-specific red-teaming
+\end{itemize}
+\end{columns}
+\vspace{3mm}
+Required: \textbf{shared data initiatives}, \textbf{regulatory sandboxes for AI testing}, and \textbf{joint research programs}.
+\bottomnote{Source: Paper Section 7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 14 -- Field at Inflection Point
+% ----------------------------------------------------------
+\begin{frame}{The Field at an Inflection Point}
+\begin{center}
+{\large\textcolor{mlpurple}{\textbf{Three conditions are now in place:}}}
+\end{center}
+\vspace{3mm}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{Technical foundations established}}: AI methods can detect anomalies in returns, extract signals from filings, and model relational structures
+\vspace{2mm}
+\item \textcolor{mlblue}{\textbf{Regulatory imperative is clear}}: EU AI Act, SEC attention, global push for AI governance in financial surveillance
+\vspace{2mm}
+\item \textcolor{mlblue}{\textbf{Economic stakes are enormous}}: \aumdollar{} industry, multi-billion-dollar fraud cases, systemic risk implications
+\end{enumerate}
+\vspace{4mm}
+\begin{block}{What Remains}
+The coordinated effort to translate promising methods into \textbf{operationally deployed}, \textbf{robustly tested}, and \textbf{legally compliant} systems that can protect investors and preserve market integrity at the scale the modern hedge fund industry demands.
+\end{block}
+\bottomnote{Source: Paper Section 7}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 15 -- Thank You / Questions
+% ----------------------------------------------------------
+\begin{frame}{}
+\vfill
+\begin{center}
+{\Large\textcolor{mlpurple}{\textbf{Thank You}}}
+
+\vspace{5mm}
+{\large Questions and Discussion}
+
+\vspace{8mm}
+\textbf{Joerg Osterrieder}\\
+Zurich University of Applied Sciences (ZHAW)\\
+
+\vspace{5mm}
+\textcolor{mlblue}{Paper: \textit{AI-Based Detection of Hedge Fund Fraud: A Survey}}
+\end{center}
+\vfill
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 16 -- Selected References
+% ----------------------------------------------------------
+\begin{frame}{Selected References}
+{\scriptsize
+\begin{itemize}\compactlist
+\item Bollen, N.\ P.\ B.\ \& Pool, V.\ K.\ (2012). Suspicious patterns in hedge fund returns and the risk of fraud. \textit{Review of Financial Studies}, 25(9).
+\item Cartella, F.\ et al.\ (2021). Adversarial attacks on financial fraud detection models. \textit{Expert Systems with Applications}.
+\item Chen, Z.\ et al.\ (2024). Robust optimization for financial fraud detection. \textit{IEEE Trans.\ Neural Networks}.
+\item Dimmock, S.\ G.\ \& Gerken, W.\ C.\ (2012). Predicting fraud by investment managers. \textit{Journal of Financial Economics}, 105(1).
+\item EU AI Act (2024). Regulation 2024/1689 of the European Parliament and of the Council.
+\item Getmansky, M., Lo, A.\ W., \& Makarov, I.\ (2004). An econometric model of serial correlation and illiquidity. \textit{Journal of Financial Economics}, 74(3).
+\item Goodfellow, I.\ J.\ et al.\ (2015). Explaining and harnessing adversarial examples. \textit{ICLR}.
+\item Lundberg, S.\ M.\ \& Lee, S.-I.\ (2017). A unified approach to interpreting model predictions. \textit{NeurIPS}.
+\item Madry, A.\ et al.\ (2018). Towards deep learning models resistant to adversarial attacks. \textit{ICLR}.
+\item Rudin, C.\ (2019). Stop explaining black box ML models for high stakes decisions. \textit{Nature Machine Intelligence}.
+\item Vaswani, A.\ et al.\ (2017). Attention is all you need. \textit{NeurIPS}.
+\end{itemize}
+}
+\bottomnote{Full bibliography available in the paper.}
+\end{frame}
+
+\end{document}

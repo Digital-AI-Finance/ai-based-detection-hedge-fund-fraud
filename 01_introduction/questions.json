@@ -1,0 +1,44 @@
+[
+  {
+    "question": "What is the approximate AUM of the global hedge fund industry as of 2025?",
+    "options": ["a) $2.0 trillion", "b) $3.5 trillion", "c) $4.5 trillion", "d) $6.0 trillion"],
+    "correct_answer": "c",
+    "explanation": "The global hedge fund industry manages assets exceeding $4.5 trillion as of 2025, having grown substantially from roughly $2 trillion at the onset of the 2008 financial crisis.",
+    "section_reference": "Section 1.1"
+  },
+  {
+    "question": "What were the estimated losses from the Madoff Ponzi scheme?",
+    "options": ["a) $10 billion", "b) $35 billion", "c) $65 billion", "d) $100 billion"],
+    "correct_answer": "c",
+    "explanation": "The collapse of Bernard L. Madoff Investment Securities in December 2008 revealed a Ponzi scheme with estimated losses of $65 billion in stated account value, making it the largest financial fraud in history.",
+    "section_reference": "Section 1.1"
+  },
+  {
+    "question": "Which of these is NOT one of the four advantages of AI/ML for fraud detection?",
+    "options": ["a) Scalability", "b) Real-time monitoring", "c) Cost reduction", "d) Multi-modal integration"],
+    "correct_answer": "c",
+    "explanation": "The four fundamental advantages are: (1) scalability, (2) pattern recognition, (3) real-time monitoring, and (4) multi-modal data integration. Cost reduction is not listed as a primary advantage.",
+    "section_reference": "Section 1.2"
+  },
+  {
+    "question": "How many principal contributions does this survey make?",
+    "options": ["a) 2", "b) 3", "c) 4", "d) 5"],
+    "correct_answer": "b",
+    "explanation": "The survey makes three principal contributions: C1 (Detection Pipeline Taxonomy), C2 (Adversarial and Regulatory Readiness Assessment), and C3 (Actionable Research Roadmap).",
+    "section_reference": "Section 1.3"
+  },
+  {
+    "question": "Why does this survey NOT conduct a quantitative meta-analysis?",
+    "options": ["a) Insufficient data", "b) Heterogeneity of datasets, metrics, and definitions", "c) Legal restrictions", "d) Time constraints"],
+    "correct_answer": "b",
+    "explanation": "A qualitative synthesis approach is adopted because the heterogeneity of datasets, fraud definitions, evaluation protocols, and reporting standards across the existing literature precludes meaningful statistical aggregation.",
+    "section_reference": "Section 1.3"
+  },
+  {
+    "question": "Approximately how many staff does the SEC employ?",
+    "options": ["a) 1,200", "b) 2,800", "c) 4,600", "d) 8,500"],
+    "correct_answer": "c",
+    "explanation": "The SEC employs approximately 4,600 staff to oversee thousands of registered investment advisers, broker-dealers, and fund complexes, creating a stark mismatch between regulatory capacity and industry scale.",
+    "section_reference": "Section 1.2"
+  }
+]

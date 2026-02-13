@@ -1,0 +1,172 @@
+{
+  "charts": [
+    {
+      "id": "01_introduction/01_survey_comparison",
+      "section": "01_introduction",
+      "name": "Survey comparison heatmap",
+      "script_path": "01_introduction/01_survey_comparison/01_survey_comparison.py",
+      "output_path": "01_introduction/01_survey_comparison/01_survey_comparison.pdf",
+      "description": "Heatmap comparing survey methodology and scope across key papers in hedge fund fraud detection literature"
+    },
+    {
+      "id": "01_introduction/02_hedge_fund_growth",
+      "section": "01_introduction",
+      "name": "AUM growth timeline",
+      "script_path": "01_introduction/02_hedge_fund_growth/02_hedge_fund_growth.py",
+      "output_path": "01_introduction/02_hedge_fund_growth/02_hedge_fund_growth.pdf",
+      "description": "Timeline showing global hedge fund AUM growth from 2000 to 2024, highlighting major fraud events and regulatory milestones"
+    },
+    {
+      "id": "02_background/01_fraud_taxonomy",
+      "section": "02_background",
+      "name": "Fraud taxonomy difficulty ratings",
+      "script_path": "02_background/01_fraud_taxonomy/01_fraud_taxonomy.py",
+      "output_path": "02_background/01_fraud_taxonomy/01_fraud_taxonomy.pdf",
+      "description": "Visualization of fraud types (Ponzi, misrepresentation, NAV manipulation, etc.) with difficulty ratings for detection"
+    },
+    {
+      "id": "02_background/02_data_ecosystem",
+      "section": "02_background",
+      "name": "4-layer data ecosystem",
+      "script_path": "02_background/02_data_ecosystem/02_data_ecosystem.py",
+      "output_path": "02_background/02_data_ecosystem/02_data_ecosystem.pdf",
+      "description": "Four-layer architecture diagram showing regulatory filings, news/media, market data, and alternative data sources"
+    },
+    {
+      "id": "02_background/03_regulatory_landscape",
+      "section": "02_background",
+      "name": "US vs EU regulatory comparison",
+      "script_path": "02_background/03_regulatory_landscape/03_regulatory_landscape.py",
+      "output_path": "02_background/03_regulatory_landscape/03_regulatory_landscape.pdf",
+      "description": "Comparative table of US (SEC, CFTC, Form PF) and EU (AIFMD, ESMA) regulatory frameworks"
+    },
+    {
+      "id": "03_detection_pipeline/01_pipeline_architecture",
+      "section": "03_detection_pipeline",
+      "name": "5-stage pipeline flow",
+      "script_path": "03_detection_pipeline/01_pipeline_architecture/01_pipeline_architecture.py",
+      "output_path": "03_detection_pipeline/01_pipeline_architecture/01_pipeline_architecture.pdf",
+      "description": "Flowchart of the 5-stage detection pipeline: data ingestion, feature engineering, model training, inference, and explainability"
+    },
+    {
+      "id": "03_detection_pipeline/02_feature_families",
+      "section": "03_detection_pipeline",
+      "name": "Feature families radar",
+      "script_path": "03_detection_pipeline/02_feature_families/02_feature_families.py",
+      "output_path": "03_detection_pipeline/02_feature_families/02_feature_families.pdf",
+      "description": "Radar chart showing 10 feature families: return patterns, volatility, autocorrelation, liquidity, style drift, operational risk, etc."
+    },
+    {
+      "id": "03_detection_pipeline/03_model_families",
+      "section": "03_detection_pipeline",
+      "name": "Model-fraud type heatmap",
+      "script_path": "03_detection_pipeline/03_model_families/03_model_families.py",
+      "output_path": "03_detection_pipeline/03_model_families/03_model_families.pdf",
+      "description": "Heatmap showing which model families (logistic regression, random forest, XGBoost, neural nets, etc.) are best suited for each fraud type"
+    },
+    {
+      "id": "04_literature_review/01_method_families",
+      "section": "04_literature_review",
+      "name": "Method comparison bars",
+      "script_path": "04_literature_review/01_method_families/01_method_families.py",
+      "output_path": "04_literature_review/01_method_families/01_method_families.pdf",
+      "description": "Bar chart comparing performance (AUC, F1) of statistical, machine learning, and hybrid methods across studies"
+    },
+    {
+      "id": "04_literature_review/02_literature_gaps",
+      "section": "04_literature_review",
+      "name": "Critical assessment radar",
+      "script_path": "04_literature_review/02_literature_gaps/02_literature_gaps.py",
+      "output_path": "04_literature_review/02_literature_gaps/02_literature_gaps.pdf",
+      "description": "Radar chart highlighting gaps in literature: limited public datasets, model interpretability, adversarial robustness, real-time detection"
+    },
+    {
+      "id": "05_adversarial_regulatory/01_attack_vectors",
+      "section": "05_adversarial_regulatory",
+      "name": "Attack vectors diagram",
+      "script_path": "05_adversarial_regulatory/01_attack_vectors/01_attack_vectors.py",
+      "output_path": "05_adversarial_regulatory/01_attack_vectors/01_attack_vectors.pdf",
+      "description": "Diagram showing adversarial attack vectors: data poisoning, evasion attacks, model inversion, and defenses"
+    },
+    {
+      "id": "05_adversarial_regulatory/02_readiness_heatmap",
+      "section": "05_adversarial_regulatory",
+      "name": "Readiness heatmap",
+      "script_path": "05_adversarial_regulatory/02_readiness_heatmap/02_readiness_heatmap.py",
+      "output_path": "05_adversarial_regulatory/02_readiness_heatmap/02_readiness_heatmap.pdf",
+      "description": "Heatmap assessing industry readiness for EU AI Act requirements: transparency, robustness, data governance, human oversight"
+    },
+    {
+      "id": "05_adversarial_regulatory/03_explainability_tradeoff",
+      "section": "05_adversarial_regulatory",
+      "name": "Explainability vs performance",
+      "script_path": "05_adversarial_regulatory/03_explainability_tradeoff/03_explainability_tradeoff.py",
+      "output_path": "05_adversarial_regulatory/03_explainability_tradeoff/03_explainability_tradeoff.pdf",
+      "description": "Scatter plot showing the tradeoff between model interpretability and detection performance (AUC) across model families"
+    },
+    {
+      "id": "06_research_agenda/01_open_problems_map",
+      "section": "06_research_agenda",
+      "name": "Open problems by category",
+      "script_path": "06_research_agenda/01_open_problems_map/01_open_problems_map.py",
+      "output_path": "06_research_agenda/01_open_problems_map/01_open_problems_map.pdf",
+      "description": "Hierarchical map of open research problems grouped by category: data, methods, evaluation, deployment, ethics"
+    },
+    {
+      "id": "06_research_agenda/02_priority_matrix",
+      "section": "06_research_agenda",
+      "name": "Impact vs feasibility scatter",
+      "script_path": "06_research_agenda/02_priority_matrix/02_priority_matrix.py",
+      "output_path": "06_research_agenda/02_priority_matrix/02_priority_matrix.pdf",
+      "description": "2x2 matrix plotting open research problems by impact (y-axis) and feasibility (x-axis) to prioritize future work"
+    },
+    {
+      "id": "07_conclusion/01_contributions_summary",
+      "section": "07_conclusion",
+      "name": "3 contributions visual",
+      "script_path": "07_conclusion/01_contributions_summary/01_contributions_summary.py",
+      "output_path": "07_conclusion/01_contributions_summary/01_contributions_summary.pdf",
+      "description": "Visual summary of 3 key contributions: systematic literature review, detection pipeline framework, research agenda"
+    },
+    {
+      "id": "07_conclusion/02_takeaways_by_audience",
+      "section": "07_conclusion",
+      "name": "Audience takeaways matrix",
+      "script_path": "07_conclusion/02_takeaways_by_audience/02_takeaways_by_audience.py",
+      "output_path": "07_conclusion/02_takeaways_by_audience/02_takeaways_by_audience.pdf",
+      "description": "Matrix of key takeaways tailored for different audiences: regulators, fund managers, researchers, investors"
+    },
+    {
+      "id": "08_reproducibility/01_search_funnel",
+      "section": "08_reproducibility",
+      "name": "Literature screening funnel",
+      "script_path": "08_reproducibility/01_search_funnel/01_search_funnel.py",
+      "output_path": "08_reproducibility/01_search_funnel/01_search_funnel.pdf",
+      "description": "Funnel diagram showing literature search process: initial hits, after deduplication, after screening, final inclusion (105 papers)"
+    },
+    {
+      "id": "08_reproducibility/02_database_coverage",
+      "section": "08_reproducibility",
+      "name": "Database coverage bars",
+      "script_path": "08_reproducibility/02_database_coverage/02_database_coverage.py",
+      "output_path": "08_reproducibility/02_database_coverage/02_database_coverage.pdf",
+      "description": "Bar chart showing paper counts by database: SSRN, Web of Science, Scopus, IEEE Xplore, Google Scholar"
+    },
+    {
+      "id": "A0_search_protocol/01_boolean_query",
+      "section": "A0_search_protocol",
+      "name": "Boolean query structure",
+      "script_path": "A0_search_protocol/01_boolean_query/01_boolean_query.py",
+      "output_path": "A0_search_protocol/01_boolean_query/01_boolean_query.pdf",
+      "description": "Visual representation of the Boolean search query structure with fraud terms, hedge fund terms, and method terms"
+    },
+    {
+      "id": "A1_feature_engineering/01_feature_table",
+      "section": "A1_feature_engineering",
+      "name": "Feature table by category",
+      "script_path": "A1_feature_engineering/01_feature_table/01_feature_table.py",
+      "output_path": "A1_feature_engineering/01_feature_table/01_feature_table.pdf",
+      "description": "Comprehensive table of all 10 feature families with mathematical definitions, interpretations, and fraud detection relevance"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+% ==================== APPENDIX B: FEATURE ENGINEERING DETAILS ====================
+\section{Feature Engineering Details}
+\label{app:features}
+
+This appendix provides detailed specifications for the key features employed in hedge fund fraud detection models. Feature engineering represents a critical component of detection systems, as the quality and informativeness of input features directly determine model performance. The features are organized by category, with mathematical definitions, data sources, and representative citations.
+
+\subsection*{Overview}
+
+Effective fraud detection requires features that capture different aspects of fund behavior: statistical properties of returns, adherence to mathematical laws, textual characteristics of disclosures, network relationships, and temporal patterns. Table~\ref{tab:feature-details} summarizes the most commonly used features across the literature, organized by category.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Key Features in Hedge Fund Fraud Detection}
+\label{tab:feature-details}
+\begin{tabular}{@{}p{3cm}p{5cm}p{2cm}p{2.5cm}@{}}
+\toprule
+\textbf{Feature} & \textbf{Formula/Description} & \textbf{Category} & \textbf{Reference} \\
+\midrule
+First-order autocorrelation & $\rho_1 = \text{Corr}(r_t, r_{t-1})$ & Statistical & \cite{getmansky2004econometric} \\
+\addlinespace
+Sharpe ratio & $SR = \bar{r}/\sigma_r$ & Statistical & \cite{brown2009hedge} \\
+\addlinespace
+Maximum drawdown & $MDD = \max_{t}\left(\frac{\max_{s \leq t} P_s - P_t}{\max_{s \leq t} P_s}\right)$ & Statistical & \cite{bollen2014model} \\
+\addlinespace
+Kurtosis & Excess kurtosis: $\text{Kurt}(r) - 3$ & Statistical & \cite{brown2009hedge} \\
+\addlinespace
+Discontinuity at zero & Kink in return distribution at zero (Bollen-Pool measure) & Statistical & \cite{bollen2009kink} \\
+\addlinespace
+Hurst exponent & $H$ estimated via rescaled range (R/S) analysis & Statistical & \cite{diaz2013detecting} \\
+\addlinespace
+First-digit test & $\chi^2 = \sum_{d=1}^{9} \frac{(O_d - E_d)^2}{E_d}$ for Benford's law & Benford & \cite{amiram2015fraud} \\
+\addlinespace
+Second-digit test & Benford's law applied to second significant digit & Benford & \cite{jorion2015nonconformity} \\
+\addlinespace
+Summation test & Cumulative conformity to Benford across digit positions & Benford & \cite{amiram2015fraud} \\
+\addlinespace
+Fog index & Readability: $0.4[(w/s) + 100(c/w)]$ & Textual & \cite{brown2020lies} \\
+\addlinespace
+FinBERT sentiment & BERT-based financial sentiment score $\in [-1,1]$ & Textual & \cite{chen2023language} \\
+\addlinespace
+Boilerplate deviation & $1 - \text{CosSim}(\text{doc}, \text{template})$ & Textual & \cite{brown2020lies} \\
+\addlinespace
+Degree centrality & Number of connections in fund-service-provider network & Network & \cite{zhang2022graph} \\
+\addlinespace
+Betweenness centrality & $\sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}$ & Network & \cite{zhang2022graph} \\
+\addlinespace
+Related-party count & Number of related-party relationships disclosed & Network & \cite{cassar2015related} \\
+\addlinespace
+Regime indicator & Binary indicator from Hidden Markov Model state & Temporal & \cite{bollen2014model} \\
+\addlinespace
+Change-point score & Bayesian change-point detection probability & Temporal & \cite{adams2007bayesian} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Data Sources and Construction}
+
+Statistical features are constructed from monthly return time series, typically requiring at least 24--36 months of data for reliable estimation. Benford's law features can be computed from returns, NAV values, or fee disclosures. Textual features are extracted from regulatory filings (Form ADV in the U.S., AIFMD disclosures in the EU), annual letters, and offering documents. Network features require relationship data from regulatory databases, commercial data vendors, or manual extraction from disclosures.
+
+The construction of robust features must address several challenges. Return-based features are susceptible to backfill bias and survivorship bias in commercial databases. Textual features require careful preprocessing (tokenization, stopword removal, domain-specific term handling). Network features are often incomplete due to selective disclosure and evolving relationship structures. Temporal features must be computed on rolling windows to enable real-time detection while maintaining sufficient statistical power.
+
+\subsection*{Feature Selection and Dimensionality Reduction}
+
+Given the high dimensionality of feature spaces (often 50--200 features), most studies employ feature selection techniques. Common approaches include LASSO regularization for linear models, tree-based feature importance for ensemble methods, and mutual information criteria for neural networks. Dimensionality reduction via PCA or autoencoders is less common due to the loss of interpretability, which is critical for regulatory applications and explainability requirements.

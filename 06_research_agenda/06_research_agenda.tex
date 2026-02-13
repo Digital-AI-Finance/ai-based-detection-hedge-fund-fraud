@@ -1,0 +1,702 @@
+% ============================================================
+%  Slide Deck 6 -- Research Agenda: 10 Open Problems
+%  AI-Based Detection of Hedge Fund Fraud
+% ============================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Color definitions ----
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255,127,14}
+\definecolor{mlgreen}{RGB}{44,160,44}
+\definecolor{mlred}{RGB}{214,39,40}
+\definecolor{mlgray}{RGB}{127,127,127}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{midgray}{RGB}{180,180,180}
+
+% ---- Apply custom colors to Madrid theme ----
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% ---- Navigation / itemize ----
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% ---- Custom commands ----
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+\newcommand{\chartplaceholder}[2][5cm]{%
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth, max height=#1}
+\framebox[\textwidth][c]{%
+\rule{0pt}{#1}%
+\textcolor{midgray}{[#2]}%
+}
+\end{adjustbox}
+\end{center}
+}
+
+% ---- Notation ----
+\input{../notation}
+
+% ---- Title metadata ----
+\title{AI-Based Detection of Hedge Fund Fraud}
+\subtitle{Section 6 -- Research Agenda: 10 Open Problems (C3)}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+% ============================================================
+\begin{document}
+
+% ----------------------------------------------------------
+% SLIDE 1 -- Title
+% ----------------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 2 -- Outline
+% ----------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\compactlist
+\item Data Challenges Overview
+\item OP1: Benchmark Dataset Creation
+\item OP2: Cross-Jurisdictional Data Integration
+\item OP3: Real-Time Alternative Data Pipelines
+\item Methodological Challenges Overview
+\item OP4: Extreme Class Imbalance at Small Scale
+\item OP5: Cold-Start Detection for New Funds
+\item OP6: Temporal Concept Drift and Adaptive Models
+\item OP7: Multi-Modal Fusion Architectures
+\item Deployment Challenges Overview
+\item OP8: Adversarial Robustness Guarantees
+\item OP9: Explainability Without Performance Loss
+\item OP10: Human-AI Collaboration
+\item Priority Matrix and Dependencies
+\item Path Forward: Collaboration Required
+\item Summary
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 3 -- Data Challenges Overview
+% ----------------------------------------------------------
+\begin{frame}{Data Challenges: OP1--OP3}
+\begin{block}{The Fundamental Constraint}
+Progress in AI-based hedge fund fraud detection is \textbf{fundamentally constrained by data availability}. Unlike credit card fraud, which benefits from large-scale public benchmarks, the hedge fund domain lacks standardized datasets, suffers from jurisdictional fragmentation, and relies on reporting cycles with \textbf{months-long detection lags}.
+\end{block}
+\vspace{3mm}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{block}{OP1: Benchmarks}
+No public benchmark dataset exists. Each study assembles proprietary data with different labels.
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{OP2: Cross-Jurisdiction}
+Data fragmented across regulators. No unified infrastructure connecting reporting regimes.
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{OP3: Real-Time Data}
+Monthly/quarterly reporting introduces detection lags that sophisticated fraudsters exploit.
+\end{block}
+\end{columns}
+\bottomnote{Source: Paper Section 6.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 4 -- OP1: Benchmark Datasets
+% ----------------------------------------------------------
+\begin{frame}{OP1: Benchmark Dataset Creation}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{Why It Is Critical}
+\begin{itemize}\compactlist
+\item \textbf{No public benchmark} exists for hedge fund fraud detection
+\item Credit card fraud has widely used benchmarks $\Rightarrow$ hundreds of reproducible comparisons
+\item Hedge fund studies: proprietary data, different labels, non-overlapping populations
+\item \textbf{Cross-study comparison effectively impossible}
+\item Structural obstacles: proprietary data, restrictive licenses, sparse monthly returns, only 10K--15K funds total, scarce confirmed fraud labels
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Two-Track Approach}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{Synthetic benchmark}}:
+  \begin{itemize}\compactlist
+  \item Regime-switching models calibrated to empirical return distributions
+  \item Injected fraud patterns: Ponzi, NAV smoothing, style drift
+  \item Rates calibrated to known enforcement cases
+  \end{itemize}
+\item \textcolor{mlblue}{\textbf{Anonymized regulatory data}}:
+  \begin{itemize}\compactlist
+  \item Differential privacy protocol for regulator-held labeled datasets
+  \item VAEs and GANs trained on real data to produce synthetic releases
+  \item Preserves aggregate statistics while protecting identities
+  \end{itemize}
+\end{enumerate}
+\end{columns}
+\vspace{2mm}
+\textcolor{mlred}{OP1 is a \textbf{precondition} for OP4, OP6, OP7, and OP8.}
+\bottomnote{Source: Kingma \& Welling (2014); Goodfellow et al.\ (2014); paper Section 6.1.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 5 -- OP2: Cross-Jurisdictional Integration
+% ----------------------------------------------------------
+\begin{frame}{OP2: Cross-Jurisdictional Data Integration}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{The Problem}
+\begin{itemize}\compactlist
+\item A single fund may be:
+  \begin{itemize}\compactlist
+  \item Domiciled in Cayman Islands
+  \item Managed from New York
+  \item Marketing passport in Europe
+  \item Asian prime brokerage relationships
+  \end{itemize}
+\item Generates regulatory filings across \textbf{multiple jurisdictions} with different formats, frequencies, disclosures
+\item No single regulator sees the complete picture
+\item Funds exploit regulatory arbitrage \textbf{deliberately}
+\item SEC Form ADV, FCA registry, ESMA/\aifmd{} not linked, different identifiers, different classification schemes
+\end{itemize}
+
+\column{0.45\textwidth}
+\textbf{Suggested Approach: Federated Learning}
+\begin{itemize}\compactlist
+\item Multiple regulatory agencies train a \textbf{shared model} without exchanging raw data
+\item Each jurisdiction trains local updates on its own data
+\item Central server aggregates into a global model
+\item Differential privacy layered on top for formal privacy bounds
+\item Key research challenges:
+  \begin{itemize}\compactlist
+  \item \textbf{Entity resolution} across jurisdictions without sharing identifiable data
+  \item Standardized feature extraction from \textbf{heterogeneous reporting formats}
+  \end{itemize}
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 6.1.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 6 -- OP3: Real-Time Alternative Data
+% ----------------------------------------------------------
+\begin{frame}{OP3: Real-Time Alternative Data Pipelines}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{The Detection Lag Problem}
+\begin{itemize}\compactlist
+\item Most detection operates on \textbf{monthly or quarterly data}
+\item By the time a pattern becomes visible:
+  \begin{itemize}\compactlist
+  \item Months of additional investor capital at risk
+  \item Manager may have adjusted behavior or absconded
+  \end{itemize}
+\item Hedge fund lag: \textbf{orders of magnitude greater} than other fraud domains
+  \begin{itemize}\compactlist
+  \item Banking: real-time, sub-second
+  \item Credit card: per-transaction at point of sale
+  \item Hedge funds: 30--60 day return lag, quarterly filings, 45-day holdings delay
+  \end{itemize}
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Alternative Data Sources}
+\begin{itemize}\compactlist
+\item \textbf{News sentiment}: transformer-based NLP (BERT) flags concerns within hours
+\item \textbf{Social media}: investor complaints, whistleblower signals
+\item \textbf{Web scraping}: marketing materials, employee turnover, litigation filings
+\item \textbf{Early warning}: signals precede return changes by months
+\end{itemize}
+\vspace{2mm}
+\textbf{Research Challenge}
+\begin{itemize}\compactlist
+\item Fusion architectures integrating high-frequency noisy alternative data with low-frequency reliable periodic data
+\item Attention-based architectures that learn modality weighting by time horizon
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Devlin et al.\ (2019); Vaswani et al.\ (2017); paper Section 6.1.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 7 -- Methodological Challenges Overview
+% ----------------------------------------------------------
+\begin{frame}{Methodological Challenges: OP4--OP7}
+\begin{block}{Beyond Standard ML Practice}
+Even with adequate data, hedge fund fraud detection poses methodological challenges that \textbf{distinguish it from other fraud domains} and require tailored solutions.
+\end{block}
+\vspace{3mm}
+\begin{columns}[T]
+\column{0.24\textwidth}
+\begin{block}{OP4: Imbalance}
+\numfraudcases{} labeled cases total. Standard oversampling fails at this scale.
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{OP5: Cold-Start}
+New funds lack history. Early period is when fraud risk may be highest.
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{OP6: Drift}
+Fraud patterns evolve. Legitimate strategy changes mimic fraud signatures.
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{OP7: Fusion}
+Returns, filings, holdings, networks, alt data: radically different modalities.
+\end{block}
+\end{columns}
+\bottomnote{Source: Paper Section 6.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 8 -- OP4: Extreme Class Imbalance
+% ----------------------------------------------------------
+\begin{frame}{OP4: Extreme Class Imbalance at Small Scale}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{Why Standard Methods Fail}
+\begin{itemize}\compactlist
+\item Credit card fraud: 0.1--0.5\% base rate but \textbf{millions of transactions} $\Rightarrow$ thousands of positives
+\item Hedge fund fraud: 0.5--3\% base rate but only \textbf{10K--15K funds total}
+\item Result: only \textbf{\numfraudcases{} labeled fraud cases} across entire historical record
+\item Small-$N$, high-dimensional, multi-modal problem
+\item SMOTE fails: minority class is \textbf{fundamentally heterogeneous}
+  \begin{itemize}\compactlist
+  \item Ponzi schemes, NAV manipulation, style drift produce entirely different signatures
+  \item Interpolating between fraud types generates nonexistent patterns
+  \end{itemize}
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Suggested Approaches}
+\begin{itemize}\compactlist
+\item \textcolor{mlblue}{\textbf{Few-shot learning}}: classify from 5--10 labeled cases per fraud type via meta-learned representations
+\item \textcolor{mlblue}{\textbf{Meta-learning across fraud types}}: train on a distribution of detection tasks
+\item \textcolor{mlblue}{\textbf{Semi-supervised contrastive learning}}: exploit large unlabeled pool by contrasting normal/anomalous in embedding space
+\item \textcolor{mlblue}{\textbf{Transfer learning}}: from insurance fraud, financial statement fraud, AML
+\item Evaluation: \textbf{fraud-type-stratified splits}, not pooled cross-validation
+\end{itemize}
+\end{columns}
+\vspace{1mm}
+\textcolor{mlred}{OP4 is a \textbf{precondition} for all supervised methods.}
+\bottomnote{Source: Chawla et al.\ (2002); paper Section 6.2.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 9 -- OP5: Cold-Start Detection
+% ----------------------------------------------------------
+\begin{frame}{OP5: Cold-Start Detection for New and Emerging Funds}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{The Problem}
+\begin{itemize}\compactlist
+\item New funds lack historical return data (primary input to most models)
+\item 3 months of track record $\Rightarrow$ \textbf{insufficient statistical power} for distributional tests, correlation analysis, style detection
+\item Yet the \textbf{early period} is when fraud risk may be highest (credibility-building phase)
+\item Genuinely informationally opaque: no return history, no filing history, no track record
+\item Incubation structures allow \textbf{selective reporting} of successful histories (backfill bias)
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Suggested Approaches}
+\begin{itemize}\compactlist
+\item \textcolor{mlblue}{\textbf{Operational due diligence features}} (available at registration):
+  \begin{itemize}\compactlist
+  \item Auditor quality, administrator independence
+  \item Custody arrangements, governance structures
+  \item Predictive power demonstrated by Dimmock \& Gerken (2012)
+  \end{itemize}
+\item \textcolor{mlblue}{\textbf{Transfer learning}} from similar strategy/manager profiles
+\item \textcolor{mlblue}{\textbf{Network analysis}}: manager's prior fund relationships, service provider networks
+\item \textcolor{mlblue}{\textbf{NLP on launch documents}}: assess plausibility and consistency of stated strategies before any returns
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Dimmock \& Gerken (2012); Brown et al.\ (2008); paper Section 6.2.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 10 -- OP6: Concept Drift
+% ----------------------------------------------------------
+\begin{frame}{OP6: Temporal Concept Drift and Adaptive Models}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{The Unique Challenge}
+\begin{itemize}\compactlist
+\item Fraud patterns evolve as perpetrators learn from detected schemes
+\item Standard drift solutions: periodic retraining, online learning
+\item Hedge fund complication: \textbf{legitimate strategy changes} produce the same statistical signatures as fraud
+  \begin{itemize}\compactlist
+  \item Equity L/S pivots to global macro
+  \item Quant fund shifts from momentum to mean-reversion
+  \item Changes in factor exposures, return distributions, risk profiles
+  \end{itemize}
+\item Credit card drift: slow, predictable (lifecycle/inflation)
+\item Hedge fund drift: \textbf{sudden, large, strategically motivated}
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Suggested Approaches}
+\begin{itemize}\compactlist
+\item \textcolor{mlblue}{\textbf{Strategy-aware drift detection}}: incorporate market regime and factor conditions
+\item \textcolor{mlblue}{\textbf{ADWIN / DDM}} augmented with regime-switching models
+\item \textcolor{mlblue}{\textbf{Factor-conditioned anomaly scores}}: normalize against peer funds pursuing similar strategies
+\item Reduces false positives from legitimate strategy evolution
+\item Key evaluation challenge: test sets with both \textbf{genuinely drifting fraud} and \textbf{legitimately adapting non-fraud}
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 6.2.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 11 -- OP7: Multi-Modal Fusion
+% ----------------------------------------------------------
+\begin{frame}{OP7: Multi-Modal Fusion Architectures}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{The Data Modality Problem}
+\begin{itemize}\compactlist
+\item No other financial entity generates this combination:
+  \begin{itemize}\compactlist
+  \item Monthly returns: sparse, 36--120 observations
+  \item Regulatory filings: unstructured narrative (NLP)
+  \item Form 13F holdings: high-dimensional, 45-day lag
+  \item Network data: relational (prime brokers, auditors)
+  \item Alternative data: irregular, high-frequency
+  \end{itemize}
+\item Radically different frequencies, dimensionalities, missingness patterns
+\item Existing approaches: single modality or hand-engineered feature concatenation
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Suggested Architectures}
+\begin{itemize}\compactlist
+\item \textcolor{mlblue}{\textbf{Attention-based multi-modal transformers}}: learn dynamic modality weighting by informativeness
+\item \textcolor{mlblue}{\textbf{Cross-modal contrastive learning}}: flag funds whose textual descriptions contradict quantitative behavior
+\item \textcolor{mlblue}{\textbf{Hierarchical fusion}}: modality-specific encoders + higher-level combination
+  \begin{itemize}\compactlist
+  \item RNNs for return series
+  \item Pre-trained LMs (BERT) for text
+  \item GNNs for relational data
+  \end{itemize}
+\item Evaluate \textbf{marginal contribution} of each modality
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Vaswani et al.\ (2017); Devlin et al.\ (2019); Kipf \& Welling (2017); paper Section 6.2.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 12 -- Deployment Challenges Overview
+% ----------------------------------------------------------
+\begin{frame}{Deployment Challenges: OP8--OP10}
+\begin{block}{From Proof-of-Concept to Operational Deployment}
+Even a technically superior detection model is of limited practical value if it cannot \textbf{withstand adversarial manipulation}, \textbf{explain its decisions} to regulators and courts, or \textbf{integrate effectively} into human investigation workflows.
+\end{block}
+\vspace{3mm}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{block}{OP8: Robustness}
+Detection is inherently adversarial. Robustness is a \textbf{necessary condition}, not a desirable property.
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{OP9: Explainability}
+EU AI Act mandates transparency. Best models resist explanation. Current post-hoc methods are insufficient.
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{OP10: Human-AI}
+Models generate alerts; humans investigate. Effectiveness depends on \textbf{interaction quality}.
+\end{block}
+\end{columns}
+\bottomnote{Source: Paper Section 6.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 13 -- OP8: Adversarial Robustness
+% ----------------------------------------------------------
+\begin{frame}{OP8: Adversarial Robustness Guarantees}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{Why Generic Robustness Is Insufficient}
+\begin{itemize}\compactlist
+\item Hedge fund adversaries are \textbf{qualitatively different} from credit card fraudsters
+\item PhD-level quants with same tools as detector
+\item Can simulate models, identify boundaries, engineer plausible evasion
+\item Standard $\ell_p$-norm adversarial training is not enough
+\item Perturbation budgets must be \textbf{economically meaningful}:
+  \begin{itemize}\compactlist
+  \item Returns must satisfy investor expectations
+  \item Pass administrator review
+  \item Maintain strategy consistency
+  \end{itemize}
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Suggested Approaches}
+\begin{itemize}\compactlist
+\item \textcolor{mlblue}{\textbf{Certified robustness bounds}}: formal guarantees on max output change under bounded perturbation
+\item \textcolor{mlblue}{\textbf{Game-theoretic modeling}}: detector vs.\ fraudster as players in repeated game with asymmetric information
+\item \textcolor{mlblue}{\textbf{Red-teaming}}: domain experts construct evasive return series against specific models
+\item \textcolor{mlblue}{\textbf{Robust ensembles}}: diverse model families (statistical, tree, neural, network) force adversary to fool multiple independent mechanisms
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 6.3.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 14 -- OP9: Explainability Without Performance Loss
+% ----------------------------------------------------------
+\begin{frame}{OP9: Explainability Without Sacrificing Performance}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{The Stringent Bar}
+\begin{itemize}\compactlist
+\item EU AI Act: ``sufficiently transparent'' outputs
+\item Must satisfy \textbf{multiple audiences simultaneously}:
+  \begin{itemize}\compactlist
+  \item SEC/FCA examiners during routine examination
+  \item Enforcement attorneys in proceedings
+  \item Judges and juries in contested cases
+  \end{itemize}
+\item Materially higher bar than standard AML compliance dashboards
+\item No standardized examination protocol for AI-assisted surveillance
+\item Rudin (2019): high-stakes domains should prefer \textbf{inherently interpretable models}
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Suggested Approaches}
+\begin{itemize}\compactlist
+\item \textcolor{mlblue}{\textbf{Neural additive models / explainable boosting machines}}: nonlinear capacity with per-feature transparency
+\item \textcolor{mlblue}{\textbf{Faithful distillation}}: interpretable student model approximating complex teacher
+\item \textcolor{mlblue}{\textbf{Attention-based explanations}}: highlight which return periods, filing passages, network connections contributed most
+\item \textcolor{mlblue}{\textbf{Standardized explanation templates}}: structured reports mapping ML output to regulatory fraud indicators
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Rudin (2019); Lundberg \& Lee (2017); paper Section 6.3.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 15 -- OP10: Human-AI Collaboration
+% ----------------------------------------------------------
+\begin{frame}{OP10: Human-AI Collaboration in Fraud Investigation}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{The Operational Reality}
+\begin{itemize}\compactlist
+\item No AI system will replace human judgment in foreseeable future
+\item Models generate alerts; humans \textbf{evaluate, investigate, decide}
+\item Investigations: months of document review, forensic accounting, expert consultation
+\item Low base rate $\Rightarrow$ even high-precision models generate more false positives than true positives in absolute terms
+\item \textcolor{mlred}{\textbf{Alert fatigue}}: repeated false positives cause investigators to discount or ignore alerts -- negating detection benefits
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Suggested Approaches}
+\begin{itemize}\compactlist
+\item \textcolor{mlblue}{\textbf{Active learning}}: model queries investigators about cases most likely to improve decision boundary
+\item \textcolor{mlblue}{\textbf{Prioritized alert queues}}: rank by fraud probability $\times$ estimated financial impact
+\item \textcolor{mlblue}{\textbf{Investigation-ready packages}}: fraud score, contributing features (\shap{}), historical comparisons, suggested inquiry lines
+\item \textcolor{mlblue}{\textbf{Adaptive thresholds}}: adjust based on investigator capacity and historical precision
+\item \textcolor{mlblue}{\textbf{Feedback loops}}: investigators label alerts as TP/FP/inconclusive $\Rightarrow$ retrain
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 6.3.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 16 -- Open Problems Map
+% ----------------------------------------------------------
+\begin{frame}{Open Problems Map}
+
+\chartplaceholder[5cm]{Chart: 01\_open\_problems\_map -- Visual map of 10 open problems organized by category (Data: OP1--3, Methods: OP4--7, Deployment: OP8--10) with dependency arrows showing how OP1 enables OP4/OP6/OP7/OP8 and OP4 is precondition for all supervised methods}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item Three categories: \textbf{Data} (OP1--3), \textbf{Methods} (OP4--7), \textbf{Deployment} (OP8--10)
+\item Dense interdependencies: data problems constrain methodological and deployment progress
+\end{itemize}
+\bottomnote{Source: Paper Section 6.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 17 -- Priority Matrix
+% ----------------------------------------------------------
+\begin{frame}{Priority Matrix: Impact $\times$ Feasibility}
+
+\chartplaceholder[4cm]{Chart: 02\_priority\_matrix -- Scatter plot of 10 open problems positioned by Impact (y-axis: Medium to Critical) vs.\ Feasibility (x-axis: Low to High), with OP1 and OP4 in upper-right quadrant marked as critical preconditions}
+
+\vspace{1mm}
+{\footnotesize
+\begin{center}
+\begin{tabular}{l l c c l}
+\toprule
+\textbf{ID} & \textbf{Problem} & \textbf{Impact} & \textbf{Feasibility} & \textbf{Dependencies} \\
+\midrule
+OP1 & Benchmark dataset & Critical & Medium & Precondition for OP4, OP6, OP7, OP8 \\
+OP4 & Class imbalance & Critical & Medium & Precondition for all supervised methods \\
+OP9 & Explainability & High & Med--High & Required for OP10, regulatory deployment \\
+OP5 & Cold-start & High & Medium & Benefits from OP1 \\
+OP7 & Multi-modal fusion & High & Medium & Benefits from OP1 \\
+OP8 & Adversarial robustness & High & Low--Med & Requires OP1 for evaluation \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+\bottomnote{Source: Paper Table 6 / Section 6.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 18 -- Dependencies: OP1 and OP4
+% ----------------------------------------------------------
+\begin{frame}{Critical Preconditions: OP1 and OP4}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{OP1: Benchmark Datasets}
+\textbf{Foundational} because without a shared evaluation resource:
+\begin{itemize}\compactlist
+\item Field cannot conduct \textbf{reproducible comparisons}
+\item Progress on nearly every other problem is impeded:
+  \begin{itemize}\compactlist
+  \item OP4: class imbalance methods
+  \item OP6: drift detection
+  \item OP7: fusion architectures
+  \item OP8: adversarial robustness
+  \end{itemize}
+\item Cannot benchmark against common data
+\end{itemize}
+\end{block}
+
+\column{0.48\textwidth}
+\begin{block}{OP4: Extreme Class Imbalance}
+\textbf{Equally critical} because:
+\begin{itemize}\compactlist
+\item Small-$N$, heterogeneous-positive-class nature \textbf{invalidates standard supervised learning assumptions}
+\item Any advance that does not address this will \textbf{fail to translate} from lab to deployment
+\item Only \numfraudcases{} labeled cases across entire historical record
+\item Too few cases \textit{per fraud type} for standard training
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{3mm}
+\textcolor{mlred}{$\Rightarrow$ Solving OP1 and OP4 \textbf{unlocks} progress across the entire research agenda.}
+\bottomnote{Source: Paper Section 6.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 19 -- Path Forward: Collaboration
+% ----------------------------------------------------------
+\begin{frame}{Path Forward: Collaboration Required}
+\begin{block}{No Single Community Can Solve These Problems Alone}
+The most impactful problems (OP2, OP10) require institutional collaboration that no single research group can orchestrate.
+\end{block}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{block}{Regulators Contribute}
+\begin{itemize}\compactlist
+\item Enforcement-labeled data (OP1)
+\item Cross-border relationships (OP2)
+\item Operational environments for human-AI evaluation (OP10)
+\item Regulatory sandboxes for AI testing
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Academics Contribute}
+\begin{itemize}\compactlist
+\item Methodological expertise in deep learning
+\item Adversarial robustness methods
+\item Explainability research
+\item Federated learning protocols
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Industry Contributes}
+\begin{itemize}\compactlist
+\item Domain knowledge of strategy evolution
+\item Operational due diligence expertise
+\item Practical realities of fund management
+\item Red-teaming capabilities
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{2mm}
+\textcolor{mlblue}{$\Rightarrow$ Shared data initiatives, regulatory sandboxes, and joint research programs are essential.}
+\bottomnote{Source: Paper Section 6.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 20 -- Summary
+% ----------------------------------------------------------
+\begin{frame}{Summary: Research Agenda -- 10 Open Problems}
+{\footnotesize
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Category} & \textbf{ID} & \textbf{Problem} & \textbf{Key Approach} \\
+\midrule
+\multirow{3}{*}{Data} & OP1 & Benchmark datasets & Synthetic generation + differential privacy \\
+ & OP2 & Cross-jurisdictional integration & Federated learning \\
+ & OP3 & Real-time alternative data & Attention-based fusion architectures \\
+\midrule
+\multirow{4}{*}{Methods} & OP4 & Extreme class imbalance & Few-shot / meta-learning \\
+ & OP5 & Cold-start detection & Transfer learning + operational features \\
+ & OP6 & Concept drift & ADWIN + regime-switching models \\
+ & OP7 & Multi-modal fusion & Multi-modal transformers \\
+\midrule
+\multirow{3}{*}{Deployment} & OP8 & Adversarial robustness & Certified bounds + game theory \\
+ & OP9 & Explainability & Neural additive models + templates \\
+ & OP10 & Human-AI collaboration & Active learning + adaptive thresholds \\
+\bottomrule
+\end{tabular}
+}
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item \textbf{OP1} (benchmarks) and \textbf{OP4} (class imbalance) are \textcolor{mlred}{critical preconditions}
+\item Progress demands \textbf{collaboration} among regulators, academics, and industry
+\end{itemize}
+\bottomnote{Source: Paper Section 6 (Contribution C3)}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,51 @@
+[
+  {
+    "question": "How many stages does the detection pipeline have?",
+    "options": ["a) 3", "b) 4", "c) 5", "d) 6"],
+    "correct_answer": "c",
+    "explanation": "The detection pipeline comprises five sequential stages: data ingestion and integration, feature engineering, model selection and training, explainability and interpretation, and deployment and monitoring.",
+    "section_reference": "Section 3.1"
+  },
+  {
+    "question": "How many feature families are identified?",
+    "options": ["a) 3", "b) 4", "c) 5", "d) 7"],
+    "correct_answer": "c",
+    "explanation": "Five feature families are identified: statistical features, Benford's law features, textual features from regulatory filings, network and relational features, and temporal features.",
+    "section_reference": "Section 3.3"
+  },
+  {
+    "question": "What F1 score do gradient boosting ensembles approach?",
+    "options": ["a) 0.72", "b) 0.78", "c) 0.84", "d) 0.88"],
+    "correct_answer": "d",
+    "explanation": "Recent work on stacking ensembles that combine XGBoost, LightGBM, and CatBoost through a meta-learner has reported F1 scores approaching 0.88, the highest among individual method families.",
+    "section_reference": "Section 3.4"
+  },
+  {
+    "question": "What AUC do deep autoencoders achieve for anomaly detection?",
+    "options": ["a) 0.65", "b) 0.72", "c) 0.79", "d) 0.85"],
+    "correct_answer": "c",
+    "explanation": "Deep autoencoders have achieved an AUC of approximately 0.79 on hedge fund return data in anomaly detection frameworks, competitive with supervised approaches despite requiring no fraud labels.",
+    "section_reference": "Section 3.4"
+  },
+  {
+    "question": "What does SHAP stand for?",
+    "options": ["a) Statistical Hypothesis Analysis Protocol", "b) SHapley Additive exPlanations", "c) Systematic Hedge fund Assessment Program", "d) Supervised Heuristic Analysis Pipeline"],
+    "correct_answer": "b",
+    "explanation": "SHAP (SHapley Additive exPlanations) values provide theoretically grounded feature attribution scores that decompose a model's prediction into the contribution of each input feature.",
+    "section_reference": "Section 3.5"
+  },
+  {
+    "question": "Which fusion approach is better when data sources have different scales?",
+    "options": ["a) Early fusion", "b) Late fusion", "c) Both equal", "d) Neither works"],
+    "correct_answer": "b",
+    "explanation": "Late fusion processes each data source through a modality-specific feature extraction pipeline and combines results afterward, preserving native structure and accommodating different scales better than early fusion.",
+    "section_reference": "Section 3.2"
+  },
+  {
+    "question": "What are the two feedback loops in the pipeline?",
+    "options": ["a) Training and testing", "b) Investigator feedback and drift-triggered retraining", "c) Input and output validation", "d) Forward and backward propagation"],
+    "correct_answer": "b",
+    "explanation": "The pipeline includes two feedback loops from deployment back to earlier stages: investigator feedback to feature engineering and drift-triggered retraining to model selection.",
+    "section_reference": "Section 3.1"
+  }
+]

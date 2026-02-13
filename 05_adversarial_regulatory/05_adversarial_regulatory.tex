@@ -1,0 +1,723 @@
+% ============================================================
+%  Slide Deck 5 -- Adversarial Robustness, Regulatory Readiness, and Ethics
+%  AI-Based Detection of Hedge Fund Fraud
+% ============================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Color definitions ----
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255,127,14}
+\definecolor{mlgreen}{RGB}{44,160,44}
+\definecolor{mlred}{RGB}{214,39,40}
+\definecolor{mlgray}{RGB}{127,127,127}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{midgray}{RGB}{180,180,180}
+
+% ---- Apply custom colors to Madrid theme ----
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% ---- Navigation / itemize ----
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% ---- Custom commands ----
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+\newcommand{\chartplaceholder}[2][5cm]{%
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth, max height=#1}
+\framebox[\textwidth][c]{%
+\rule{0pt}{#1}%
+\textcolor{midgray}{[#2]}%
+}
+\end{adjustbox}
+\end{center}
+}
+
+% ---- Notation ----
+\input{../notation}
+
+% ---- Title metadata ----
+\title{AI-Based Detection of Hedge Fund Fraud}
+\subtitle{Section 5 -- Adversarial Robustness, Regulatory Readiness, and Ethics (C2)}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+% ============================================================
+\begin{document}
+
+% ----------------------------------------------------------
+% SLIDE 1 -- Title
+% ----------------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 2 -- Outline
+% ----------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\compactlist
+\item The Adversary Profile
+\item Attack Vectors (Data Poisoning, Evasion, Model Extraction, Strategic Timing)
+\item Attack Vectors Chart
+\item Mean \auc{} Degradation: \aucdeg{}
+\item Defense: Adversarial Training
+\item Defense: Ensemble Diversity
+\item Defense: Input Validation and Meta-Detection
+\item Defense: Certified and Randomized Methods
+\item EU AI Act Requirements (Art.\ 13, 14, 9)
+\item SEC Regulatory Expectations
+\item The Explainability--Performance Trade-off
+\item Readiness Heatmap: 5 Methods $\times$ 5 Dimensions
+\item Ethics: False Positives, Selection Bias, Fairness
+\item Governance Recommendations
+\item Summary
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 3 -- The Adversary Profile
+% ----------------------------------------------------------
+\begin{frame}{The Adversary Profile}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\textbf{Not Script Kiddies -- PhD-Level Quants}
+\begin{itemize}\compactlist
+\item Adversaries are \textbf{quantitatively trained professionals} (PhDs in math, physics, CS)
+\item Deep knowledge of statistical methods and the same academic literature informing detection systems
+\item Access to sophisticated modeling tools, computational resources, and expert consultants
+\item Strong financial incentives to remain undetected ($\Rightarrow$ billions at stake)
+\end{itemize}
+
+\column{0.42\textwidth}
+\begin{block}{Key Implication}
+Standard adversarial ML threat models (pixel perturbations, $\ell_p$-norm budgets) are \textbf{insufficient}. The hedge fund adversary can:
+\begin{itemize}\compactlist
+\item Simulate detection models
+\item Engineer statistically plausible returns
+\item Exploit temporal and structural gaps
+\end{itemize}
+\end{block}
+\vspace{2mm}
+\textcolor{mlred}{78\% of financial institutions lack formal adversarial resilience policies for ML-based detection.}
+\end{columns}
+\bottomnote{Source: Goodfellow et al.\ (2015); Biggio \& Roli (2018); paper Section 5.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 4 -- Attack Vector 1: Data Poisoning
+% ----------------------------------------------------------
+\begin{frame}{Attack Vector 1: Data Poisoning}
+\begin{block}{Mechanism}
+Fraudulent managers report \textbf{fabricated returns} to commercial databases (HFR, Lipper TASS), effectively poisoning the training data of supervised detection models.
+\end{block}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Why It Works}
+\begin{itemize}\compactlist
+\item Hedge fund reporting is \textbf{voluntary and largely unverified}
+\item A manager can engineer return series that:
+  \begin{itemize}\compactlist
+  \item Satisfy Benford's law
+  \item Exhibit appropriate serial correlation
+  \item Maintain plausible distributional properties
+  \end{itemize}
+\item Small fraction of poisoned samples $\Rightarrow$ disproportionate effect
+\end{itemize}
+
+\column{0.45\textwidth}
+\textbf{Impact}
+\begin{itemize}\compactlist
+\item \textcolor{mlred}{\textbf{5--12\% model performance degradation}} even with small poisoning fraction (Goldblum et al., 2023)
+\item Particularly dangerous because:
+  \begin{itemize}\compactlist
+  \item Base rate of fraud is already low
+  \item Class imbalance \textbf{amplifies} the impact of corrupted labels
+  \end{itemize}
+\item Undermines the foundational assumption of clean training data
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Goldblum et al.\ (2023); paper Section 5.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 5 -- Attack Vector 2: Evasion
+% ----------------------------------------------------------
+\begin{frame}{Attack Vector 2: Evasion Attacks}
+\begin{block}{Mechanism}
+Structuring reported returns to \textbf{avoid triggering detection thresholds} -- the most natural adversarial attack in the hedge fund domain.
+\end{block}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Forms of Evasion}
+\begin{itemize}\compactlist
+\item \textbf{Return smoothing} (Getmansky et al., 2004): suppresses volatility signals and serial correlation
+\item Optimizing reported returns against a known or estimated \textbf{detection boundary}
+\item Minor perturbations bounded by financial plausibility $\Rightarrow$ substantially alter predictions
+\end{itemize}
+
+\column{0.45\textwidth}
+\textbf{Quantified Impact}
+\begin{itemize}\compactlist
+\item FGSM and PGD attacks degrade \auc{} by \textcolor{mlred}{\textbf{8--15\%}} (Cartella et al., 2021)
+\item Mean \auc{} degradation across surveyed systems: \textcolor{mlred}{\textbf{\aucdeg{}}}
+\item Even minor plausibility-bounded perturbations:
+  \begin{itemize}\compactlist
+  \item Elevate calibration error
+  \item Increase expected portfolio loss by $\sim$5\%
+  \end{itemize}
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Cartella et al.\ (2021); Goodfellow et al.\ (2015); Madry et al.\ (2018); paper Section 5.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 6 -- Attack Vector 3: Model Extraction
+% ----------------------------------------------------------
+\begin{frame}{Attack Vector 3: Model Extraction}
+\begin{block}{Mechanism}
+Reverse-engineering a regulator's detection model by \textbf{observing enforcement patterns} over time.
+\end{block}
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item A sophisticated adversary can infer which features and thresholds trigger scrutiny by analyzing:
+  \begin{itemize}\compactlist
+  \item Which funds are investigated
+  \item Which enforcement actions are brought
+  \item Which anomalies are flagged in examination letters
+  \end{itemize}
+\item Construct a \textbf{surrogate model} of the detection system
+\item Optimize reported behavior to remain below the decision boundary
+\end{itemize}
+\vspace{3mm}
+\begin{block}{Facilitating Factor}
+SEC enforcement actions and examination priority announcements are \textbf{public} -- inadvertently revealing features and thresholds that regulators prioritize.
+\end{block}
+\bottomnote{Source: Paper Section 5.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 7 -- Attack Vector 4: Strategic Timing
+% ----------------------------------------------------------
+\begin{frame}{Attack Vector 4: Strategic Timing and Regime Exploitation}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{Market Stress Exploitation}
+\begin{itemize}\compactlist
+\item Time fraudulent activity to coincide with \textbf{periods of market stress}
+\item During crises, legitimate fund returns exhibit unusual distributional properties
+\item Fabricated returns are \textbf{masked within broader market noise}
+\item Detection models struggle to distinguish fraud from genuine market dislocation
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Gradual Introduction}
+\begin{itemize}\compactlist
+\item Introduce fraudulent reporting \textbf{incrementally}
+\item Detection models trained on historical data treat evolving fraud as \textbf{legitimate regime change}
+\item Exploits the assumption of stationarity in most supervised models
+\item By the time the pattern becomes detectable, years of damage may have occurred
+\end{itemize}
+\end{columns}
+\vspace{3mm}
+\textcolor{mlred}{$\Rightarrow$ Most detection models do not account for these temporal dynamics -- a critical vulnerability.}
+\bottomnote{Source: Paper Section 5.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 8 -- Attack Vectors Chart
+% ----------------------------------------------------------
+\begin{frame}{Attack Vectors: Summary}
+
+\chartplaceholder[5cm]{Chart: 01\_attack\_vectors -- Bar chart comparing four attack vectors (Data Poisoning, Evasion, Model Extraction, Strategic Timing) across impact severity and detection difficulty, with annotations for key metrics (5--12\% degradation, 8--15\% AUC loss)}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item All four vectors exploit structural features of the hedge fund ecosystem
+\item Evasion and data poisoning have the most \textbf{empirically quantified} impact
+\item Model extraction and strategic timing are harder to measure but equally dangerous
+\end{itemize}
+\bottomnote{Source: Paper Section 5.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 9 -- Mean AUC Degradation
+% ----------------------------------------------------------
+\begin{frame}{Mean \auc{} Degradation: \aucdeg{}}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{block}{Aggregate Finding}
+Across surveyed detection systems, adversarial perturbations cause a \textbf{mean \auc{} degradation of \aucdeg{}}, with some techniques exhibiting degradation \textbf{exceeding 25\%} under informed adversaries.
+\end{block}
+\vspace{2mm}
+\textbf{Breakdown}
+\begin{itemize}\compactlist
+\item Data poisoning: \textbf{5--12\%} degradation
+\item Evasion (FGSM/PGD): \textbf{8--15\%} degradation
+\item Plausibility-bounded perturbations: $\sim$\textbf{5\%} portfolio loss increase
+\item Attack success rate (pre-defense): $\sim$\textbf{35\%}
+\end{itemize}
+
+\column{0.42\textwidth}
+\textbf{Why This Understates the Risk}
+\begin{itemize}\compactlist
+\item Literature tests \textit{generic} perturbations, not financially tailored attacks
+\item Real adversaries use \textbf{domain-specific constraints}
+\item Actual degradation against PhD-level quants likely \textbf{higher}
+\item No published study tests robustness against hedge-fund-specific adversaries
+\end{itemize}
+\end{columns}
+\vspace{2mm}
+\textcolor{mlred}{$\Rightarrow$ Detection performance on historical data is necessary but \textbf{not sufficient} for deployment.}
+\bottomnote{Source: Cartella et al.\ (2021); Chen et al.\ (2024); paper Section 5.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 10 -- Defense: Adversarial Training
+% ----------------------------------------------------------
+\begin{frame}{Defense 1: Adversarial Training}
+\begin{block}{Approach}
+Augment training data with adversarial examples, forcing the model to learn decision boundaries \textbf{robust to perturbations} (min-max optimization: Madry et al., 2018).
+\end{block}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{Effectiveness}
+\begin{itemize}\compactlist
+\item Recovers \textcolor{mlgreen}{\textbf{60--70\%}} of \auc{} lost to adversarial attacks (Chen et al., 2024)
+\item Reduces attack success rate from $\sim$35\% to $\sim$\textbf{5\%}
+\item Most direct and well-studied defense mechanism
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Limitations}
+\begin{itemize}\compactlist
+\item Computationally expensive: \textcolor{mlred}{\textbf{5--10$\times$}} standard training cost
+\item Which perturbation model to use?
+  \begin{itemize}\compactlist
+  \item $\ell_\infty$-bounded perturbations dominate CV literature
+  \item May not capture \textbf{financially constrained} perturbations
+  \end{itemize}
+\item Need domain-specific perturbation budgets
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Madry et al.\ (2018); Chen et al.\ (2024); paper Section 5.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 11 -- Defense: Ensemble Diversity
+% ----------------------------------------------------------
+\begin{frame}{Defense 2: Ensemble Diversity}
+\begin{block}{Implicit Adversarial Robustness}
+Ensembles aggregating predictions from \textbf{multiple heterogeneous base learners} provide a natural form of adversarial robustness.
+\end{block}
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item An adversary optimizing evasion against one model component is \textbf{unlikely to simultaneously fool all components}
+\item Most effective when ensemble incorporates \textbf{diverse model families}:
+  \begin{itemize}\compactlist
+  \item Tree-based models (XGBoost, LightGBM)
+  \item Neural networks (LSTM, autoencoders)
+  \item Statistical anomaly detectors (isolation forests, one-class SVM)
+  \end{itemize}
+\item Diversity metric over ensemble components \textbf{correlates positively} with robustness (Patel et al., 2025)
+\item Yields robustness benefits \textbf{beyond} the accuracy gains typically reported for ensembles
+\end{itemize}
+\vspace{2mm}
+\textcolor{mlblue}{$\Rightarrow$ Combining gradient-boosted trees with neural network classifiers is both a performance and a robustness strategy.}
+\bottomnote{Source: Patel et al.\ (2025); paper Section 5.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 12 -- Defense: Input Validation
+% ----------------------------------------------------------
+\begin{frame}{Defense 3: Input Validation and Meta-Level Anomaly Detection}
+\begin{block}{Layered Defense}
+Deploy a \textbf{separate anomaly detection system} to screen model inputs for signs of adversarial manipulation -- treating adversarial detection as a distinct task from fraud detection.
+\end{block}
+\vspace{3mm}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{What the Meta-Detector Flags}
+\begin{itemize}\compactlist
+\item Suspiciously precise conformity to Benford's law
+\item Implausibly low serial correlation for the stated strategy type
+\item Distributional characteristics inconsistent with reported asset class exposures
+\item Statistical properties ``too clean'' to be genuine
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Advantages}
+\begin{itemize}\compactlist
+\item Does not require modifying the classification model itself
+\item Enables \textbf{specialized models} for each task
+\item Can be updated independently as new attack patterns emerge
+\item Complements rather than replaces adversarial training
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 5.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 13 -- Defense: Certified and Randomized
+% ----------------------------------------------------------
+\begin{frame}{Defense 4: Certified and Randomized Defenses}
+\begin{block}{Approach}
+Certified defense methods (e.g., \textbf{randomized smoothing}) provide \textbf{provable robustness guarantees} within a specified perturbation radius.
+\end{block}
+\vspace{3mm}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{Theoretical Appeal}
+\begin{itemize}\compactlist
+\item Formal guarantee: bounded input change $\Rightarrow$ bounded output change
+\item Eliminates need to enumerate all possible attacks
+\item Provides \textbf{worst-case} robustness assurance
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Practical Challenges}
+\begin{itemize}\compactlist
+\item Perturbation model must be defined over \textbf{financially meaningful dimensions} (returns, risk metrics, factor exposures)
+\item Certification radius must align with plausible adversarial strategies, not arbitrary $\ell_p$ norms
+\item \textcolor{mlred}{No published work} has adapted certified defenses to hedge fund fraud detection
+\end{itemize}
+\end{columns}
+\vspace{3mm}
+\textcolor{mlblue}{$\Rightarrow$ An important \textbf{open area} for future research (see OP8).}
+\bottomnote{Source: Paper Section 5.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 14 -- EU AI Act
+% ----------------------------------------------------------
+\begin{frame}{EU AI Act: Requirements for Fraud Detection Systems}
+\begin{block}{Classification}
+Under Annex III of the EU AI Act (Regulation 2024/1689), AI systems for financial fraud detection are classified as \textbf{high-risk AI systems}, subject to the Act's most stringent requirements.
+\end{block}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{block}{Art.\ 13: Transparency}
+\begin{itemize}\compactlist
+\item Operations must be \textbf{sufficiently transparent}
+\item Users must interpret output and use it appropriately
+\item $\Rightarrow$ Favors interpretable models or robust post-hoc explanations
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Art.\ 14: Human Oversight}
+\begin{itemize}\compactlist
+\item Effective oversight by \textbf{natural persons}
+\item Ability to override output or intervene
+\item $\Rightarrow$ Codifies \textbf{human-in-the-loop} principle
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Art.\ 9: Risk Management}
+\begin{itemize}\compactlist
+\item Comprehensive risk management system
+\item Must address \textbf{adversarial vulnerabilities}
+\item $\Rightarrow$ Links adversarial robustness to \textbf{legal compliance}
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{2mm}
+\textcolor{mlred}{Entered into force August 2024, phased implementation through 2027.}
+\bottomnote{Source: EU AI Act (2024/1689); paper Section 5.3.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 15 -- SEC Expectations
+% ----------------------------------------------------------
+\begin{frame}{SEC Regulatory Expectations}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\textbf{Current Landscape}
+\begin{itemize}\compactlist
+\item No comprehensive AI legislation comparable to EU AI Act
+\item However, SEC signals \textbf{increasing regulatory attention}:
+  \begin{itemize}\compactlist
+  \item Division of Examinations: AI and emerging technology as \textbf{priority area}
+  \item Staff guidance: fiduciary obligations for algorithmic tools
+  \end{itemize}
+\item DERA itself employs ML models for market surveillance and enforcement targeting
+\item Creates \textbf{implicit benchmarks} for industry practice
+\end{itemize}
+
+\column{0.45\textwidth}
+\textbf{AI Washing Enforcement}
+\begin{itemize}\compactlist
+\item Recent enforcement actions against firms that \textbf{exaggerated or fabricated AI use} in investment processes
+\item Signals SEC views \textbf{AI governance} as within enforcement purview
+\item Industry should anticipate:
+  \begin{itemize}\compactlist
+  \item More specific expectations for AI-based compliance systems
+  \item Governance requirements for ML-based surveillance
+  \end{itemize}
+\end{itemize}
+\end{columns}
+\vspace{2mm}
+\textcolor{mlblue}{$\Rightarrow$ Even without legislation, SEC expectations will shape deployment standards.}
+\bottomnote{Source: SEC Examination Priorities (2023); paper Section 5.3.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 16 -- Explainability--Performance Trade-off
+% ----------------------------------------------------------
+\begin{frame}{The Explainability--Performance Trade-off}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{The Fundamental Tension}
+\begin{itemize}\compactlist
+\item Most accurate methods (deep ensembles, transformers, GNNs) are the \textbf{most opaque}
+\item Inherently interpretable models (logistic regression, decision trees, rules) offer transparency but \textbf{lower detection rates}
+\item Regulatory requirements favor transparency
+\item Detection requirements favor complexity
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Post-Hoc Explainability Methods}
+\begin{itemize}\compactlist
+\item \textbf{\shap{}} (Lundberg \& Lee, 2017): theoretically grounded feature attribution scores
+\item \textbf{\lime{}} (Ribeiro et al., 2016): local surrogate models
+\item Can generate: ``flagged due to low serial correlation, high Sharpe vs.\ peers, irregular distributions''
+\item \textcolor{mlred}{Limitations}: added cost, may not faithfully represent true decision process, can be unstable
+\end{itemize}
+\end{columns}
+\vspace{2mm}
+\begin{block}{Open Question}
+No regulatory consensus on what constitutes ``sufficient'' explainability for financial fraud detection AI. Compliance requirements may tighten retroactively.
+\end{block}
+\bottomnote{Source: Rudin (2019); Lundberg \& Lee (2017); Ribeiro et al.\ (2016); paper Section 5.3.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 17 -- Explainability Chart
+% ----------------------------------------------------------
+\begin{frame}{Explainability vs.\ Performance Spectrum}
+
+\chartplaceholder[5cm]{Chart: 03\_explainability\_tradeoff -- Scatter plot positioning method families (linear/logistic, tree ensembles, neural networks, hybrid architectures) along axes of detection performance (y) vs.\ explainability (x), with regulatory compliance threshold annotated}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item Tree-based ensembles currently occupy the \textbf{most favorable position}: strong performance with moderate explainability via \shap{}
+\item Hybrid architectures (tree classification + neural feature extraction) offer promising trade-offs
+\end{itemize}
+\bottomnote{Source: Paper Sections 5.3.3 and 5.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 18 -- Readiness Heatmap
+% ----------------------------------------------------------
+\begin{frame}{Readiness Assessment: 5 Methods $\times$ 5 Dimensions}
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{l c c c c c}
+\toprule
+\textbf{Method Family} & \textbf{Adversarial} & \textbf{Intrinsic} & \textbf{Post-Hoc} & \textbf{Regulatory} & \textbf{Deployment} \\
+ & \textbf{Robustness} & \textbf{Explain.} & \textbf{Explain.} & \textbf{Readiness} & \textbf{Maturity} \\
+\midrule
+Linear / Logistic & \textcolor{mlred}{Low} & \textcolor{mlgreen}{High} & \textcolor{mlgreen}{High} & \textcolor{mlgreen}{High} & \textcolor{mlgreen}{High} \\
+Tree-Based Ensembles & \textcolor{mlorange}{Moderate} & \textcolor{mlorange}{Moderate} & \textcolor{mlgreen}{High} & \textcolor{mlgreen}{High} & \textcolor{mlgreen}{High} \\
+Deep Learning & \textcolor{mlred}{Low} & \textcolor{mlred}{Low} & \textcolor{mlorange}{Moderate} & \textcolor{mlred}{Low} & \textcolor{mlorange}{Moderate} \\
+Hybrid / Ensemble & \textcolor{mlorange}{Mod--High} & \textcolor{mlorange}{Moderate} & \textcolor{mlorange}{Mod--High} & \textcolor{mlorange}{Moderate} & \textcolor{mlorange}{Moderate} \\
+Anomaly Detection & \textcolor{mlorange}{Moderate} & \textcolor{mlorange}{Variable} & \textcolor{mlorange}{Variable} & \textcolor{mlorange}{Moderate} & \textcolor{mlorange}{Moderate} \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item \textbf{Tree-based ensembles} (XGBoost, LightGBM, RF) occupy the most favorable overall position
+\item \textbf{Deep learning} offers highest potential accuracy but ranks lowest on explainability and regulatory readiness
+\item \textbf{Hybrid architectures} provide pragmatic path: interpretable classification + neural feature extraction
+\end{itemize}
+\bottomnote{Source: Paper Section 5.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 19 -- Readiness Chart
+% ----------------------------------------------------------
+\begin{frame}{Readiness Heatmap: Visual}
+
+\chartplaceholder[5cm]{Chart: 02\_readiness\_heatmap -- Heatmap of 5 method families (rows) $\times$ 5 readiness dimensions (columns), color-coded from green (high readiness) through yellow (moderate) to red (low readiness)}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item No single method family dominates across \textbf{all} criteria
+\item Selection depends on organizational priorities: accuracy vs.\ compliance vs.\ robustness
+\end{itemize}
+\bottomnote{Source: Paper Section 5.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 20 -- Ethics: False Positives and Selection Bias
+% ----------------------------------------------------------
+\begin{frame}{Ethics: False Positives and Selection Bias}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\begin{block}{Harm from False Positives}
+\begin{itemize}\compactlist
+\item Consequences are \textbf{substantial and asymmetric}:
+  \begin{itemize}\compactlist
+  \item Severe reputational damage
+  \item Investor redemptions
+  \item Counterparty relationship termination
+  \item Regulatory scrutiny cascade
+  \end{itemize}
+\item Can \textbf{destroy a legitimate business} even if allegation is unfounded
+\item Market-level effects possible (contagion from public investigation)
+\item Categorically different from false positives in spam filtering
+\end{itemize}
+\end{block}
+
+\column{0.47\textwidth}
+\begin{block}{Selection Bias from Enforcement Data}
+\begin{itemize}\compactlist
+\item Supervised models trained on past \sec{} actions learn patterns of \textbf{historically prosecuted} fraud
+\item Prosecuted cases $\neq$ random sample of all fraud
+\item Historical concentration on certain:
+  \begin{itemize}\compactlist
+  \item Fund types and strategies
+  \item Geographies
+  \item Visible fraud schemes
+  \end{itemize}
+\item Models may \textbf{perpetuate and amplify} selective scrutiny
+\item Under-detect in overlooked categories
+\end{itemize}
+\end{block}
+\end{columns}
+\bottomnote{Source: Paper Section 5.5}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 21 -- Ethics: Fairness, Dual-Use, Transparency Paradox
+% ----------------------------------------------------------
+\begin{frame}{Ethics: Fairness, Dual-Use, and the Transparency Paradox}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{block}{Fairness Across Fund Characteristics}
+\begin{itemize}\compactlist
+\item Do models disproportionately flag:
+  \begin{itemize}\compactlist
+  \item Small funds?
+  \item Emerging market funds?
+  \item Certain demographic groups?
+  \end{itemize}
+\item Almost \textbf{no empirical attention} in literature
+\item Need fairness metrics for financial context
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Dual-Use Nature}
+\begin{itemize}\compactlist
+\item Same AI techniques used by regulators can be \textbf{repurposed by fraudsters}
+\item Published models provide a \textbf{roadmap for evasion}
+\item Not hypothetical: hedge fund quants consume and operationalize published research
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Transparency Paradox}
+\begin{itemize}\compactlist
+\item Regulatory demands for disclosure \textbf{conflict with} operational security
+\item Every piece of disclosed information is exploitable by adversaries
+\item Current regulations do not adequately address this tension
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{2mm}
+\textcolor{mlred}{$\Rightarrow$ Balancing transparency with adversarial security requires nuanced governance frameworks.}
+\bottomnote{Source: Doshi-Velez \& Kim (2017); paper Section 5.5}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 22 -- Governance Recommendations
+% ----------------------------------------------------------
+\begin{frame}{Governance Recommendations}
+\begin{block}{Recommended Governance Framework}
+Organizations deploying AI-based fraud detection should adopt:
+\end{block}
+\vspace{2mm}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{Regular bias audits}} across fund characteristics and demographic dimensions
+\item \textcolor{mlblue}{\textbf{Diverse and representative training data}} that corrects for historical enforcement biases where possible
+\item \textcolor{mlblue}{\textbf{Human-in-the-loop decision-making}}: AI systems inform but do \textbf{not replace} human judgment in enforcement decisions
+\item \textcolor{mlblue}{\textbf{Transparent model governance}}: documented procedures for model development, validation, monitoring, and retirement
+\end{enumerate}
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item Aligns with emerging best practices in responsible AI (Arrieta et al., 2020; Molnar, 2020)
+\item Aligns with EU AI Act human oversight requirements (Art.\ 14)
+\item Adversarial testing should be \textbf{standard practice}, not optional
+\end{itemize}
+\bottomnote{Source: Arrieta et al.\ (2020); Molnar (2020); paper Section 5.5}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 23 -- Summary
+% ----------------------------------------------------------
+\begin{frame}{Summary: Adversarial Robustness, Regulatory Readiness, and Ethics}
+\begin{enumerate}\compactlist
+\item \textbf{Adversary profile}: PhD-level quants with deep statistical knowledge -- not generic attackers
+\item \textbf{Four attack vectors}: data poisoning (5--12\%), evasion (8--15\% \auc{}), model extraction, strategic timing
+\item \textbf{Mean \auc{} degradation}: \aucdeg{} across surveyed systems -- likely understates real-world risk
+\item \textbf{Defenses}: adversarial training (recovers 60--70\%), ensemble diversity, input validation, certified methods (open area)
+\item \textbf{EU AI Act}: fraud detection classified as high-risk; mandates transparency, human oversight, risk management
+\item \textbf{SEC}: no comprehensive legislation yet, but increasing attention and implicit expectations
+\item \textbf{Explainability--performance trade-off}: tree-based ensembles best positioned; no regulatory consensus on ``sufficient'' explainability
+\item \textbf{Readiness}: no single method dominates all 5 dimensions; hybrid architectures most pragmatic
+\item \textbf{Ethics}: false positive harm is severe, selection bias is systematic, dual-use and transparency paradox require governance
+\item \textbf{Governance}: bias audits, diverse training data, human-in-the-loop, transparent model governance
+\end{enumerate}
+\bottomnote{Source: Paper Section 5 (Contribution C2)}
+\end{frame}
+
+\end{document}

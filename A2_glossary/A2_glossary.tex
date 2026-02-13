@@ -1,0 +1,499 @@
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255,127,14}
+\definecolor{mlgreen}{RGB}{44,160,44}
+\definecolor{mlred}{RGB}{214,39,40}
+\definecolor{mlgray}{RGB}{127,127,127}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{midgray}{RGB}{180,180,180}
+
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+\newcommand{\bottomnote}[1]{\vfill\vspace{-2mm}\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}\vspace{1mm}\footnotesize\textbf{#1}}
+\newcommand{\compactlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\setlength{\parsep}{0pt}}
+\newcommand{\chartplaceholder}[2][5cm]{\begin{center}\begin{adjustbox}{max width=0.95\textwidth, max height=#1}\framebox[\textwidth][c]{\rule{0pt}{#1}\textcolor{midgray}{[#2]}}\end{adjustbox}\end{center}}
+
+\input{../notation}
+
+\title{Appendix C: Glossary of Terms}
+\subtitle{AI-Based Detection of Hedge Fund Fraud}
+\author{Comprehensive Terminology Reference}
+\date{}
+
+\begin{document}
+
+% ==================== SLIDE 1: Title ====================
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ==================== SLIDE 2: ML/AI Terms (Part 1) ====================
+\begin{frame}{Machine Learning and AI Terms (1/2)}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+
+\textbf{\textcolor{mlpurple}{AUC (Area Under the Curve)}}
+\begin{itemize}\compactlist
+    \item Performance metric for classification models
+    \item Area under the ROC curve
+    \item Range: 0--1 (0.5 = random, 1.0 = perfect)
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Autoencoder}}
+\begin{itemize}\compactlist
+    \item Neural network learning compressed representations
+    \item Trains to reconstruct its input
+    \item Used for anomaly detection via reconstruction error
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{BERT (Bidirectional Encoder Representations from Transformers)}}
+\begin{itemize}\compactlist
+    \item Transformer-based language model
+    \item Generates contextualized word embeddings
+    \item FinBERT: variant fine-tuned on financial text
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Class Imbalance}}
+\begin{itemize}\compactlist
+    \item One class (fraud) substantially less frequent
+    \item Requires specialized sampling or algorithms
+    \item Critical challenge in fraud detection
+\end{itemize}
+
+\column{0.48\textwidth}
+
+\textbf{\textcolor{mlpurple}{Concept Drift}}
+\begin{itemize}\compactlist
+    \item Statistical properties of target change over time
+    \item Requires model retraining or adaptive learning
+    \item Common in fraud detection due to adversarial behavior
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{DBSCAN (Density-Based Spatial Clustering)}}
+\begin{itemize}\compactlist
+    \item Unsupervised clustering algorithm
+    \item Groups densely packed points
+    \item Identifies outliers as potential anomalies
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Ensemble Methods}}
+\begin{itemize}\compactlist
+    \item Combine multiple base models (e.g., decision trees)
+    \item Improve predictive performance and robustness
+    \item Examples: Random Forest, XGBoost
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{F1 Score}}
+\begin{itemize}\compactlist
+    \item Harmonic mean of precision and recall
+    \item Formula: $F_1 = 2 \cdot \frac{\text{precision} \cdot \text{recall}}{\text{precision} + \text{recall}}$
+    \item Particularly useful for imbalanced datasets
+\end{itemize}
+
+\end{columns}
+
+\bottomnote{Key ML/AI concepts for understanding fraud detection methodologies.}
+\end{frame}
+
+% ==================== SLIDE 3: ML/AI Terms (Part 2) ====================
+\begin{frame}{Machine Learning and AI Terms (2/2)}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+
+\textbf{\textcolor{mlpurple}{GNN (Graph Neural Network)}}
+\begin{itemize}\compactlist
+    \item Deep learning for graph-structured data
+    \item Captures node features and topology
+    \item Subtypes: GCN, GAT
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{GCN (Graph Convolutional Network)}}
+\begin{itemize}\compactlist
+    \item Neural network operating on graphs
+    \item Aggregates features from neighboring nodes
+    \item Convolutional operations on graph structure
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{GAT (Graph Attention Network)}}
+\begin{itemize}\compactlist
+    \item GNN with attention mechanism
+    \item Learns importance weights for neighbors
+    \item Selective information aggregation
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Gradient Boosting}}
+\begin{itemize}\compactlist
+    \item Ensemble method building models sequentially
+    \item Each model corrects errors of previous ones
+    \item Popular: XGBoost, LightGBM
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Isolation Forest}}
+\begin{itemize}\compactlist
+    \item Anomaly detection algorithm
+    \item Identifies outliers via ease of isolation
+    \item Uses randomly constructed decision trees
+\end{itemize}
+
+\column{0.48\textwidth}
+
+\textbf{\textcolor{mlpurple}{LSTM (Long Short-Term Memory)}}
+\begin{itemize}\compactlist
+    \item Recurrent neural network architecture
+    \item Gating mechanisms for long-range dependencies
+    \item Used for time series analysis
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Random Forest}}
+\begin{itemize}\compactlist
+    \item Ensemble of multiple decision trees
+    \item Outputs mode (classification) or mean (regression)
+    \item Robust to overfitting
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{XGBoost (eXtreme Gradient Boosting)}}
+\begin{itemize}\compactlist
+    \item Optimized gradient boosting implementation
+    \item Regularization, parallel processing
+    \item Widely used in fraud detection competitions
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{SHAP (SHapley Additive exPlanations)}}
+\begin{itemize}\compactlist
+    \item Explainability framework from game theory
+    \item Assigns feature importance for predictions
+    \item Model-agnostic approach
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{LIME (Local Interpretable Model-Agnostic Explanations)}}
+\begin{itemize}\compactlist
+    \item Local approximation of complex models
+    \item Uses interpretable linear models
+    \item Explains individual predictions
+\end{itemize}
+
+\end{columns}
+
+\bottomnote{Advanced ML/AI techniques for fraud detection and model explainability.}
+\end{frame}
+
+% ==================== SLIDE 4: Financial and Regulatory Terms ====================
+\begin{frame}{Financial and Regulatory Terms}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+
+\textbf{\textcolor{mlpurple}{Hedge Fund}}
+\begin{itemize}\compactlist
+    \item Pooled investment vehicle with diverse strategies
+    \item Long/short equity, global macro, event-driven
+    \item Limited regulatory oversight and investor restrictions
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{NAV (Net Asset Value)}}
+\begin{itemize}\compactlist
+    \item Total assets minus liabilities
+    \item Typically calculated per share
+    \item Primary metric reported to investors
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Ponzi Scheme}}
+\begin{itemize}\compactlist
+    \item Fraudulent operation paying returns from new capital
+    \item Not from legitimate profits
+    \item Collapses when new investments slow
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Serial Correlation}}
+\begin{itemize}\compactlist
+    \item Correlation at different time lags
+    \item High serial correlation may indicate return smoothing
+    \item Fraud detection red flag
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Survivorship Bias}}
+\begin{itemize}\compactlist
+    \item Failed/closed funds excluded from databases
+    \item Leads to overestimation of average returns
+    \item Critical data quality issue
+\end{itemize}
+
+\column{0.48\textwidth}
+
+\textbf{\textcolor{mlpurple}{Backfill Bias}}
+\begin{itemize}\compactlist
+    \item Artificial inflation of historical performance
+    \item Funds report past returns after track record
+    \item Selective reporting problem
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Benford's Law}}
+\begin{itemize}\compactlist
+    \item Leading digits follow logarithmic distribution
+    \item ``1'' appears as first digit ~30\% of time
+    \item Deviations suggest manipulation
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{AIFMD (Alternative Investment Fund Managers Directive)}}
+\begin{itemize}\compactlist
+    \item European Union regulation
+    \item Registration, disclosure, oversight requirements
+    \item Applies to hedge funds and private equity
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Dodd-Frank Act}}
+\begin{itemize}\compactlist
+    \item U.S. financial reform legislation (2010)
+    \item Hedge fund registration with SEC
+    \item Periodic disclosure of positions and risk metrics
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Form ADV}}
+\begin{itemize}\compactlist
+    \item SEC registration form for investment advisers
+    \item Business practices, fees, conflicts, discipline
+    \item Primary disclosure document in U.S.
+\end{itemize}
+
+\end{columns}
+
+\bottomnote{Essential financial and regulatory concepts for hedge fund fraud detection.}
+\end{frame}
+
+% ==================== SLIDE 5: Adversarial ML and Explainability ====================
+\begin{frame}{Adversarial ML and Explainability Terms}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+
+\begin{block}{Adversarial Machine Learning}
+Techniques for robust models in adversarial environments where fraudsters actively evade detection.
+\end{block}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Adversarial Training}}
+\begin{itemize}\compactlist
+    \item Train on genuine and perturbed examples
+    \item Improves robustness against attacks
+    \item Critical for fraud detection systems
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Data Poisoning}}
+\begin{itemize}\compactlist
+    \item Inject malicious data into training set
+    \item Corrupts model learning
+    \item Supply chain attack on ML systems
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{Evasion Attack}}
+\begin{itemize}\compactlist
+    \item Fraudsters modify behavior to avoid detection
+    \item Exploit knowledge of detection model
+    \item Primary threat in deployed systems
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{FGSM (Fast Gradient Sign Method)}}
+\begin{itemize}\compactlist
+    \item Adversarial example generation technique
+    \item Uses gradient information
+    \item Tests model robustness
+\end{itemize}
+
+\column{0.48\textwidth}
+
+\begin{block}{Explainability and Interpretability}
+Techniques to understand and explain model predictions, critical for regulatory compliance.
+\end{block}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{SHAP (Revisited)}}
+\begin{itemize}\compactlist
+    \item Game-theoretic approach to feature importance
+    \item Consistent, locally accurate explanations
+    \item Regulatory-friendly interpretability
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{LIME (Revisited)}}
+\begin{itemize}\compactlist
+    \item Local linear approximations
+    \item Explains individual predictions
+    \item Model-agnostic approach
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{SupTech (Supervisory Technology)}}
+\begin{itemize}\compactlist
+    \item Technology-based regulatory solutions
+    \item Data collection, risk assessment, surveillance
+    \item Enables scalable regulatory oversight
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{\textcolor{mlpurple}{EU AI Act}}
+\begin{itemize}\compactlist
+    \item Regulation of high-risk AI systems
+    \item Transparency and explainability requirements
+    \item Applies to fraud detection in finance
+\end{itemize}
+
+\end{columns}
+
+\bottomnote{Adversarial robustness and explainability are critical for deployed fraud detection systems.}
+\end{frame}
+
+% ==================== SLIDE 6: References and Resources ====================
+\begin{frame}{References and Further Resources}
+
+\begin{block}{Key Reference Sources}
+This glossary synthesizes terminology from academic literature, regulatory documents, and industry practice.
+\end{block}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+
+\textbf{Academic Literature:}
+\begin{itemize}\compactlist
+    \item Getmansky et al. (2004) - Serial correlation
+    \item Brown et al. (2009) - Statistical features
+    \item Bollen \& Pool (2009) - Discontinuity at zero
+    \item Amiram et al. (2015) - Benford's law
+    \item Zhang et al. (2022) - Graph neural networks
+    \item Chen et al. (2023) - FinBERT applications
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Regulatory Sources:}
+\begin{itemize}\compactlist
+    \item SEC (Securities and Exchange Commission)
+    \item ESMA (European Securities and Markets Authority)
+    \item FINRA (Financial Industry Regulatory Authority)
+    \item FSA (Financial Services Authority, UK)
+\end{itemize}
+
+\column{0.48\textwidth}
+
+\textbf{Technical Resources:}
+\begin{itemize}\compactlist
+    \item Goodfellow et al. (2016) - Deep Learning textbook
+    \item Bishop (2006) - Pattern Recognition and ML
+    \item Murphy (2022) - Probabilistic Machine Learning
+    \item Lundberg \& Lee (2017) - SHAP paper
+    \item Ribeiro et al. (2016) - LIME paper
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Industry Standards:}
+\begin{itemize}\compactlist
+    \item Alternative Investment Management Association (AIMA)
+    \item CFA Institute standards
+    \item International Organization of Securities Commissions (IOSCO)
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Additional Context:}
+\begin{itemize}\compactlist
+    \item Full reference list in main paper
+    \item Appendices A \& B provide methodological details
+    \item See main body for applications and case studies
+\end{itemize}
+
+\end{columns}
+
+\bottomnote{Comprehensive terminology enables clear communication across AI, finance, and regulatory domains.}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,861 @@
+% ============================================================
+%  Slide Deck 3 -- A Unified Detection Pipeline Framework (C1)
+%  AI-Based Detection of Hedge Fund Fraud
+% ============================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Color definitions ----
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255, 127, 14}
+\definecolor{mlgreen}{RGB}{44, 160, 44}
+\definecolor{mlred}{RGB}{214, 39, 40}
+\definecolor{mlgray}{RGB}{127, 127, 127}
+\definecolor{lightgray}{RGB}{240, 240, 240}
+\definecolor{midgray}{RGB}{180, 180, 180}
+
+% ---- Apply custom colors to Madrid theme ----
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% ---- Navigation / itemize ----
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% ---- Custom commands ----
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+\newcommand{\chartplaceholder}[2][5cm]{%
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth, max height=#1}
+\framebox[\textwidth][c]{%
+\rule{0pt}{#1}%
+\textcolor{midgray}{[#2]}%
+}
+\end{adjustbox}
+\end{center}
+}
+
+% ---- Notation ----
+\input{../notation}
+
+% ---- Title metadata ----
+\title{A Unified Detection Pipeline Framework (C1)}
+\subtitle{Section 3 -- AI-Based Detection of Hedge Fund Fraud}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+% ============================================================
+\begin{document}
+
+% ----------------------------------------------------------
+% SLIDE 1 -- Title
+% ----------------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 2 -- Outline
+% ----------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\compactlist
+\item Pipeline Overview: Five Stages
+\item Stage 1: Data Ingestion and Integration
+  \begin{itemize}\compactlist
+  \item Temporal alignment, data quality, entity resolution, fusion
+  \end{itemize}
+\item Stage 2: Feature Engineering (5 families)
+  \begin{itemize}\compactlist
+  \item Statistical, Benford's law, textual, network, temporal
+  \end{itemize}
+\item Stage 3: Model Selection and Training (6 families)
+  \begin{itemize}\compactlist
+  \item Classical ML, deep learning, anomaly detection, NLP, GNN, generative
+  \end{itemize}
+\item Stage 4: Explainability and Interpretation
+\item Stage 5: Deployment and Monitoring
+\item Summary
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 3 -- Pipeline Overview
+% ----------------------------------------------------------
+\begin{frame}{Pipeline Overview: Five Stages}
+\begin{columns}[T]
+\column{0.45\textwidth}
+\begin{enumerate}\compactlist
+\item \textbf{Data Ingestion \& Integration}\\
+  Multi-source collection, temporal alignment, entity resolution
+\item \textbf{Feature Engineering}\\
+  5 feature families: statistical, Benford, textual, network, temporal
+\item \textbf{Model Selection \& Training}\\
+  6 method families matched to fraud types
+\item \textbf{Explainability \& Interpretation}\\
+  Regulatory transparency (\euaiact{} Art.\ 13)
+\item \textbf{Deployment \& Monitoring}\\
+  Batch/real-time, drift detection, human-in-the-loop
+\end{enumerate}
+
+\column{0.52\textwidth}
+\textbf{Key Design Principles}
+\begin{itemize}\compactlist
+\item Pipeline is \textbf{not strictly unidirectional}
+\item Feedback loop: deployment $\to$ feature engineering, model training
+\item Incorporates investigator judgments, adapts to evolving fraud patterns
+\item No prior work assembles these components into a coherent framework \textit{tailored to hedge funds}
+\end{itemize}
+\vspace{2mm}
+\textbf{Three Purposes}
+\begin{itemize}\compactlist
+\item Researchers: structured lens for positioning contributions
+\item Practitioners: engineering blueprint for operational systems
+\item Gap analysis: reveals methodological gaps $\to$ research agenda
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Section 3.1 -- Contribution C1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 4 -- Stage 1: Data Ingestion Overview
+% ----------------------------------------------------------
+\begin{frame}{Stage 1: Data Ingestion and Integration}
+\begin{itemize}\compactlist
+\item Assemble a coherent analytical dataset from sources differing in \textbf{structure, frequency, reliability, provenance}
+\item Four layers: returns (monthly, numerical), filings (quarterly/annual, text), alternative (continuous, heterogeneous), synthetic (on-demand)
+\item Four sub-problems must be solved:
+\end{itemize}
+\vspace{3mm}
+\begin{columns}[T]
+\column{0.24\textwidth}
+\begin{block}{\small Temporal Alignment}
+\small Different cadences:\\returns (monthly), filings (quarterly), alt data (continuous)
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{\small Data Quality}
+\small Survivorship (+242 bp), backfill (+442 bp), selection biases
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{\small Entity Resolution}
+\small Same fund $\to$ different IDs across databases (TASS, HFR, CRD, LEI)
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{\small Multi-Source Fusion}
+\small Early vs.\ late fusion architectures
+\end{block}
+\end{columns}
+\bottomnote{Source: Paper Section 3.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 5 -- Temporal Alignment
+% ----------------------------------------------------------
+\begin{frame}{Stage 1: Temporal Alignment Challenge}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{Reporting Cadences}
+\begin{itemize}\compactlist
+\item Return data: monthly, 30--60 day lag
+\item Form ADV: annual + ad hoc amendments
+\item Form 13F: quarterly, 45-day delay
+\item News / social media: continuous, irregular
+\end{itemize}
+\vspace{2mm}
+\textbf{Alignment Strategies}
+\begin{itemize}\compactlist
+\item Aggregate to quarter-end $\Rightarrow$ discards intra-quarter dynamics
+\item Multi-resolution architectures: process each stream at native frequency before fusion
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Why It Matters}
+\begin{itemize}\compactlist
+\item End-of-quarter return spikes (Bollen \& Pool, 2012) = potential manipulation signals
+\item Choice of alignment strategy determines which temporal patterns remain visible
+\item Misalignment can introduce spurious correlations or mask genuine signals
+\end{itemize}
+\vspace{2mm}
+\textcolor{mlblue}{\textbf{Practical recommendation:} hybrid architecture that preserves native frequency per source, fuses at the model input stage}
+\end{columns}
+\bottomnote{Source: Bollen \& Pool (2012); paper Section 3.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 6 -- Data Quality and Bias
+% ----------------------------------------------------------
+\begin{frame}{Stage 1: Data Quality and Bias Correction}
+\begin{itemize}\compactlist
+\item Biases propagate through the \textbf{entire pipeline} if uncorrected
+\end{itemize}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Bias Correction Procedures}
+\begin{itemize}\compactlist
+\item \textbf{Backfill}: restrict analysis to post-reporting-inception returns only
+\item \textbf{Survivorship}: require databases with graveyard (defunct) fund records
+\item \textbf{Selection}: model the reporting decision process itself as an informative signal
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Fraud-Specific Asymmetry}
+\begin{itemize}\compactlist
+\item Detected frauds $\to$ graveyard section
+\item \textcolor{mlred}{Undetected frauds remain in live data}
+\item ``Clean'' training class is contaminated
+\item Models trained on biased data underestimate base rate of fraud
+\item May miss signatures of currently active schemes
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Fung \& Hsieh (2009); Agarwal et al.\ (2011); paper Section 3.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 7 -- Entity Resolution
+% ----------------------------------------------------------
+\begin{frame}{Stage 1: Entity Resolution}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{The Problem}
+\begin{itemize}\compactlist
+\item Same fund $\Rightarrow$ different identifiers across sources:
+  \begin{itemize}\compactlist
+  \item TASS fund ID $\neq$ HFR ID $\neq$ SEC CRD number $\neq$ LEI
+  \end{itemize}
+\item Managers may \textbf{deliberately obscure} connections to prior failed/sanctioned funds
+\item Inability to link is itself a \textbf{fraud-relevant signal}
+\end{itemize}
+\vspace{2mm}
+\textbf{Methods}
+\begin{itemize}\compactlist
+\item Approximate string matching (fund/manager names)
+\item Shared-attribute clustering (addresses, auditors, administrators, prime brokers)
+\item Graph-based entity resolution (propagate identity evidence through shared relationships)
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{Post-Dodd-Frank Improvement}
+\begin{itemize}\compactlist
+\item Form ADV filing since 2010 provides \textbf{stable CRD numbers} for US-registered advisers
+\item CRD serves as linkage key across databases
+\item Substantially improved entity resolution for US funds
+\end{itemize}
+\vspace{2mm}
+\textbf{Remaining Gaps}
+\begin{itemize}\compactlist
+\item Non-US funds lack stable identifiers
+\item Offshore structures (Cayman Islands, BVI) deliberately fragment entity trails
+\item Graph-based methods offer robustness but at higher computational cost
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Brown et al.\ (2008); paper Section 3.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 8 -- Stage 2: Feature Engineering Overview
+% ----------------------------------------------------------
+\begin{frame}{Stage 2: Feature Engineering -- Five Families}
+\begin{center}
+\small
+\begin{tabular}{lp{3.5cm}p{3.5cm}p{3.5cm}}
+\toprule
+\textbf{Family} & \textbf{Key Features} & \textbf{Target Fraud Types} & \textbf{Data Source} \\
+\midrule
+Statistical & $\rhoone$, Sharpe, skewness, kurtosis, max drawdown, Hurst $H$ & Performance fabrication, NAV manipulation & Return series \\
+Benford's law & First-digit $\chi^2$, second-digit, summation test, KS statistic & Data fabrication & Returns, NAVs \\
+Textual & Fog index, FinBERT sentiment, boilerplate deviation, topic drift & Strategy misrep., regulatory fraud & Form ADV, letters \\
+Network & Auditor risk, manager history, co-investment centrality, clustering & Allocation fraud, serial offenders & Filings, databases \\
+Temporal & HMM regimes, change-points, calendar effects, momentum/reversal & All types (dynamic dimension) & Return series \\
+\bottomrule
+\end{tabular}
+\end{center}
+\bottomnote{Source: Paper Section 3.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 9 -- Statistical Features
+% ----------------------------------------------------------
+\begin{frame}{Statistical Features}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Serial Correlation}
+\begin{itemize}\compactlist
+\item $\rhoone = \mathrm{Corr}(r_t, r_{t-1})$: proxy for return smoothing
+\item Typical $\rhoone = 0.3$--$0.5$ for illiquid positions
+\item Higher-order: $\rho_2, \rho_3$, Ljung-Box $Q$-statistic
+\item Abnormally high for funds claiming liquid assets $\Rightarrow$ NAV manipulation
+\end{itemize}
+\vspace{2mm}
+\textbf{Distributional Discontinuity}
+\begin{itemize}\compactlist
+\item Bollen-Pool ``kink'' at zero: excess small positives, deficit of small negatives
+\item Quantified via kernel density estimation or histogram structural break
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Higher Moments \& Risk-Adjusted}
+\begin{itemize}\compactlist
+\item Sharpe ratio $S = \bar{r}/\sigma_r$: implausibly high $\Rightarrow$ fabrication
+\item Skewness, excess kurtosis: fabricated returns $\approx$ zero skew, low kurtosis
+\item Maximum drawdown: difficult to fake over long horizons
+\end{itemize}
+\vspace{2mm}
+\textbf{Long-Memory Detection}
+\begin{itemize}\compactlist
+\item Hurst exponent $H$ (R/S analysis, DFA)
+\item $H \gg 0.5$: persistent serial dependence $\Rightarrow$ smoothing
+\item Combined with GARCH residual analysis for volatility clustering
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Getmansky et al.\ (2004); Lo (2001); paper Section 3.3.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 10 -- Benford's Law Features
+% ----------------------------------------------------------
+\begin{frame}{Benford's Law Features}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Foundation}
+\begin{itemize}\compactlist
+\item Leading digit $d$: $P(d) = \log_{10}(1 + 1/d)$
+\item Naturally occurring data follow this logarithmic distribution
+\item Human-generated / engineered numbers often fail to reproduce it
+\end{itemize}
+\vspace{2mm}
+\textbf{Three Test Types}
+\begin{itemize}\compactlist
+\item \textbf{First-digit test}: $\chi^2 = \sum_{d=1}^{9}\frac{(O_d - E_d)^2}{E_d}$
+\item \textbf{Second-digit test}: more sensitive to subtle manipulation (fraudsters engineer first digits but neglect second)
+\item \textbf{Summation test}: detects round-number manipulation in reported amounts
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{ML Feature Space}
+\begin{itemize}\compactlist
+\item 9 first-digit frequencies + 10 second-digit frequencies + 2 test statistics ($\chi^2$, KS)
+\item \textbf{21-dimensional feature vector} per fund
+\item Enables detection of complex digit manipulation patterns:
+  \begin{itemize}\compactlist
+  \item E.g., first digits conform but second digits anomalously uniform
+  \end{itemize}
+\end{itemize}
+\vspace{2mm}
+\textbf{Limitations}
+\begin{itemize}\compactlist
+\item Low statistical power for short return histories ($< 60$ months)
+\item Knowledgeable fraudster can engineer conformity
+\item Most valuable as one component in multi-feature pipeline
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Benford (1938); Nigrini (2012); paper Section 3.3.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 11 -- Textual Features
+% ----------------------------------------------------------
+\begin{frame}{Textual Features from Regulatory Filings}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Filing Complexity / Readability}
+\begin{itemize}\compactlist
+\item Gunning Fog: $0.4 \times (\text{ASL} + \text{PHW})$
+\item Firms engaged in misconduct tend to produce more complex filings
+\item Word count, sentence count, type-token ratio
+\end{itemize}
+\vspace{2mm}
+\textbf{Sentiment Analysis}
+\begin{itemize}\compactlist
+\item FinBERT: BERT fine-tuned on financial text
+\item SEC-BERT: pre-trained on EDGAR filings
+\item Aggregate sentiment, sentiment volatility, proportion of hedging language
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Boilerplate Deviation}
+\begin{itemize}\compactlist
+\item Cosine similarity vs.\ peer-template mean TF representation
+\item Unusual deviation (vague \textit{or} suspiciously precise) $\Rightarrow$ scrutiny
+\item \textbf{Temporal trajectory} more informative than single snapshot:
+  \begin{itemize}\compactlist
+  \item Deteriorating readability
+  \item Increasing hedging language
+  \item Growing divergence from prior filings
+  \end{itemize}
+\end{itemize}
+\vspace{2mm}
+\textbf{Topic Modeling}
+\begin{itemize}\compactlist
+\item LDA / neural topic models on strategy descriptions
+\item Cross-modal consistency: text strategy vs.\ quantitative factor exposures
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Araci (2019); Loukas et al.\ (2022); paper Section 3.3.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 12 -- Network Features
+% ----------------------------------------------------------
+\begin{frame}{Network and Relational Features}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Fund--Service-Provider Graphs}
+\begin{itemize}\compactlist
+\item Bipartite graph: funds $\leftrightarrow$ auditors, administrators, custodians
+\item Small, non-Big-Four auditors over-represented among sanctioned funds
+\item Auditor \textit{change} from reputable to small firm $+$ other risk signals $\Rightarrow$ weakening oversight
+\item Node features: client count, historical sanctions, change frequency
+\end{itemize}
+\vspace{2mm}
+\textbf{Manager History Networks}
+\begin{itemize}\compactlist
+\item ``Serial offenders'': new fund after prior failure/sanction
+\item Prior sanctions = significant fraud predictor (Dimmock \& Gerken, 2012)
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Co-Investment / Capital Flow Networks}
+\begin{itemize}\compactlist
+\item Funds sharing common investors or correlated capital flows
+\item Centrality measures as fund-level features:
+  \begin{itemize}\compactlist
+  \item \textbf{Betweenness}: bridges disconnected investor communities (Ponzi signature)
+  \item \textbf{Degree}: number of connections
+  \item \textbf{Eigenvector}: importance of neighbors
+  \item \textbf{Clustering coefficient}: local density
+  \end{itemize}
+\end{itemize}
+\vspace{2mm}
+\textcolor{mlblue}{\textbf{``Guilt by association''}: individually inconspicuous funds embedded in suspicious relational structures}
+\end{columns}
+\bottomnote{Source: Brown et al.\ (2008); Dimmock \& Gerken (2012); paper Section 3.3.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 13 -- Temporal Features
+% ----------------------------------------------------------
+\begin{frame}{Temporal Features}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Regime Detection (HMMs)}
+\begin{itemize}\compactlist
+\item Hidden Markov Models: ``normal'' vs.\ ``manipulated'' regime
+\item Different mean, variance, autocorrelation per state
+\item Transition probabilities and regime timing as features
+\item Distinguishes legitimate adaptation from suspicious behavioral shifts
+\end{itemize}
+\vspace{2mm}
+\textbf{Change-Point Detection}
+\begin{itemize}\compactlist
+\item Patton \& Ramadorai (2015): structural breaks precede fund failure
+\item Bayesian Online Change Point Detection (BOCPD)
+\item Features: number of change points, spacing, magnitude
+\item Frequent, large shifts without identifiable market events $\Rightarrow$ suspicious
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Calendar Effects}
+\begin{itemize}\compactlist
+\item Consistently higher December returns
+\item Abnormally positive last-trading-day-of-quarter returns
+\item Signals end-of-period NAV manipulation
+\item Computed as month/day-of-quarter dummy coefficients
+\end{itemize}
+\vspace{2mm}
+\textbf{Momentum / Reversal Patterns}
+\begin{itemize}\compactlist
+\item Autocorrelation at multiple lags
+\item Legitimate strategies: characteristic momentum-reversal from investment style
+\item Fabricated returns: artificially smooth momentum \textit{without} mean-reversion imposed by fundamentals
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Patton \& Ramadorai (2015); paper Section 3.3.5}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 14 -- Feature Families Chart
+% ----------------------------------------------------------
+\begin{frame}{Feature Families: Visual Summary}
+
+\chartplaceholder[5.5cm]{Chart: 02\_feature\_families -- Matrix or radar showing five feature families (statistical, Benford, textual, network, temporal) mapped to five fraud types with relative importance and data requirements}
+
+\bottomnote{Source: Paper Section 3.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 15 -- Stage 3: Model Selection Overview
+% ----------------------------------------------------------
+\begin{frame}{Stage 3: Model Selection -- Six Families}
+\begin{center}
+\small
+\begin{tabular}{lp{3.5cm}p{4cm}l}
+\toprule
+\textbf{Family} & \textbf{Key Methods} & \textbf{Strengths} & \textbf{Best For} \\
+\midrule
+Classical ML & Logistic regression, SVM, RF, XGBoost & Interpretable, handles mixed features & Tabular, small $n$ \\
+Deep learning & LSTM, CNN, Transformer & Temporal patterns, nonlinear & Sequential data \\
+Anomaly detection & Isolation Forest, LOF, autoencoder & No labels needed & Label-scarce \\
+NLP / text mining & FinBERT, SEC-BERT, TF-IDF & Text signals, cross-modal & Filings \\
+Graph neural networks & GCN, GAT, GraphSAGE & Relational ``guilt by association'' & Network data \\
+Generative & GANs, VAEs & Anomaly detection + augmentation & Class imbalance \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{2mm}
+\textbf{Context-specific challenges}: extreme class imbalance, small sample sizes, heterogeneous fraud types, multi-modal inputs, adversarial dynamics.
+\bottomnote{Source: Paper Section 3.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 16 -- Classical ML
+% ----------------------------------------------------------
+\begin{frame}{Classical ML: Logistic Regression, SVM, RF, XGBoost}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Logistic Regression}
+\begin{itemize}\compactlist
+\item Interpretable baseline: coefficients = log-odds contributions
+\item Dimmock \& Gerken (2012) on Form ADV: \auc{} $\approx 0.65$--$0.70$
+\item Limitation: assumes linear feature-response
+\end{itemize}
+\vspace{2mm}
+\textbf{SVM}
+\begin{itemize}\compactlist
+\item Maximum-margin hyperplanes
+\item One-class SVM: semi-supervised, no fraud labels needed
+\item Good on small datasets; limited scalability and interpretability
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Random Forests}
+\begin{itemize}\compactlist
+\item Hundreds of trees, bootstrap + random features
+\item Handles high-dimensional, mixed-type features naturally
+\item Robust to outliers, missing values
+\item Feature importance via permutation / mean decrease in impurity
+\end{itemize}
+\vspace{2mm}
+\textbf{Gradient Boosting (XGBoost, LightGBM, CatBoost)}
+\begin{itemize}\compactlist
+\item State of the art for tabular classification
+\item Built-in class imbalance handling
+\item Stacking ensembles: \fone{} $\sim$\textbf{0.88} (Hilal et al., 2022)
+\item CatBoost: native categorical feature support
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Breiman (2001); Chen et al.\ (2016); Hilal et al.\ (2022); paper Section 3.4.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 17 -- Deep Learning
+% ----------------------------------------------------------
+\begin{frame}{Deep Learning: LSTM, CNN, Transformer}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{block}{LSTM}
+\begin{itemize}\compactlist
+\item Gated memory cells capture long-range sequential dependencies
+\item Natural fit for monthly return time series
+\item Learns temporal patterns: gradual smoothing onset, regime transitions
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{CNN}
+\begin{itemize}\compactlist
+\item Returns $\to$ 2D representation (Gramian Angular Fields, recurrence plots)
+\item Spatial pattern detection on visual representations
+\item ``Smooth upward ramp'' of Ponzi scheme
+\end{itemize}
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Transformer}
+\begin{itemize}\compactlist
+\item Self-attention over all sequence positions
+\item Handles long-range dependencies in sparse monthly series
+\item Attention weights = built-in explainability
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{3mm}
+\textcolor{mlred}{\textbf{Key challenge:}} hedge fund return series are extremely short (60--120 months) and $<100$ positive labels exist. Regularization, pre-training, and transfer learning are \textbf{essential} to prevent overfitting.
+\bottomnote{Source: Hochreiter \& Schmidhuber (1997); Vaswani et al.\ (2017); paper Section 3.4.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 18 -- Anomaly Detection
+% ----------------------------------------------------------
+\begin{frame}{Anomaly Detection: Isolation Forest, LOF, Autoencoders}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Isolation Forest}
+\begin{itemize}\compactlist
+\item Random recursive partitioning; anomalies isolated with fewer splits
+\item Efficient, high-dimensional, no distributional assumptions
+\item Detects \textit{global} anomalies (vs.\ entire population)
+\end{itemize}
+\vspace{2mm}
+\textbf{Local Outlier Factor (LOF)}
+\begin{itemize}\compactlist
+\item Local density deviation vs.\ $k$-nearest neighbors
+\item Detects \textit{local} anomalies (unusual within strategy peer group)
+\item Critical: strategy-specific norms differ substantially
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Deep Autoencoders}
+\begin{itemize}\compactlist
+\item Learn compressed representation of normal behavior
+\item High reconstruction error $\Rightarrow$ anomaly
+\item \auc{} $\approx$ \textbf{0.79} on hedge fund returns (Chalapathy \& Chawla, 2019)
+\item Competitive with supervised methods \textit{without requiring fraud labels}
+\end{itemize}
+\vspace{2mm}
+\textbf{DBSCAN}
+\begin{itemize}\compactlist
+\item Density-based clustering; noise points = potential anomalies
+\item Fund not assignable to any peer group $\Rightarrow$ possible strategy misrepresentation
+\end{itemize}
+\end{columns}
+\vspace{2mm}
+\textcolor{mlblue}{Unsupervised methods are especially valuable when confirmed fraud labels are scarce and potentially biased toward historically detected types.}
+\bottomnote{Source: Liu et al.\ (2008); Breunig et al.\ (2000); Chalapathy \& Chawla (2019); paper Section 3.4.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 19 -- NLP and GNN Methods
+% ----------------------------------------------------------
+\begin{frame}{NLP and Graph Neural Network Methods}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{NLP / Text Mining}
+\begin{itemize}\compactlist
+\item Evolution: bag-of-words $\to$ TF-IDF $\to$ word2vec $\to$ transformers
+\item \textbf{FinBERT}: financial-domain sentiment
+\item \textbf{SEC-BERT}: EDGAR-specific pre-training
+\item Applications:
+  \begin{itemize}\compactlist
+  \item Detect vague/evasive strategy descriptions
+  \item Filing inconsistencies across time
+  \item Text-quant divergence (stated strategy vs.\ factor exposures)
+  \end{itemize}
+\item Multi-modal fusion (NLP + returns) more robust: fraudster must maintain both textual \textit{and} statistical consistency
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Graph Neural Networks}
+\begin{itemize}\compactlist
+\item \textbf{GCN}: spectral graph convolutions, neighborhood aggregation
+\item \textbf{GAT}: attention-weighted neighbor contributions (heterogeneous graphs)
+\item \textbf{GraphSAGE}: inductive learning on unseen nodes (new fund cold-start)
+\item \textbf{Temporal knowledge graphs}: time-stamped edges capture ``flight from oversight'' patterns
+\end{itemize}
+\vspace{2mm}
+\textbf{Key Advantage}
+\begin{itemize}\compactlist
+\item ``Guilt by association'': individually benign funds in suspicious relational structures
+\end{itemize}
+\textbf{Key Limitation}
+\begin{itemize}\compactlist
+\item Graph construction requires entity resolution across databases
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Kipf \& Welling (2017); Velickovic et al.\ (2018); paper Sections 3.4.4--3.4.5}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 20 -- Generative Methods
+% ----------------------------------------------------------
+\begin{frame}{Generative and Synthetic Methods}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Dual Role}
+\begin{itemize}\compactlist
+\item \textit{Anomaly detection}: learn normal distribution, flag deviations
+\item \textit{Data augmentation}: generate synthetic fraud examples for class imbalance
+\end{itemize}
+\vspace{2mm}
+\textbf{GAN-Based Anomaly Detection}
+\begin{itemize}\compactlist
+\item BiGAN, AnoGAN: generator learns normal returns
+\item High reconstruction error in latent space $\Rightarrow$ anomalous
+\item Adversarial training captures non-Gaussian features and temporal dependencies
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Synthetic Data Generation}
+\begin{itemize}\compactlist
+\item Beyond SMOTE: conditional GANs and VAEs
+\item Conditional generation essential: different fraud types $\to$ different signatures
+\item Wasserstein GAN: earth-mover distance for financial time series
+\end{itemize}
+\vspace{2mm}
+\textbf{Validation Requirements}
+\begin{itemize}\compactlist
+\item Generated samples must pass domain-specific plausibility checks:
+  \begin{itemize}\compactlist
+  \item Realistic return magnitudes
+  \item Appropriate serial correlation
+  \item Sensible Sharpe ratios
+  \end{itemize}
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Goodfellow et al.\ (2014); Kingma \& Welling (2014); paper Section 3.4.6}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 21 -- Model Families Chart
+% ----------------------------------------------------------
+\begin{frame}{Model Families: Visual Summary}
+
+\chartplaceholder[5.5cm]{Chart: 03\_model\_families -- Comparison of six model families showing reported performance ranges (AUC, F1), data requirements, interpretability level, and fraud-type suitability}
+
+\bottomnote{Source: Paper Section 3.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 22 -- Stage 4: Explainability
+% ----------------------------------------------------------
+\begin{frame}{Stage 4: Explainability and Interpretation}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{\shap{} Values}
+\begin{itemize}\compactlist
+\item Decompose each prediction into per-feature contributions (Shapley values)
+\item Example: ``35\% from high $\rhoone$, 25\% from non-Big-Four auditor with 2 prior sanctions, 20\% from deteriorating readability, 20\% from peripheral network position''
+\item Maps directly to SEC investigative categories
+\end{itemize}
+\vspace{2mm}
+\textbf{\lime{}}
+\begin{itemize}\compactlist
+\item Local interpretable model around each prediction
+\item Model-agnostic: works with deep nets, GNNs
+\item Tailored case-by-case explanations
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Attention Visualization}
+\begin{itemize}\compactlist
+\item Transformer: which historical periods are most relevant
+\item GAT: which relational connections drove the score
+\item Intrinsic explainability (no post-hoc layer needed)
+\end{itemize}
+\vspace{2mm}
+\textbf{Regulatory Requirement}
+\begin{itemize}\compactlist
+\item \euaiact{} Art.\ 13: ``sufficiently transparent to enable deployers to interpret''
+\item Opaque probability scores $\to$ \textcolor{mlred}{insufficient}
+\item Structured explanation $\to$ \textcolor{mlgreen}{actionable investigation plan}
+\item Three independent lines of inquiry per alert: return analysis, operational due diligence, filing review
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Lundberg \& Lee (2017); Ribeiro et al.\ (2016); EU AI Act Art.\ 13; paper Section 3.5}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 23 -- Stage 5: Deployment
+% ----------------------------------------------------------
+\begin{frame}{Stage 5: Deployment and Monitoring}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Processing Cadence}
+\begin{itemize}\compactlist
+\item Hedge fund surveillance is \textbf{batch-oriented} (monthly/quarterly data)
+\item Hybrid: batch scoring of full fund universe $+$ event-triggered inter-batch reassessment
+\end{itemize}
+\vspace{2mm}
+\textbf{Concept Drift Detection}
+\begin{itemize}\compactlist
+\item Models degrade: legitimate strategies evolve; fraudsters adapt
+\item ADWIN: variable-length window, distribution comparison
+\item DDM: monitors error rate vs.\ historical baseline
+\item Hybrid retraining: scheduled $+$ drift-triggered emergency updates
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Human-in-the-Loop}
+\begin{itemize}\compactlist
+\item Designed for \textbf{collaboration, not replacement}
+\item Investigator feedback loop $\to$ feature engineering and model training
+\item Active learning: query cases most likely to improve decision boundary
+\item Reduces alert fatigue from false positives
+\item EU AI Act Art.\ 14: human oversight requirement satisfied
+\end{itemize}
+\vspace{2mm}
+\textbf{Alert Prioritization}
+\begin{itemize}\compactlist
+\item Composite score: fraud probability $\times$ AUM exposure $\times$ novelty $\times$ tractability
+\item Transforms raw flags into manageable investigation queue
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Pang et al.\ (2021); EU AI Act Art.\ 14; paper Section 3.6}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 24 -- Pipeline Architecture Chart
+% ----------------------------------------------------------
+\begin{frame}{Pipeline Architecture: Visual Summary}
+
+\chartplaceholder[5.5cm]{Chart: 01\_pipeline\_architecture -- Full five-stage pipeline diagram with forward data flow, feedback loops (investigator feedback, drift-triggered retraining), and fraud-type annotations per stage}
+
+\bottomnote{Source: Paper Figure 1; Section 3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 25 -- Summary
+% ----------------------------------------------------------
+\begin{frame}{Summary: The Detection Pipeline (C1)}
+\begin{enumerate}\compactlist
+\item The \textbf{five-stage pipeline} (ingestion $\to$ features $\to$ models $\to$ explainability $\to$ deployment) provides the first hedge-fund-specific end-to-end framework
+\item \textbf{Data ingestion} must solve temporal alignment, bias correction, entity resolution, and multi-source fusion
+\item \textbf{Five feature families} (statistical, Benford, textual, network, temporal) capture complementary fraud signals across different data modalities
+\item \textbf{Six model families} are matched to specific fraud types and data characteristics; tree-based ensembles currently dominate tabular detection (\fone{} $\sim 0.88$)
+\item \textbf{Explainability} is not optional: EU AI Act mandates transparency for high-risk AI; \shap{}/\lime{}/attention provide structured explanations
+\item \textbf{Deployment} requires batch+event processing, drift detection, human-in-the-loop feedback, and GRC integration
+\item The pipeline is \textbf{not unidirectional}: feedback from deployment enables continuous adaptation
+\end{enumerate}
+\bottomnote{Source: Paper Section 3 -- Contribution C1}
+\end{frame}
+
+\end{document}

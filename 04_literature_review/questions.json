@@ -1,0 +1,44 @@
+[
+  {
+    "question": "What AUC range do Dimmock's logistic regression models achieve?",
+    "options": ["a) 0.50-0.60", "b) 0.65-0.70", "c) 0.75-0.80", "d) 0.85-0.90"],
+    "correct_answer": "b",
+    "explanation": "Dimmock et al. applied logistic regression to SEC filing data, demonstrating that past regulatory violations, ownership structures, and custody arrangements predict future fraud with an AUC in the range of 0.65-0.70.",
+    "section_reference": "Section 4.1"
+  },
+  {
+    "question": "What AUC does Bao's RUSBoost achieve?",
+    "options": ["a) 0.625", "b) 0.725", "c) 0.825", "d) 0.925"],
+    "correct_answer": "b",
+    "explanation": "Bao et al. applied a RUSBoost ensemble (combining random undersampling with AdaBoost) to detect accounting fraud, achieving an AUC of 0.725, substantially outperforming the logistic regression baseline.",
+    "section_reference": "Section 4.2"
+  },
+  {
+    "question": "What accuracy does FinBERT achieve on financial sentiment?",
+    "options": ["a) 72%", "b) 79%", "c) 87%", "d) 94%"],
+    "correct_answer": "c",
+    "explanation": "FinBERT, a BERT model fine-tuned on a large corpus of financial news and communications, achieved 87% accuracy on financial sentiment classification tasks, substantially outperforming general-purpose models.",
+    "section_reference": "Section 4.4"
+  },
+  {
+    "question": "What AUC does Wang's semi-supervised GNN achieve?",
+    "options": ["a) 0.77", "b) 0.82", "c) 0.87", "d) 0.92"],
+    "correct_answer": "c",
+    "explanation": "Wang et al. applied a semi-supervised graph neural network to transaction networks, achieving an AUC of 0.87 and demonstrating that graph-based features substantially outperform tabular features alone.",
+    "section_reference": "Section 4.5"
+  },
+  {
+    "question": "How much AUC improvement does multi-modal fusion add?",
+    "options": ["a) 1-2%", "b) 3-5%", "c) 7-10%", "d) 12-15%"],
+    "correct_answer": "b",
+    "explanation": "Multi-modal fusion of NLP features with quantitative return data has been shown to improve detection over either modality alone, with reported improvements of approximately 3-5% in AUC.",
+    "section_reference": "Section 4.4"
+  },
+  {
+    "question": "What is the main cause of the reproducibility crisis?",
+    "options": ["a) Lack of interest", "b) Proprietary datasets", "c) Insufficient computing", "d) Poor documentation"],
+    "correct_answer": "b",
+    "explanation": "The majority of studies use proprietary datasets---licensed commercial databases, internal regulatory records, or bespoke compilations---that are unavailable to other researchers, preventing independent verification of results.",
+    "section_reference": "Section 4.8"
+  }
+]

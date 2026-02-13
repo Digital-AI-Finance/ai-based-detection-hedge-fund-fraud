@@ -1,0 +1,98 @@
+[
+  {
+    "question": "How many open problems are identified in the research agenda?",
+    "options": [
+      "a) 5",
+      "b) 8",
+      "c) 10",
+      "d) 12"
+    ],
+    "correct_answer": "c",
+    "explanation": "The research agenda identifies exactly 10 open problems (OP1--OP10), organized across three categories: Data challenges, Methodological advances, and Deployment considerations.",
+    "section_reference": "Section 6: Research Agenda"
+  },
+  {
+    "question": "What are the three categories of open problems?",
+    "options": [
+      "a) Input/Process/Output",
+      "b) Data/Methodological/Deployment",
+      "c) Theory/Practice/Policy",
+      "d) Design/Build/Test"
+    ],
+    "correct_answer": "b",
+    "explanation": "The 10 open problems are organized into: (1) Data challenges (OP1--OP3), (2) Methodological advances (OP4--OP8), and (3) Deployment considerations (OP9--OP10).",
+    "section_reference": "Section 6: Research Agenda"
+  },
+  {
+    "question": "Which two problems are identified as critical preconditions for the field?",
+    "options": [
+      "a) OP2 and OP5",
+      "b) OP3 and OP6",
+      "c) OP1 and OP4",
+      "d) OP8 and OP9"
+    ],
+    "correct_answer": "c",
+    "explanation": "OP1 (Benchmark datasets) and OP4 (Interpretability standards) are critical preconditions. Without accessible data and explainable models, the field cannot progress toward production deployment.",
+    "section_reference": "Section 6: Research Agenda"
+  },
+  {
+    "question": "What is OP1's two-track approach for creating benchmark datasets?",
+    "options": [
+      "a) Survey + interview",
+      "b) Synthetic data + differential privacy",
+      "c) Open source + proprietary",
+      "d) Academic + industry"
+    ],
+    "correct_answer": "b",
+    "explanation": "OP1 proposes generating synthetic fraud datasets while applying differential privacy techniques to protect sensitive information from real cases, enabling research without exposing confidential data.",
+    "section_reference": "Section 6.1: Data Challenges"
+  },
+  {
+    "question": "What method does OP2 suggest for cross-jurisdictional data integration?",
+    "options": [
+      "a) Federated learning",
+      "b) Blockchain",
+      "c) Cloud computing",
+      "d) API integration"
+    ],
+    "correct_answer": "a",
+    "explanation": "OP2 proposes federated learning frameworks that enable model training across multiple jurisdictions without sharing raw data, respecting privacy regulations while leveraging global patterns.",
+    "section_reference": "Section 6.1: Data Challenges"
+  },
+  {
+    "question": "How many labeled fraud cases typically exist in the literature?",
+    "options": [
+      "a) 10--20",
+      "b) 25--50",
+      "c) 50--100",
+      "d) 200--500"
+    ],
+    "correct_answer": "c",
+    "explanation": "The paper identifies that only 50--100 labeled fraud cases exist, creating a severe small-sample problem. OP3 addresses semi-supervised and active learning to work with limited labels.",
+    "section_reference": "Section 6.1: Data Challenges"
+  },
+  {
+    "question": "What is the name of OP5?",
+    "options": [
+      "a) Warm-start training",
+      "b) Cold-start detection",
+      "c) Zero-shot classification",
+      "d) Bootstrap analysis"
+    ],
+    "correct_answer": "b",
+    "explanation": "OP5 focuses on detecting fraud in funds with limited history (12--24 months of returns), where traditional statistical tests lack power. This requires methods that work with short time series.",
+    "section_reference": "Section 6.2: Methodological Advances"
+  },
+  {
+    "question": "Which two problems have the lowest feasibility scores?",
+    "options": [
+      "a) OP1 and OP3",
+      "b) OP4 and OP7",
+      "c) OP5 and OP6",
+      "d) OP2 and OP10"
+    ],
+    "correct_answer": "d",
+    "explanation": "OP2 (Cross-jurisdictional data) and OP10 (Regulatory alignment) have lowest feasibility due to legal barriers, international coordination challenges, and complex compliance requirements.",
+    "section_reference": "Section 6: Priority Matrix"
+  }
+]

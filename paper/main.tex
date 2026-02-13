@@ -1,0 +1,165 @@
+% DRAFTING CLASS: article. Convert to elsarticle for JBF submission.
+\documentclass[12pt,a4paper]{article}
+
+% ==================== PACKAGES ====================
+% Mathematics
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Graphics and figures
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{adjustbox}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+% TikZ for diagrams
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{calc}
+\usetikzlibrary{mindmap}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{fit}
+\usetikzlibrary{patterns}
+
+% Colors
+\usepackage{xcolor}
+
+% References and links
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    breaklinks=true
+}
+\usepackage[capitalize,noabbrev]{cleveref}
+
+% Bibliography
+\usepackage[round,sort&compress]{natbib}
+\bibliographystyle{plainnat}
+
+% Page layout
+\usepackage[margin=1in]{geometry}
+
+% Line spacing
+\usepackage{setspace}
+\doublespacing
+
+% Line numbers for review
+\usepackage{lineno}
+\linenumbers
+
+% ==================== CUSTOM COMMANDS ====================
+\newcommand{\auc}{\ensuremath{\mathrm{AUC}}}
+\newcommand{\fone}{\ensuremath{F_1}}
+
+% ==================== DOCUMENT METADATA ====================
+\title{AI-Based Detection of Hedge Fund Fraud: A Systematic Survey and Research Agenda}
+
+\author{
+    Joerg Osterrieder\\
+    \textit{Zurich University of Applied Sciences}\\
+    \textit{School of Engineering}\\
+    \textit{Switzerland}\\
+    \texttt{joerg.osterrieder@zhaw.ch}
+}
+
+\date{\today}
+
+% ==================== DOCUMENT CONTENT ====================
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+The hedge fund industry, managing over \$4.5 trillion in assets under management, faces persistent fraud risks amplified by operational opacity and limited regulatory oversight. Despite growing regulatory scrutiny and technological advances, no systematic survey has examined artificial intelligence methods specifically for hedge fund fraud detection. This paper addresses this gap through three contributions. First, we develop a unified five-stage detection pipeline taxonomy (data ingestion, feature engineering, model selection, explainability, deployment) that maps hedge fund fraud types to appropriate AI methods—the first hedge-fund-specific detection framework in the literature. Second, we conduct a systematic adversarial and regulatory readiness assessment, revealing significant vulnerabilities (mean AUC degradation of 10.6\% under adversarial attack) and uncertain compliance with the EU AI Act and SEC requirements. We evaluate defense mechanisms and their effectiveness across different attack scenarios. Third, we propose a research agenda articulating ten concrete open problems spanning data challenges (benchmark datasets, cross-jurisdictional integration, real-time pipelines), methodological challenges (extreme class imbalance with only 50--100 documented fraud cases, cold-start detection, concept drift, multi-modal fusion), and deployment challenges (adversarial robustness, explainability, human-AI collaboration). Our analysis shows that ensemble methods combining tree-based models with anomaly detection currently offer the most robust performance, yet critical gaps remain in adversarial resilience and standardized evaluation datasets. These findings have direct implications for practitioners designing fraud detection systems, regulators evaluating AI-based compliance tools, and researchers advancing financial crime prevention methodologies.
+
+\vspace{1em}
+\noindent
+\textbf{Keywords:} hedge fund fraud, machine learning, anomaly detection, financial regulation, explainable AI, systematic review, adversarial robustness
+
+\vspace{0.5em}
+\noindent
+\textbf{JEL Classification:} G23 (Non-bank Financial Institutions), G28 (Government Policy and Regulation), C45 (Neural Networks and Related Topics), C53 (Forecasting and Prediction Methods), K22 (Business and Securities Law)
+\end{abstract}
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+% ==================== MAIN SECTIONS ====================
+\InputIfFileExists{sections/01-introduction.tex}{}{
+    \section{Introduction}
+    % Content to be added
+}
+
+\InputIfFileExists{sections/02-background.tex}{}{
+    \section{Background}
+    % Content to be added
+}
+
+\InputIfFileExists{sections/03-pipeline.tex}{}{
+    \section{Detection Pipeline}
+    % Content to be added
+}
+
+\InputIfFileExists{sections/04-literature-review.tex}{}{
+    \section{Literature Review}
+    % NOTE: This is a qualitative literature review, NOT a meta-analysis
+    % Content to be added
+}
+
+\InputIfFileExists{sections/05-adversarial.tex}{}{
+    \section{Adversarial Robustness}
+    % Content to be added
+}
+
+\InputIfFileExists{sections/06-research-agenda.tex}{}{
+    \section{Research Agenda}
+    % Content to be added
+}
+
+\InputIfFileExists{sections/07-conclusion.tex}{}{
+    \section{Conclusion}
+    % Content to be added
+}
+
+\InputIfFileExists{sections/08-reproducibility.tex}{}{
+    \section{Reproducibility Statement}
+    % Content to be added
+}
+
+% ==================== BIBLIOGRAPHY ====================
+\clearpage
+\bibliography{references}
+
+% ==================== APPENDICES ====================
+\clearpage
+\appendix
+
+\InputIfFileExists{appendices/A-search-protocol.tex}{}{
+    \section{Systematic Search Protocol}
+    % Content to be added
+}
+
+\InputIfFileExists{appendices/B-features.tex}{}{
+    \section{Feature Engineering Details}
+    % Content to be added
+}
+
+\InputIfFileExists{appendices/C-glossary.tex}{}{
+    \section{Glossary of Terms}
+    % Content to be added
+}
+
+\end{document}

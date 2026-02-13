@@ -1,0 +1,514 @@
+% ============================================================
+%  Slide Deck 1 -- Introduction
+%  AI-Based Detection of Hedge Fund Fraud
+% ============================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Color definitions ----
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255, 127, 14}
+\definecolor{mlgreen}{RGB}{44, 160, 44}
+\definecolor{mlred}{RGB}{214, 39, 40}
+\definecolor{mlgray}{RGB}{127, 127, 127}
+\definecolor{lightgray}{RGB}{240, 240, 240}
+\definecolor{midgray}{RGB}{180, 180, 180}
+
+% ---- Apply custom colors to Madrid theme ----
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% ---- Navigation / itemize ----
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% ---- Custom commands ----
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+\newcommand{\chartplaceholder}[2][5cm]{%
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth, max height=#1}
+\framebox[\textwidth][c]{%
+\rule{0pt}{#1}%
+\textcolor{midgray}{[#2]}%
+}
+\end{adjustbox}
+\end{center}
+}
+
+% ---- Notation ----
+\input{../notation}
+
+% ---- Title metadata ----
+\title{AI-Based Detection of Hedge Fund Fraud}
+\subtitle{Section 1 -- Introduction}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+% ============================================================
+\begin{document}
+
+% ----------------------------------------------------------
+% SLIDE 1 -- Title
+% ----------------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 2 -- Outline
+% ----------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\compactlist
+\item The Scale of Hedge Fund Fraud
+\item Major Fraud Cases
+\item Why Hedge Funds Are Uniquely Vulnerable
+\item Limitations of Traditional Detection
+\item Cognitive Limitations of Human Analysts
+\item Traditional Statistical Methods and Their Limits
+\item Four AI/ML Advantages
+\item Survey Scope and Prior Work
+\item Three Principal Contributions (C1--C3)
+\item What This Survey Does NOT Do
+\item Paper Organization
+\item Summary and Key Takeaways
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 3 -- Scale of Hedge Fund Fraud
+% ----------------------------------------------------------
+\begin{frame}{The Scale of Hedge Fund Fraud}
+\begin{itemize}\compactlist
+\item Global hedge fund industry: \textbf{\aumdollar{} AUM} as of 2025
+\item Substantial growth from roughly \$2 trillion at the onset of the 2008 crisis
+\item Strategies range from quantitative stat-arb to activist equity and illiquid credit
+\item Unlike mutual funds, hedge funds benefit from \textbf{broad regulatory exemptions}:
+  \begin{itemize}\compactlist
+  \item Limited disclosure
+  \item Voluntary performance reporting
+  \item Minimal portfolio-level transparency
+  \end{itemize}
+\item Strategic flexibility attracts institutional capital -- but simultaneously \textbf{enables fraud to persist undetected for years or decades}
+\end{itemize}
+\bottomnote{Source: Stulz (2007); paper Section 1.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 4 -- Major Fraud Cases
+% ----------------------------------------------------------
+\begin{frame}{Major Fraud Cases}
+\begin{columns}[T]
+\column{0.33\textwidth}
+\begin{block}{Madoff (2008)}
+\begin{itemize}\compactlist
+\item \textbf{\$65 billion} in stated account value
+\item Largest financial fraud in history
+\item Ponzi scheme sustained for $\sim$20 years
+\item Only 7 losing months over 14 years
+\end{itemize}
+\end{block}
+
+\column{0.33\textwidth}
+\begin{block}{Bayou Group (2003--05)}
+\begin{itemize}\compactlist
+\item \textbf{\$450 million} in concealed losses
+\item Fabricated financial statements
+\item Created a sham auditing firm
+\end{itemize}
+\end{block}
+
+\column{0.33\textwidth}
+\begin{block}{Archegos (2021)}
+\begin{itemize}\compactlist
+\item \textbf{\$10+ billion} counterparty losses
+\item Prime broker failures
+\item Concentrated position reporting gaps
+\end{itemize}
+\end{block}
+\end{columns}
+
+\vspace{4mm}
+\begin{itemize}\compactlist
+\item The SEC brings \textbf{dozens of enforcement actions} each year
+\item Violations span: return misrepresentation, asset misappropriation, insider trading, valuation manipulation
+\end{itemize}
+\bottomnote{Source: Markopolos (2010); Gregoriou (2009); paper Section 1.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 5 -- Why Hedge Funds Are Uniquely Vulnerable
+% ----------------------------------------------------------
+\begin{frame}{Why Hedge Funds Are Uniquely Vulnerable}
+\begin{enumerate}\compactlist
+\item \textbf{Illiquid / hard-to-value assets}
+  \begin{itemize}\compactlist
+  \item Distressed debt, private equity co-investments, bespoke derivatives
+  \item Independent pricing difficult or impossible $\Rightarrow$ \nav{} inflation, return smoothing
+  \end{itemize}
+\item \textbf{Voluntary reporting to databases}
+  \begin{itemize}\compactlist
+  \item HFR, Lipper TASS, Morningstar -- all voluntary
+  \item Survivorship, backfill, and self-selection biases
+  \end{itemize}
+\item \textbf{Lock-up periods and redemption gates}
+  \begin{itemize}\compactlist
+  \item Restrict investor liquidity, delay fraud discovery
+  \end{itemize}
+\item \textbf{Concentrated authority}
+  \begin{itemize}\compactlist
+  \item Limited partnership structures: small group of general partners
+  \item Minimal independent oversight
+  \end{itemize}
+\end{enumerate}
+\vspace{2mm}
+\textcolor{mlred}{$\Rightarrow$ Agency problem of unusual severity (Stulz, 2007)}
+\bottomnote{Source: Getmansky et al.\ (2004); Fung \& Hsieh (2009); paper Section 1.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 6 -- Limitations of Traditional Detection
+% ----------------------------------------------------------
+\begin{frame}{Limitations of Traditional Detection}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\textbf{Regulatory Capacity Mismatch}
+\begin{itemize}\compactlist
+\item SEC: $\sim$\textbf{4,600 staff} overseeing thousands of advisers, broker-dealers, fund complexes
+\item Division of Examinations inspects only a \textit{fraction} of possible funds per year
+\item A single examiner can assess at most \textbf{a handful of funds per quarter}
+\item Most hedge funds receive scrutiny only \textit{infrequently}
+\item Long windows for fraudulent schemes to operate undiscovered
+\end{itemize}
+
+\column{0.42\textwidth}
+\textbf{The Markopolos Case}
+\begin{itemize}\compactlist
+\item Harry Markopolos submitted detailed analyses to the SEC \textbf{starting in 2000}
+\item Argued Madoff's returns were statistically implausible
+\item \textcolor{mlred}{SEC failed to act for nearly a decade}
+\item Reflects institutional shortcomings \textit{and} the difficulty of distinguishing skill from fabrication
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Markopolos (2010); paper Section 1.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 7 -- Cognitive Limitations
+% ----------------------------------------------------------
+\begin{frame}{Cognitive Limitations of Human Analysts}
+\begin{itemize}\compactlist
+\item Even experienced auditors face \textbf{fundamental cognitive constraints}
+\item Well-documented biases that impair fraud signal identification:
+\end{itemize}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.32\textwidth}
+\begin{block}{Hindsight Bias}
+After fraud is revealed, signals seem ``obvious'' -- but they were not ex ante
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Confirmation Bias}
+Analysts seek evidence confirming initial assessment, ignoring contradictory signals
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Anchoring Effects}
+Prior expectations anchor judgment -- deviations from established templates are under-weighted
+\end{block}
+\end{columns}
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item These biases compound the difficulty of evaluating \textbf{complex, opaque strategies}
+\item Throughput bottleneck $+$ cognitive limitations $\Rightarrow$ systematic detection gaps
+\end{itemize}
+\bottomnote{Source: Paper Section 1.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 8 -- Traditional Statistical Methods
+% ----------------------------------------------------------
+\begin{frame}{Traditional Statistical Methods and Their Limits}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Established Methods}
+\begin{itemize}\compactlist
+\item \textbf{Benford's law}: tests leading-digit distribution of returns
+  \begin{itemize}\compactlist
+  \item Can identify data fabrication
+  \item Easily defeated by knowledgeable fraudster
+  \end{itemize}
+\item \textbf{Serial correlation}: detects suspicious smoothness in return series (Bollen \& Pool 2012; Getmansky et al.\ 2004)
+  \begin{itemize}\compactlist
+  \item Captures only one dimension of fraud
+  \end{itemize}
+\item \textbf{Forensic ratio / outlier detection}: flags individual anomalies
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Fundamental Limitations}
+\begin{itemize}\compactlist
+\item Each method detects a \textit{single} signature of a \textit{single} fraud type
+\item Cannot capture \textbf{complex, multi-dimensional patterns}
+\item Logistic regression on Form ADV (Dimmock \& Gerken 2012):
+  \begin{itemize}\compactlist
+  \item \auc{} $\approx 0.65$--$0.70$
+  \item Interpretable but limited feature space
+  \item Does not scale to modern data volumes
+  \end{itemize}
+\item High false positive rates when deployed independently
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Nigrini (2012); Dimmock \& Gerken (2012); paper Section 1.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 9 -- Four AI/ML Advantages
+% ----------------------------------------------------------
+\begin{frame}{Four AI/ML Advantages for Fraud Detection}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{Scalability}}
+  \begin{itemize}\compactlist
+  \item Process thousands of return series, filings, and alternative data \textit{simultaneously}
+  \item Surveillance at a scale human analysts cannot achieve
+  \end{itemize}
+\item \textcolor{mlblue}{\textbf{Pattern Recognition}}
+  \begin{itemize}\compactlist
+  \item Detect subtle, nonlinear, multi-dimensional anomalies
+  \item E.g., random forest on dozens of return features: suspicious \textit{combinations} no single test flags
+  \end{itemize}
+\item \textcolor{mlblue}{\textbf{Real-Time Monitoring}}
+  \begin{itemize}\compactlist
+  \item Once deployed, models evaluate incoming data continuously
+  \item Early warning systems alert before losses compound
+  \end{itemize}
+\item \textcolor{mlblue}{\textbf{Multi-Modal Data Integration}}
+  \begin{itemize}\compactlist
+  \item Fuse structured (returns, ratios), unstructured (news, sentiment), and relational data (networks)
+  \item Richer, more holistic picture of fund behavior
+  \end{itemize}
+\end{enumerate}
+\bottomnote{Source: Paper Section 1.2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 10 -- Survey Scope
+% ----------------------------------------------------------
+\begin{frame}{Survey Scope}
+\begin{itemize}\compactlist
+\item \textbf{First systematic, qualitative survey} of AI-based approaches to hedge fund fraud detection
+\item No existing survey addresses AI fraud detection with a \textit{specific} focus on:
+  \begin{itemize}\compactlist
+  \item The hedge fund context
+  \item Its unique data challenges
+  \item Its distinctive regulatory environment
+  \end{itemize}
+\item Current literature is \textbf{fragmented}:
+  \begin{itemize}\compactlist
+  \item Spans computer science, finance, accounting, law
+  \item Divergent datasets, evaluation metrics, fraud definitions
+  \item Rarely addresses adversarial dynamics
+  \end{itemize}
+\item This survey \textbf{synthesizes} the scattered literature into a coherent analytical framework
+\end{itemize}
+\bottomnote{Source: Paper Section 1.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 11 -- Prior Survey Comparison
+% ----------------------------------------------------------
+\begin{frame}{Prior Survey Comparison}
+
+\chartplaceholder[4.5cm]{Chart: 01\_survey\_comparison -- Comparison table of prior surveys vs.\ this survey across six dimensions (Hedge Fund Focus, AI/ML Methods, Fraud Taxonomy, Adversarial Robustness, Regulatory Readiness, Research Agenda)}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item Prior surveys: Ngai et al.\ (2011), Abdallah et al.\ (2016), West \& Bhattacharya (2016), Pourhabibi et al.\ (2020), Bao et al.\ (2020), Hilal et al.\ (2022), Ahmed et al.\ (2024)
+\item \textcolor{mlred}{None} substantively covers all six dimensions -- \textbf{this survey} does
+\end{itemize}
+\bottomnote{Source: Paper Table 1; Section 1.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 12 -- Contribution C1
+% ----------------------------------------------------------
+\begin{frame}{Contribution C1: Detection Pipeline Taxonomy}
+\begin{block}{C1: Unified Five-Stage Detection Pipeline}
+A framework spanning \textbf{data ingestion, feature engineering, model selection, explainability, and deployment} that systematically maps hedge fund fraud types to appropriate AI detection methods.
+\end{block}
+
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item Provides researchers and practitioners with a \textbf{structured lens}:
+  \begin{itemize}\compactlist
+  \item Which methods apply to which fraud scenarios?
+  \item Where do methodological gaps remain?
+  \end{itemize}
+\item \textbf{No existing survey} provides this hedge-fund-specific mapping
+\item Engineering blueprint for operational surveillance systems
+\end{itemize}
+\bottomnote{Source: Paper Section 1.3 -- Contribution C1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 13 -- Contribution C2
+% ----------------------------------------------------------
+\begin{frame}{Contribution C2: Adversarial and Regulatory Readiness}
+\begin{block}{C2: Adversarial and Regulatory Readiness Assessment}
+Systematic evaluation of how \textbf{robust} current AI methods are to adversarial manipulation by sophisticated hedge fund managers, and whether they satisfy \textbf{emerging regulatory requirements}.
+\end{block}
+
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item \textbf{Adversarial lens}: hedge fund managers are sophisticated actors who adapt behavior to evade detection
+\item \textbf{Regulatory lens}:
+  \begin{itemize}\compactlist
+  \item \euaiact{} (Regulation 2024/1689) -- classifies fraud detection AI as \textit{high-risk}
+  \item SEC guidance on predictive analytics
+  \end{itemize}
+\item Bridges the gap between technical ML literature and practical demands of regulators / compliance
+\item \textcolor{mlred}{No prior survey} evaluates AI fraud detection through this dual lens
+\end{itemize}
+\bottomnote{Source: Paper Section 1.3 -- Contribution C2}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 14 -- Contribution C3
+% ----------------------------------------------------------
+\begin{frame}{Contribution C3: Actionable Research Roadmap}
+\begin{block}{C3: Ten Open Research Problems}
+Each problem is differentiated by the specific characteristics of the hedge fund context, with suggested methodological approaches, evaluation protocols, and feasibility considerations.
+\end{block}
+
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item \textbf{\numop{} concrete open problems} identified
+\item For each problem:
+  \begin{itemize}\compactlist
+  \item Suggested methodological approaches
+  \item Evaluation protocols
+  \item Feasibility considerations
+  \end{itemize}
+\item Designed to guide:
+  \begin{itemize}\compactlist
+  \item Academic researchers seeking \textbf{impactful problems}
+  \item Industry practitioners seeking \textbf{evidence-based solutions}
+  \end{itemize}
+\end{itemize}
+\bottomnote{Source: Paper Section 1.3 -- Contribution C3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 15 -- What This Survey Does NOT Do
+% ----------------------------------------------------------
+\begin{frame}{What This Survey Does NOT Do}
+\begin{itemize}\compactlist
+\item \textbf{Not a quantitative meta-analysis} of detection performance across studies
+\item Why not?
+  \begin{itemize}\compactlist
+  \item Heterogeneity of datasets, fraud definitions, evaluation protocols, reporting standards
+  \item Meaningful statistical aggregation is \textit{precluded}
+  \end{itemize}
+\item Instead: a \textbf{qualitative synthesis} approach
+  \begin{itemize}\compactlist
+  \item Critical analysis of methodological strengths, limitations, contextual applicability
+  \end{itemize}
+\item Appropriate given the current state of the field:
+  \begin{itemize}\compactlist
+  \item Standardization of benchmarks and evaluation procedures remains an \textbf{open challenge}
+  \item Addressed explicitly in the research agenda (Section 6)
+  \end{itemize}
+\end{itemize}
+\bottomnote{Source: Paper Section 1.3}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 16 -- Paper Organization
+% ----------------------------------------------------------
+\begin{frame}{Paper Organization}
+\begin{enumerate}\compactlist
+\item \textbf{Section 2 -- Background}: Fraud taxonomy, data ecosystem, regulatory context
+\item \textbf{Section 3 -- Detection Pipeline} (C1): Five-stage framework from raw data to actionable assessments
+\item \textbf{Section 4 -- Literature Review}: AI/ML methods organized by method family, mapped onto pipeline
+\item \textbf{Section 5 -- Adversarial \& Regulatory} (C2): Robustness to manipulation, EU AI Act, ethical considerations
+\item \textbf{Section 6 -- Research Agenda} (C3): Ten open problems with approaches and evaluation criteria
+\item \textbf{Section 7 -- Conclusion}: Synthesis of findings and implications
+\end{enumerate}
+\vspace{3mm}
+\textcolor{mlblue}{Each section builds on the previous -- the pipeline taxonomy (C1) provides the organizational backbone for the literature review and the research agenda.}
+\bottomnote{Source: Paper Section 1.4}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 17 -- AUM Growth Timeline
+% ----------------------------------------------------------
+\begin{frame}{Hedge Fund Industry: AUM Growth Timeline}
+
+\chartplaceholder[5cm]{Chart: 02\_hedge\_fund\_growth -- Timeline of hedge fund AUM growth from $\sim$\$2T (2008 crisis) to \$4.5T (2025), annotated with major fraud cases (Bayou 2005, Madoff 2008, SAC 2013, Archegos 2021)}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item Industry \aum{} has more than doubled since 2008
+\item Major fraud revelations clustered around crises and regulatory inflection points
+\end{itemize}
+\bottomnote{Source: Paper Section 1.1}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 18 -- Summary and Key Takeaways
+% ----------------------------------------------------------
+\begin{frame}{Summary and Key Takeaways}
+\begin{enumerate}\compactlist
+\item Hedge fund fraud is a \textbf{multi-billion-dollar problem} enabled by structural opacity, voluntary reporting, and concentrated authority
+\item Traditional detection is limited by \textbf{regulatory capacity constraints}, cognitive biases, and univariate statistical methods
+\item AI/ML offers four fundamental advantages: \textbf{scalability, pattern recognition, real-time monitoring, multi-modal integration}
+\item This survey makes \textbf{three contributions}:
+  \begin{itemize}\compactlist
+  \item[\textbf{C1}] Detection pipeline taxonomy (5 stages)
+  \item[\textbf{C2}] Adversarial and regulatory readiness assessment
+  \item[\textbf{C3}] Research roadmap (10 open problems)
+  \end{itemize}
+\item The field is \textbf{fragmented and early-stage} -- no prior survey addresses AI fraud detection specifically for hedge funds
+\item Qualitative synthesis approach is appropriate given the current lack of standardized benchmarks
+\end{enumerate}
+\bottomnote{Source: Paper Section 1}
+\end{frame}
+
+\end{document}

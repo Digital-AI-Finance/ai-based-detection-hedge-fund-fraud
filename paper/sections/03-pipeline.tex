@@ -1,0 +1,279 @@
+% ==================== SECTION 3: DETECTION PIPELINE FRAMEWORK ====================
+\section{A Unified Detection Pipeline Framework}
+\label{sec:pipeline}
+
+The preceding section catalogued the fraud types that afflict the hedge fund industry, the data sources available for detection, and the regulatory environment within which surveillance systems must operate.  We now synthesize these elements into a unified, end-to-end detection pipeline---the paper's primary organizational contribution (Contribution~C1).  While individual components of this pipeline have been studied in isolation---serial correlation analysis for return smoothing \citep{getmansky2004econometric}, Benford's law tests for data fabrication \citep{nigrini2012benford}, logistic regression on regulatory filings for fraud prediction \citep{dimmock2012predicting}---no prior work has assembled them into a coherent architectural framework tailored specifically to the hedge fund context.  The five-stage pipeline presented here maps the fraud taxonomy of \Cref{sec:taxonomy} to concrete detection stages, identifies which AI and machine learning methods are best suited to each stage, and exposes the interfaces and feedback mechanisms through which stages interact.  This framework serves three purposes: it provides researchers with a structured lens for positioning new contributions within the detection workflow; it offers practitioners an engineering blueprint for building operational surveillance systems; and it reveals the methodological gaps that motivate the research agenda of \Cref{sec:research-agenda}.
+
+% ---------- 3.1 Pipeline Overview ----------
+\subsection{Pipeline Overview}
+\label{sec:pipeline-overview}
+
+The detection pipeline comprises five sequential stages, each transforming the output of its predecessor into progressively more refined and actionable assessments:
+
+\begin{enumerate}
+    \item \textbf{Data Ingestion and Integration} (\Cref{sec:stage-ingestion}): Multi-source data collection, temporal alignment, entity resolution, and quality assurance across heterogeneous data streams.
+    \item \textbf{Feature Engineering} (\Cref{sec:stage-features}): Extraction of domain-specific features organized into five families---statistical, Benford's law, textual, network-relational, and temporal---that translate raw data into representations amenable to machine learning.
+    \item \textbf{Model Selection and Training} (\Cref{sec:stage-models}): Selection and training of AI methods, organized into six method families, matched to specific fraud types and data characteristics.
+    \item \textbf{Explainability and Interpretation} (\Cref{sec:stage-explainability}): Post-hoc and intrinsic explanation of model outputs to satisfy regulatory transparency requirements and support human decision-making.
+    \item \textbf{Deployment and Monitoring} (\Cref{sec:stage-deployment}): Operationalization of trained models within production surveillance environments, including concept drift detection, alert prioritization, and human-in-the-loop feedback.
+\end{enumerate}
+
+Critically, the pipeline is not strictly unidirectional.  A feedback loop from the deployment stage back to feature engineering and model training enables the system to incorporate investigator judgments, adapt to evolving fraud patterns, and recalibrate as new data sources become available.  \Cref{fig:pipeline} illustrates the overall architecture, including data flow arrows between stages, feedback loops from deployment to earlier stages, and annotations indicating which fraud types from \Cref{tab:fraud-taxonomy} are primarily addressed at each stage.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+    node distance=1.8cm,
+    stage/.style={rectangle, draw=black!70, fill=blue!8, rounded corners, minimum width=4.8cm, minimum height=1.1cm, align=center, font=\small\bfseries},
+    arrow/.style={-{Stealth[length=3mm]}, thick, draw=black!60},
+    feedbackarrow/.style={-{Stealth[length=2.5mm]}, thick, draw=red!60, dashed},
+    annotation/.style={font=\scriptsize\itshape, text=black!60, align=left}
+]
+% Stages
+\node[stage] (S1) {Stage 1: Data Ingestion\\and Integration};
+\node[stage, below=of S1] (S2) {Stage 2: Feature\\Engineering};
+\node[stage, below=of S2] (S3) {Stage 3: Model Selection\\and Training};
+\node[stage, below=of S3] (S4) {Stage 4: Explainability\\and Interpretation};
+\node[stage, below=of S4] (S5) {Stage 5: Deployment\\and Monitoring};
+
+% Forward arrows
+\draw[arrow] (S1) -- (S2);
+\draw[arrow] (S2) -- (S3);
+\draw[arrow] (S3) -- (S4);
+\draw[arrow] (S4) -- (S5);
+
+% Feedback loop
+\draw[feedbackarrow] (S5.east) -- ++(1.8,0) |- (S2.east) node[pos=0.25, right, annotation] {Investigator\\feedback};
+\draw[feedbackarrow] (S5.west) -- ++(-1.8,0) |- (S3.west) node[pos=0.25, left, annotation] {Drift-triggered\\retraining};
+
+% Fraud type annotations
+\node[annotation, right=2.8cm of S1] {All fraud types};
+\node[annotation, right=2.8cm of S2] {Performance fabrication,\\regulatory fraud};
+\node[annotation, right=2.8cm of S3] {Strategy misrepresentation,\\allocation fraud};
+\node[annotation, right=2.8cm of S4] {EU AI Act Art.\ 13};
+\node[annotation, right=2.8cm of S5] {Market manipulation,\\concept drift};
+\end{tikzpicture}
+\caption{Architecture of the five-stage detection pipeline.  Solid arrows indicate the forward data flow; dashed arrows represent feedback loops from deployment to earlier stages.  Annotations on the right indicate which fraud types (\Cref{tab:fraud-taxonomy}) and regulatory considerations are primarily addressed at each stage.}
+\label{fig:pipeline}
+\end{figure}
+
+% ---------- 3.2 Stage 1: Data Ingestion and Integration ----------
+\subsection{Stage 1: Data Ingestion and Integration}
+\label{sec:stage-ingestion}
+
+The first pipeline stage addresses the fundamental challenge of assembling a coherent analytical dataset from data sources that differ in structure, frequency, reliability, and provenance.  As detailed in \Cref{sec:data-ecosystem}, the hedge fund data ecosystem spans at least four layers: return data from commercial databases (monthly, numerical), regulatory filings from SEC EDGAR and equivalent repositories (quarterly or annually, textual and semi-structured), alternative data from news, social media, and satellite providers (continuous, heterogeneous), and synthetic data generated to address class imbalance (on-demand, model-derived).  Fusing these sources into a unified representation suitable for downstream feature extraction requires addressing four distinct sub-problems.
+
+\paragraph{Temporal alignment.}
+Each data source operates on a different reporting cadence.  Return data arrive monthly with a typical lag of 30 to 60 days.  Form ADV filings are updated annually, with material amendments filed on an ad hoc basis.  Form 13F holdings are disclosed quarterly with a 45-day delay.  News and social media data arrive continuously but at irregular intervals.  Aligning these streams requires careful interpolation and aggregation decisions: monthly returns can be aligned to quarter-end dates to match filing data, but this discards intra-quarter dynamics that may carry fraud signals.  Alternative data must be aggregated into windows that match the periodicity of the lowest-frequency source, or multi-resolution architectures must be employed that process each stream at its native frequency before fusion.  The choice of alignment strategy directly affects which temporal patterns---such as the end-of-quarter return spikes that \citet{bollen2012suspicious} identified as potential manipulation signals---remain visible to downstream models.
+
+\paragraph{Data quality and bias correction.}
+Hedge fund data suffer from well-documented biases that, if left uncorrected, propagate through the entire pipeline.  Survivorship bias, estimated by \citet{fung2009measurement} at approximately 242 basis points per year in return overstatement, arises because defunct funds exit live databases.  Backfill bias, estimated at 442 basis points per year, results from the retroactive inclusion of favorable pre-reporting return histories.  Self-selection bias reflects the voluntary nature of database reporting: funds with poor or suspicious performance may simply stop reporting rather than reveal deteriorating results \citep{agarwal2011hedge, aiken2013out}.  For fraud detection specifically, these biases create a pernicious asymmetry---fraudulent funds that are eventually detected and shut down enter the graveyard section of databases, while successful frauds that continue operating remain in the live section, potentially contaminating the ``clean'' training class.  Correction procedures include restricting analysis to post-reporting-inception returns (to address backfill bias), requiring the use of databases that maintain graveyard records (to address survivorship bias), and modeling the reporting decision process itself as an informative signal \citep{agarwal2011hedge}.
+
+\paragraph{Entity resolution.}
+A single hedge fund may appear under different names, identifiers, and organizational structures across data sources.  The Lipper TASS database assigns its own fund identifiers, which do not correspond to HFR's classification scheme, the SEC's Central Registration Depository (CRD) numbers, or the Legal Entity Identifiers (LEIs) used in European regulatory filings.  A fund manager who launches a new vehicle after a prior fund's failure may deliberately obscure the connection between the old and new entities.  Entity resolution---the task of linking records that refer to the same real-world fund or manager---is therefore both a data engineering challenge and a fraud-relevant signal: the inability to link a fund to its predecessors may itself indicate an attempt to escape reputational consequences.  Approximate string matching on fund and manager names, combined with shared-attribute clustering (common addresses, auditors, administrators, or prime brokers), provides a practical starting point.  Graph-based entity resolution methods, which propagate identity evidence through networks of shared relationships, offer more robust linking at the cost of greater computational complexity.  The Dodd-Frank Act's mandate of Form ADV filing since 2010 has substantially improved entity resolution for US-registered advisers by providing a stable regulatory identifier (the CRD number) that can serve as a linkage key across databases \citep{brown2008mandatory}.
+
+\paragraph{Multi-source fusion architecture.}
+The ingestion stage must produce a unified fund-level record that integrates all available data modalities.  We distinguish two architectural approaches.  In \textit{early fusion}, raw data from all sources are merged into a single feature matrix before any feature extraction occurs; this approach is simple but requires all sources to be aligned to a common temporal grid and forces a single representation for fundamentally different data types.  In \textit{late fusion}, each data source is processed through a modality-specific feature extraction pipeline (described in \Cref{sec:stage-features}), and the resulting feature vectors are concatenated or combined through learned attention weights at the model input stage.  Late fusion preserves the native structure of each data source and accommodates missing modalities gracefully---a fund that does not file Form 13F because it falls below the reporting threshold can still be analyzed using return and filing data---but it requires careful design of the fusion mechanism to ensure that cross-modal interactions (such as inconsistencies between stated strategy and realized factor exposures) are captured rather than lost.
+
+% ---------- 3.3 Stage 2: Feature Engineering ----------
+\subsection{Stage 2: Feature Engineering}
+\label{sec:stage-features}
+
+The feature engineering stage transforms the integrated dataset from Stage~1 into a structured representation that encodes the statistical, linguistic, relational, and temporal signatures of hedge fund fraud.  We organize features into five families, each targeting different fraud types and exploiting different data modalities.  The full mathematical specifications are provided in \Cref{app:features}; here we describe the intuition, key examples, and fraud-detection rationale for each family.
+
+% ----- 3.3.1 Statistical Features -----
+\subsubsection{Statistical Features}
+\label{sec:features-statistical}
+
+Statistical features operate on the monthly return series $\{r_t\}_{t=1}^{T}$ and capture distributional anomalies that arise when returns are fabricated, smoothed, or otherwise manipulated.
+
+\textit{Serial correlation.}  The first-order autocorrelation coefficient $\rho_1 = \text{Corr}(r_t, r_{t-1})$ serves as a proxy for return smoothing and illiquidity-induced stale pricing.  \citet{getmansky2004econometric} developed an econometric model demonstrating that managed pricing of illiquid assets introduces predictable serial correlation into reported returns, with typical $\rho_1$ values of 0.3 to 0.5 for funds holding illiquid positions.  Abnormally high serial correlation, particularly when the fund claims to hold liquid assets, signals potential NAV manipulation.  Higher-order autocorrelations $\rho_2, \rho_3$ and the Ljung-Box $Q$-statistic provide complementary measures of return predictability that legitimate returns should not exhibit.
+
+\textit{Distributional discontinuity.}  \citet{bollen2012suspicious} identified a distinctive ``kink'' at zero in the empirical return distribution of suspicious funds: an excess of small positive returns and a deficit of small negative returns, consistent with managers selectively reclassifying marginal losses as small gains.  This discontinuity can be quantified by comparing the density of returns in a narrow band above zero to the density in a symmetric band below zero, or by testing for a structural break in the return histogram at zero using kernel density estimation.
+
+\textit{Higher moments and risk-adjusted performance.}  The Sharpe ratio $S = \bar{r}/\sigma_r$ provides a baseline measure of risk-adjusted performance; implausibly high Sharpe ratios, as in the Madoff case, signal fabrication.  Skewness and excess kurtosis capture asymmetry and tail behavior: legitimate hedge fund returns typically exhibit negative skewness and positive excess kurtosis, reflecting exposure to tail risk, while fabricated returns often display near-zero skewness and low kurtosis \citep{lo2001risk}.  Maximum drawdown---the largest peak-to-trough decline in the cumulative return series---provides an additional measure of downside exposure that is difficult to fabricate convincingly over long horizons.
+
+\textit{Long-memory detection.}  The Hurst exponent $H$, estimated via rescaled range (R/S) analysis or detrended fluctuation analysis (DFA), measures the degree of long-range dependence in a return series.  A Hurst exponent significantly above $0.5$ indicates persistent serial dependence that may arise from return smoothing or managed pricing.  Combined with GARCH-model residual analysis, which captures volatility clustering patterns, the Hurst exponent adds a fractal dimension to the characterization of return dynamics.
+
+% ----- 3.3.2 Benford's Law Features -----
+\subsubsection{Benford's Law Features}
+\label{sec:features-benford}
+
+Benford's law, first observed empirically by \citet{benford1938law} and formalized by \citet{nigrini2012benford} for forensic applications, predicts that the leading digit $d$ of numbers drawn from many naturally occurring distributions follows the probability $P(d) = \log_{10}(1 + 1/d)$ for $d \in \{1, 2, \ldots, 9\}$.  Deviations from this expected distribution in reported financial data can signal fabrication, since human-generated or algorithmically engineered numbers often fail to reproduce the logarithmic digit pattern.
+
+\textit{First-digit test.}  The observed frequency of each leading digit in a fund's return series (or reported net asset values) is compared to the Benford distribution using a chi-squared goodness-of-fit test:
+\begin{equation}
+\chi^2 = \sum_{d=1}^{9} \frac{(O_d - E_d)^2}{E_d},
+\label{eq:benford-chi}
+\end{equation}
+where $O_d$ is the observed count and $E_d = N \cdot \log_{10}(1 + 1/d)$ is the expected count for $N$ total observations.  Significant departures indicate potential data manipulation, though the test has limited statistical power for short return histories typical of hedge funds (e.g., fewer than 60 monthly observations).
+
+\textit{Second-digit and summation tests.}  The second-digit test examines digits in the tens place and is often more sensitive to subtle manipulation than the first-digit test, because fabricators who are aware of Benford's law may engineer first digits to conform while neglecting second digits \citep{nigrini2012benford}.  The summation test compares the sum of values sharing each leading digit to the theoretically expected proportion; it is particularly effective for detecting round-number manipulation in reported amounts.
+
+\textit{Multi-dimensional Benford feature space.}  For machine learning applications, the nine first-digit frequencies, ten second-digit frequencies, and two test statistics (chi-squared and Kolmogorov-Smirnov) can be concatenated into a 21-dimensional feature vector that captures the overall conformity of a fund's reported data to Benford expectations.  This representation enables ML models to detect complex patterns of digit manipulation that individual hypothesis tests would miss---for example, a fund whose first digits conform to Benford's law but whose second digits are anomalously uniform.
+
+% ----- 3.3.3 Textual Features -----
+\subsubsection{Textual Features from Regulatory Filings}
+\label{sec:features-textual}
+
+Regulatory filings, particularly the narrative sections of Form ADV Part~2 brochures and investor letters, contain linguistic signals that complement quantitative return analysis.  Natural language processing (NLP) methods extract features that capture the complexity, sentiment, consistency, and evolution of a fund's disclosures.
+
+\textit{Filing complexity and readability.}  The Gunning Fog index, defined as $\text{Fog} = 0.4 \times (\text{ASL} + \text{PHW})$ where ASL is average sentence length and PHW is the percentage of hard words (three or more syllables), measures the readability of filing text.  Total word count, sentence count, and type-token ratio provide complementary measures.  Prior research in accounting fraud has demonstrated that firms engaged in misconduct tend to produce filings of greater linguistic complexity, possibly to obscure material information.
+
+\textit{Sentiment analysis.}  Domain-specific language models, in particular FinBERT \citep{araci2019finbert}---a BERT model \citep{devlin2019bert} fine-tuned on financial text---enable sentiment scoring that captures the tone of fund communications.  Aggregate sentiment scores, sentiment volatility (the standard deviation of sentence-level scores across a filing), and the proportion of hedging language (``may,'' ``could,'' ``potential'') provide features that can signal managerial uncertainty or deliberate obfuscation.  SEC-BERT \citep{loukas2022secbert}, pre-trained specifically on EDGAR filings, offers further domain adaptation for regulatory text.
+
+\textit{Boilerplate deviation and temporal drift.}  The cosine similarity between a fund's filing text and a template constructed from the mean term-frequency representation of peer filings measures the degree of boilerplate language.  Funds that deviate substantially from peer templates---either through unusually vague language or through anomalously specific disclosures---may warrant scrutiny.  Critically, the \textit{temporal trajectory} of readability and boilerplate deviation can be more informative than any single cross-sectional measurement: deteriorating readability over successive filings, increasing use of hedging language, or growing divergence from prior filings may indicate evolving concealment behavior as fraud progresses.
+
+\textit{Topic modeling and strategy description analysis.}  Latent Dirichlet Allocation (LDA) or neural topic models applied to the strategy description sections of Form ADV brochures can identify topic drift over time---shifts in the language used to describe a fund's investment approach that may correspond to undisclosed strategy changes.  Comparing the topic distribution of a fund's textual strategy description against its quantitative factor exposures (derived from return-based style analysis) enables cross-modal consistency checking: a fund that describes an equity long/short strategy but whose returns load on credit spread and volatility factors exhibits a text-quant inconsistency that merits investigation.
+
+% ----- 3.3.4 Network/Relational Features -----
+\subsubsection{Network and Relational Features}
+\label{sec:features-network}
+
+Hedge funds do not operate in isolation.  Each fund is embedded in a network of relationships with service providers (auditors, administrators, custodians, prime brokers), other funds (through co-investment, shared managers, or common limited partners), and regulatory entities.  Features derived from these network structures capture ``guilt by association'' patterns and organizational risk indicators that return-based and textual features cannot detect.
+
+\textit{Fund--service-provider graphs.}  The bipartite graph linking funds to their auditors, administrators, and custodians encodes critical operational risk information.  Small, non-Big-Four audit firms are over-represented among funds that subsequently face enforcement actions \citep{brown2008mandatory}.  A fund that changes its auditor from a reputable firm to a smaller, less established firm---particularly if the change coincides with other risk signals---exhibits a pattern associated with weakening oversight.  Node-level features extracted from this graph include the auditor's client count, the auditor's historical association with sanctioned funds, and the frequency of auditor changes.
+
+\textit{Manager history networks.}  A graph connecting managers to the funds they have operated, including defunct funds, captures the phenomenon of ``serial offenders''---managers who launch new funds after prior vehicles have failed or been sanctioned.  \citet{dimmock2012predicting} demonstrated that prior regulatory sanctions are a significant predictor of future fraud.  Network features such as the number of prior fund closures, the time since the most recent closure, and the degree of overlap in service providers between successive funds encode this managerial track record.
+
+\textit{Co-investment and capital flow networks.}  Funds sharing common investors or exhibiting correlated capital flows may be connected through structures---such as fund-of-funds arrangements or informal referral networks---that facilitate the propagation of fraudulent schemes.  Centrality measures computed on these networks provide fund-level features: a fund with unusually high betweenness centrality occupies a bridging position between otherwise disconnected investor communities, a structural signature associated with Ponzi schemes that depend on continuous capital inflows from diverse sources.  Degree centrality, eigenvector centrality, and clustering coefficients offer complementary perspectives on a fund's structural role in the capital flow network.
+
+% ----- 3.3.5 Temporal Features -----
+\subsubsection{Temporal Features}
+\label{sec:features-temporal}
+
+Time-series dynamics carry fraud-relevant information beyond what static distributional features capture.  Temporal features model the evolution of fund behavior and detect transitions that may signal the onset, escalation, or concealment of fraudulent activity.
+
+\textit{Regime detection.}  Hidden Markov Models (HMMs) fitted to a fund's return series can identify latent regime states---for example, a ``normal'' regime and a ``manipulated'' regime characterized by different mean, variance, and autocorrelation parameters.  The estimated transition probabilities between regimes, the posterior probability of occupying each regime at each time point, and the timing of regime transitions relative to market events provide features that can distinguish legitimate strategy adaptation from suspicious behavioral shifts.
+
+\textit{Change-point detection.}  \citet{patton2015change} demonstrated that structural breaks in hedge fund risk exposures frequently precede fund failure.  Bayesian change-point algorithms, such as the Bayesian Online Change Point Detection (BOCPD) method, detect abrupt shifts in the parameters of a fund's return distribution.  The number of detected change points, their temporal spacing, and the magnitude of parameter changes at each transition serve as features.  A fund exhibiting frequent, large-magnitude change points that do not correspond to identifiable market events warrants closer examination.
+
+\textit{Calendar effects and end-of-period manipulation.}  Systematic patterns in return timing---such as consistently higher returns in December relative to other months, or abnormally positive returns on the last trading day of each quarter---can signal end-of-period NAV manipulation.  These calendar features are computed as the coefficients of month-of-year and day-of-quarter dummy variables in a regression framework, or as the deviation of period-end returns from the fund's baseline return distribution.
+
+\textit{Momentum and reversal patterns.}  The autocorrelation structure of returns at multiple lags captures momentum (positive autocorrelation at short horizons) and reversal (negative autocorrelation at longer horizons) dynamics.  While legitimate strategies exhibit characteristic momentum-reversal patterns that reflect their investment style, fabricated returns often display artificially smooth momentum without the mean-reversion that economic fundamentals would impose.
+
+% ---------- 3.4 Stage 3: Model Selection and Training ----------
+\subsection{Stage 3: Model Selection and Training}
+\label{sec:stage-models}
+
+The model selection stage matches AI and machine learning methods to the specific characteristics of the hedge fund fraud detection problem: extreme class imbalance, small sample sizes, heterogeneous fraud types, multi-modal input features, and adversarial dynamics.  We organize available methods into six families, assessing each in terms of its suitability for the hedge fund context rather than abstract performance benchmarks.  A detailed comparative review of specific studies within each family is deferred to \Cref{sec:literature}; here we describe the method families, their strengths and limitations, and their mapping to fraud types.
+
+% ----- 3.4.1 Supervised: Classical ML -----
+\subsubsection{Supervised Classification: Classical Machine Learning}
+\label{sec:models-classical}
+
+Classical supervised methods treat fraud detection as a binary or multi-class classification problem, learning a mapping from feature vectors to fraud labels using labeled training data.
+
+\textit{Logistic regression} provides the interpretable baseline.  \citet{dimmock2012predicting} applied logistic regression to Form ADV features and achieved an area under the receiver operating characteristic curve (\auc) of approximately 0.65 to 0.70 for predicting future SEC enforcement actions.  The model's transparency---each coefficient directly quantifies the log-odds contribution of the corresponding feature---makes it well suited to regulatory settings where decisions must be justified.  Its principal limitation is the assumption of linear feature-response relationships, which cannot capture the complex, nonlinear interactions among fraud indicators.
+
+\textit{Support vector machines} (SVMs) construct maximum-margin hyperplanes in feature space and handle moderate-dimensional problems effectively \citep{cortes1995support}.  The one-class SVM variant, trained only on ``normal'' fund returns, provides a semi-supervised anomaly detection capability that circumvents the need for labeled fraud examples.  SVMs perform well on small datasets---a relevant advantage given the limited number of confirmed hedge fund fraud cases---but scale poorly to very high-dimensional feature spaces and provide limited native interpretability.
+
+\textit{Random forests} \citep{breiman2001random} aggregate predictions from hundreds of decision trees, each trained on a bootstrapped subsample with random feature selection.  They handle high-dimensional, mixed-type feature spaces naturally, are robust to outliers and missing values, and provide feature importance scores through permutation importance or mean decrease in impurity.  In the hedge fund context, random forests can ingest the full concatenated feature vector spanning statistical, Benford, textual, network, and temporal features without requiring dimensionality reduction.
+
+\textit{Gradient boosting} methods---XGBoost \citep{chen2016xgboost}, LightGBM \citep{ke2017lightgbm}, and CatBoost \citep{prokhorenkova2018catboost}---represent the current state of the art for tabular classification tasks and dominate production fraud detection systems across the financial industry.  They construct ensembles of shallow decision trees sequentially, with each tree correcting the residual errors of its predecessors.  CatBoost handles categorical features natively, which is useful for encoding strategy classifications, auditor identities, and jurisdiction codes without one-hot encoding.  Ensemble stacking, which combines gradient boosting with other model families (e.g., random forests and neural networks) through a meta-learner, has achieved the highest reported detection performance in financial fraud settings, with $\fone$ scores approaching 0.88 in some studies \citep{hilal2022financial}.
+
+% ----- 3.4.2 Supervised: Deep Learning -----
+\subsubsection{Supervised Classification: Deep Learning}
+\label{sec:models-deep}
+
+Deep learning architectures offer the capacity to learn hierarchical, nonlinear representations directly from raw or minimally processed data, but their application to hedge fund fraud detection faces distinctive challenges.
+
+\textit{Long Short-Term Memory} (LSTM) networks \citep{hochreiter1997long}, a recurrent architecture designed to capture long-range dependencies in sequential data, are a natural fit for modeling monthly return time series.  An LSTM can learn temporal patterns---such as the gradual onset of return smoothing or the sudden transition from legitimate to fabricated reporting---that static feature vectors cannot represent.  However, hedge fund return series are extremely short by deep learning standards: 60 to 120 monthly observations per fund, compared to the thousands or millions of time steps available in speech, text, or high-frequency financial data.  This data scarcity limits the effective depth and complexity of LSTM architectures and increases the risk of overfitting.
+
+\textit{Convolutional neural networks} (CNNs), originally developed for image recognition \citep{lecun2015deep}, can be adapted to time-series analysis by converting return sequences into two-dimensional representations---for example, recurrence plots or Gramian angular fields---and applying standard convolutional filters.  This approach enables the detection of visual patterns in return dynamics, such as the characteristic ``smooth upward ramp'' of a Ponzi scheme, that are difficult to capture with hand-crafted features.  The representational transformation adds a pre-processing step but leverages the powerful pattern-matching capabilities of convolutional architectures.
+
+\textit{Transformer architectures} \citep{vaswani2017attention}, which use self-attention mechanisms to model dependencies between all pairs of positions in a sequence, can handle the long-range dependencies in sparse monthly time series more effectively than LSTMs when augmented with positional encodings that account for irregular temporal spacing.  Temporal attention weights are themselves interpretable: they reveal which historical periods the model considers most relevant to the current fraud assessment, providing a form of built-in explainability.  The principal challenge for all deep learning methods in this domain is data efficiency: with only 10,000 to 15,000 funds and fewer than 100 confirmed fraud cases, the parameter-to-data ratio is unfavorable, and regularization, pre-training, and transfer learning strategies are essential to prevent overfitting.
+
+% ----- 3.4.3 Unsupervised: Anomaly Detection -----
+\subsubsection{Unsupervised Anomaly Detection}
+\label{sec:models-anomaly}
+
+Unsupervised methods detect fraud by identifying funds whose behavior deviates substantially from the learned distribution of ``normal'' behavior, without requiring labeled fraud examples.  This characteristic is particularly valuable in the hedge fund context, where confirmed fraud labels are scarce and potentially biased toward historically detected fraud types \citep{chandola2009anomaly}.
+
+\textit{Isolation Forest} \citep{liu2008isolation} isolates anomalies by recursively partitioning the feature space with random splits; anomalous observations, which occupy sparse regions of the feature space, require fewer splits to isolate and therefore receive higher anomaly scores.  The method is computationally efficient, scales well to high-dimensional feature spaces, and requires no distributional assumptions.  It is effective for detecting global anomalies---funds that are unusual relative to the entire population---but may miss local anomalies that are unusual only within their strategy peer group.
+
+\textit{Local Outlier Factor} (LOF) \citep{breunig2000lof} addresses this limitation by measuring the local density deviation of each point relative to its $k$-nearest neighbors.  A fund that appears normal in the global feature space but has anomalously low density relative to funds pursuing similar strategies receives a high LOF score.  This local perspective is critical for hedge fund detection, where strategy-specific norms differ substantially: the return characteristics that are normal for a global macro fund would be anomalous for a statistical arbitrage fund.
+
+\textit{Deep autoencoders} learn compressed representations of normal fund behavior and flag funds whose reconstruction error---the discrepancy between the original input and the autoencoder's reconstruction---exceeds a threshold \citep{chalapathy2019deep}.  The latent representation captures the essential statistical regularities of legitimate returns, and deviations in the reconstruction reveal dimensions along which a fund's behavior is anomalous.  Variational autoencoders (VAEs) extend this framework with a probabilistic latent space, enabling the computation of explicit likelihood scores for each fund.
+
+\textit{Density-based clustering.}  DBSCAN \citep{ester1996density} identifies clusters of funds with similar characteristics and labels funds that do not belong to any cluster as noise points---potential anomalies.  In the fraud detection context, a fund that cannot be assigned to any strategy peer group may be misrepresenting its investment approach or pursuing an undisclosed strategy, warranting further investigation.
+
+% ----- 3.4.4 NLP and Text Mining -----
+\subsubsection{Natural Language Processing and Text Mining}
+\label{sec:models-nlp}
+
+NLP methods extract fraud-relevant signals from the textual data sources identified in \Cref{sec:features-textual}, enabling detection capabilities that purely quantitative approaches cannot provide.
+
+The evolution of NLP methods in financial applications has followed the broader trajectory of the field: from bag-of-words representations and term frequency--inverse document frequency (TF-IDF) weighting, through distributed word embeddings (word2vec, GloVe), to contextualized language models based on the transformer architecture.  Each generation has expanded the range of textual signals that can be captured.  Bag-of-words methods can identify the presence of specific fraud-associated terms but miss semantic context; word embeddings capture semantic similarity but not the sequential structure of sentences; transformer-based models capture both semantics and context, enabling nuanced understanding of hedge fund communications.
+
+\textit{FinBERT} \citep{araci2019finbert}, fine-tuned on financial news and analyst reports, provides domain-adapted sentiment analysis that outperforms general-purpose sentiment tools on financial text.  Applied to Form ADV brochures, investor letters, and marketing materials, FinBERT can score the overall tone of fund communications and detect sentiment shifts that precede fraud revelations.  \textit{SEC-BERT} \citep{loukas2022secbert}, pre-trained on the full corpus of EDGAR filings, offers further specialization for regulatory documents, capturing the distinctive vocabulary and rhetorical patterns of SEC filings that general financial language models may miss.
+
+Key NLP applications for hedge fund fraud detection include detecting vague or evasive language in strategy descriptions, identifying inconsistencies between successive filings by the same fund, measuring the divergence between a fund's textual strategy description and its quantitative return characteristics, and flagging unusual linguistic patterns in prospectuses and offering memoranda.  The combination of NLP-derived features with return-based statistical features creates a multi-modal detection capability that is more robust to evasion than either modality alone: a fraudster who engineers returns to satisfy statistical tests must also maintain textual consistency across filings, substantially raising the complexity of concealment.
+
+% ----- 3.4.5 Graph Neural Networks -----
+\subsubsection{Graph Neural Networks}
+\label{sec:models-gnn}
+
+Graph neural networks (GNNs) operate on the relational structures described in \Cref{sec:features-network}, propagating information through the fund-entity network to produce node-level embeddings that capture both a fund's own features and the characteristics of its neighbors \citep{pourhabibi2020fraud}.
+
+\textit{Graph Convolutional Networks} (GCNs) \citep{kipf2017semi} aggregate neighborhood information through spectral graph convolutions, producing embeddings that encode the local network structure around each fund node.  A fund connected to a recently sanctioned auditor, a manager with a history of fund failures, and a custodian with weak controls would receive an embedding that reflects these risk-associated connections, even if the fund's own return-based features appear benign.
+
+\textit{Graph Attention Networks} (GATs) \citep{velickovic2018graph} extend GCNs by learning attention weights that determine how much influence each neighbor exerts on a node's embedding.  This attention mechanism is particularly useful for heterogeneous fund-entity graphs, where the relevance of different relationship types (auditor vs.\ administrator vs.\ co-investor) to fraud risk varies and should be learned from data rather than specified a priori.
+
+\textit{GraphSAGE} \citep{hamilton2017inductive} enables inductive learning on unseen nodes by learning a neighborhood aggregation function rather than node-specific embeddings.  This property is essential for hedge fund detection, where new funds continuously enter the market and must be assessed without retraining the full model.  A newly launched fund can be evaluated by sampling and aggregating its neighborhood in the fund-entity graph, leveraging the model's learned understanding of which relational patterns are associated with elevated fraud risk.
+
+\textit{Temporal knowledge graphs} extend static GNN architectures by incorporating time-stamped edges that capture the evolution of fund-entity relationships.  A fund that severs its relationship with a reputable auditor and simultaneously establishes connections with service providers associated with prior fraud cases exhibits a temporal relational pattern---a ``flight from oversight''---that static network features cannot capture but temporal GNNs can model explicitly.
+
+The key advantage of GNN-based approaches for hedge fund fraud detection is their ability to capture ``guilt by association'' patterns: funds that are individually inconspicuous but are embedded in suspicious relational structures can be identified through network propagation.  The principal limitation is data availability: constructing comprehensive fund-entity graphs requires linking data across multiple sources, a process that depends on the entity resolution capabilities of Stage~1.
+
+% ----- 3.4.6 Generative and Synthetic Methods -----
+\subsubsection{Generative and Synthetic Methods}
+\label{sec:models-generative}
+
+Generative models serve two distinct roles in the detection pipeline: as anomaly detectors that learn the distribution of normal fund behavior, and as data augmentation tools that generate synthetic fraud examples to address class imbalance.
+
+\textit{Generative adversarial networks for anomaly detection.}  GAN-based anomaly detection methods, including BiGAN and AnoGAN \citep{goodfellow2014generative}, train a generator to produce realistic return series that resemble normal fund behavior.  At inference time, a fund whose returns cannot be well reconstructed by the generator---measured by the reconstruction error in the latent space---is flagged as anomalous.  The adversarial training process forces the generator to capture the full complexity of normal return distributions, including non-Gaussian features and temporal dependencies, producing a more expressive normality model than parametric distributional assumptions.
+
+\textit{Synthetic data generation for class imbalance.}  Beyond SMOTE \citep{chawla2002smote}, which generates synthetic minority-class samples through linear interpolation in feature space, conditional GANs and variational autoencoders \citep{kingma2014auto} can generate synthetic fraud examples that preserve the statistical dependencies and temporal dynamics of real fraud cases.  Conditional generation is essential in the hedge fund context because different fraud types produce qualitatively different statistical signatures---synthetic Ponzi-scheme returns should exhibit different distributional properties than synthetic NAV-manipulation returns.  The Wasserstein GAN variant, which optimizes the earth-mover distance between generated and real distributions, has shown particular promise for financial time-series generation.  Validation of synthetic data quality is critical: generated samples must pass domain-specific plausibility checks (e.g., realistic return magnitudes, appropriate serial correlation structure, sensible Sharpe ratios) before being used to augment training sets.
+
+% ---------- 3.5 Stage 4: Explainability and Interpretation ----------
+\subsection{Stage 4: Explainability and Interpretation}
+\label{sec:stage-explainability}
+
+A detection system that flags a fund as suspicious but cannot articulate the basis for its assessment is of limited operational value.  Regulators who must justify examination priorities, compliance officers who must escalate findings to senior management, and enforcement attorneys who must present evidence in administrative proceedings all require explanations that translate model outputs into actionable intelligence.  The EU AI Act's Article~13 transparency requirement (discussed in \Cref{sec:regulatory-eu}) codifies this need into law for high-risk AI systems \citep{eu2024aiact}.  The explainability stage addresses this requirement through three complementary approaches.
+
+\textit{SHAP values.}  SHapley Additive exPlanations \citep{lundberg2017unified} decompose each prediction into the additive contribution of each input feature, grounded in the cooperative game theory concept of Shapley values.  For a fund flagged by a gradient-boosted ensemble, SHAP can identify that, for example, 35\% of the fraud score is attributable to abnormally high first-order serial correlation ($\rho_1 = 0.52$ vs.\ a strategy-peer median of $0.08$), 25\% to the use of a small, non-Big-Four auditor with two prior client sanctions, 20\% to deteriorating readability in successive Form ADV brochures, and 20\% to the fund's peripheral position in the co-investment network.  This feature-level decomposition maps directly onto the investigative categories that SEC examiners are trained to evaluate, bridging the gap between algorithmic output and regulatory workflow.
+
+\textit{LIME.}  Local Interpretable Model-agnostic Explanations \citep{ribeiro2016why} construct a locally faithful interpretable model---typically a sparse linear model---in the neighborhood of a specific prediction.  While SHAP provides exact feature attributions for tree-based models, LIME is model-agnostic and can be applied to any classifier, including deep neural networks and GNNs.  For case-by-case investigation, LIME can generate explanations tailored to the specific characteristics of the flagged fund, highlighting the features that are most influential in its local decision region.
+
+\textit{Attention visualization.}  For transformer-based and graph attention network models, the learned attention weights provide an intrinsic form of explainability.  In a temporal transformer applied to monthly return series, attention weights reveal which historical time periods the model considers most relevant to the current fraud assessment---for example, concentrated attention on a six-month window during which returns became anomalously smooth.  In a GAT applied to the fund-entity graph, attention weights reveal which relational connections---a specific auditor, a particular co-investor, a prior fund managed by the same principal---contributed most to the fraud score.
+
+\textit{A worked example.}  Consider a hypothetical compliance alert generated by a deployed detection system.  The alert identifies Fund~XYZ, a mid-sized equity long/short fund, with a fraud probability of 0.78.  The accompanying SHAP explanation reveals three primary contributors: (1)~the fund's first-order serial correlation of $\rho_1 = 0.47$ is in the 98th percentile for equity long/short funds, suggesting return smoothing inconsistent with the fund's liquid equity mandate; (2)~the fund recently switched from a Big-Four auditor to a regional firm whose prior clients include two funds that subsequently faced SEC enforcement actions; and (3)~natural language analysis of the fund's most recent Form ADV brochure reveals a 40\% increase in the Fog readability index relative to the prior filing, with increased use of hedging language (``may,'' ``could,'' ``potentially'') in the risk factor section.  An investigator reviewing this alert can immediately identify three independent lines of inquiry---return analysis, operational due diligence, and filing review---each supported by specific, quantified anomalies.  This structured explanation transforms an opaque probability score into an actionable investigation plan.
+
+% ---------- 3.6 Stage 5: Deployment and Monitoring ----------
+\subsection{Stage 5: Deployment and Monitoring}
+\label{sec:stage-deployment}
+
+The final pipeline stage addresses the operational realities of running a fraud detection system in production.  The transition from a research prototype that performs well on historical data to a deployed system that delivers reliable surveillance over time introduces challenges that the preceding stages do not address: processing cadence, model degradation, alert management, and integration with human investigative workflows.
+
+\paragraph{Real-time versus batch processing.}
+Hedge fund fraud detection operates on a fundamentally different temporal cadence than most other financial surveillance applications.  Banking fraud detection systems process transactions in real time, rendering verdicts in milliseconds.  Credit card fraud systems evaluate each swipe at the point of sale.  Hedge fund surveillance, by contrast, is inherently batch-oriented: the primary input data---monthly returns and quarterly filings---arrive on fixed schedules, and the detection objective is to identify suspicious funds for further investigation rather than to block individual transactions.  The processing architecture should therefore be optimized for monthly or quarterly batch runs that score the full fund universe, supplemented by event-triggered evaluations when alternative data signals (e.g., breaking news, sudden web traffic changes, litigation filings) indicate the need for inter-batch reassessment.  This hybrid batch-plus-event architecture matches the temporal structure of the available data while reducing the detection lag discussed in \Cref{sec:data-alternative}.
+
+\paragraph{Concept drift detection.}
+Models trained on historical data degrade over time as the distribution of fund behavior shifts---both because legitimate strategies evolve in response to market dynamics and because fraudsters adapt their methods to evade detection.  Concept drift detection algorithms monitor the statistical properties of model inputs and outputs to identify when degradation occurs.  The Adaptive Windowing (ADWIN) method maintains a variable-length window of recent observations and detects drift by comparing the distributions of the window's subsets.  The Drift Detection Method (DDM) monitors the model's error rate and triggers an alarm when the error rate increases significantly relative to its historical baseline \citep{pang2021deep}.  Both methods can be adapted to the hedge fund context by monitoring fund-level anomaly scores, feature distributions, and model confidence scores across successive batch runs.
+
+\paragraph{Retraining cadence and strategy.}
+Drift detection triggers raise the question of when and how to retrain.  Calendar-based retraining on a fixed schedule (e.g., semi-annually) provides predictability but may lag behind rapid distributional shifts.  Drift-triggered retraining, which initiates model updates only when detected drift exceeds a threshold, is more adaptive but introduces the risk of frequent, potentially disruptive retraining cycles.  A pragmatic hybrid approach combines scheduled retraining with drift-triggered emergency updates, maintaining a model registry that tracks the performance characteristics of each model version and enables rollback if a retrained model underperforms its predecessor.
+
+\paragraph{Alert prioritization and workload management.}
+A detection system that generates more alerts than investigators can process defeats its own purpose.  Alert prioritization ranks flagged funds by a composite score that incorporates the model's fraud probability, the estimated financial exposure (assets under management as a proxy for potential investor losses), the novelty of the alert (is this a newly flagged fund or a persistent signal?), and the investigative tractability (are the data needed for follow-up investigation available?).  This prioritization function transforms a raw list of flagged funds into a manageable investigation queue, enabling resource-constrained regulatory and compliance teams to allocate their attention to the cases with the highest expected value of investigation.
+
+\paragraph{Human-in-the-loop integration.}
+The deployment stage must be designed for human collaboration, not human replacement.  Investigators who review alerts generate valuable feedback: confirmed fraud cases validate the model's predictions, cleared false positives identify systematic biases, and inconclusive cases highlight areas where the model's feature space is insufficient.  This feedback loop, channeled back to the feature engineering and model training stages, enables continuous improvement.  Active learning frameworks, in which the model selectively queries investigators about the cases most likely to improve its decision boundary, can maximize the information gained from each investigation and reduce alert fatigue---the well-documented tendency of human operators to discount or ignore alerts after experiencing repeated false positives.  The EU AI Act's Article~14 human oversight requirement is directly satisfied by this design: the system informs human decision-making without replacing it, and investigators retain the ability to override model recommendations at every stage.
+
+\paragraph{Integration with compliance infrastructure.}
+In practice, a detection system does not operate in isolation.  It must integrate with governance, risk, and compliance (GRC) platforms that manage regulatory reporting obligations, examination preparation, and enforcement coordination.  API-based interfaces that deliver prioritized alerts, supporting explanations, and investigation packages to existing case management systems reduce adoption barriers and ensure that detection outputs enter established workflows rather than creating parallel, disconnected processes.  Audit trail functionality---logging every model inference, alert generation, investigator action, and feedback event---is essential for both regulatory compliance and system improvement.
+
+\bigskip
+\noindent
+This section has presented the five-stage detection pipeline that constitutes the paper's primary organizational contribution.  The framework maps the fraud types catalogued in \Cref{sec:taxonomy} to specific data sources, feature families, and AI methods, while identifying the explainability and deployment requirements that operational systems must satisfy.  \Cref{sec:literature} builds on this framework by reviewing the specific studies that populate each stage, critically evaluating their methods, datasets, and findings within the context of hedge fund fraud detection.

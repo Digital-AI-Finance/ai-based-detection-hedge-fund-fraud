@@ -1,0 +1,50 @@
+[
+  {
+    "question": "What search period does the systematic review cover?",
+    "options": [
+      "a) 2010--2024",
+      "b) 2005--2025",
+      "c) 2000--2025",
+      "d) 2015--2025"
+    ],
+    "correct_answer": "c",
+    "explanation": "The systematic review covers a 25-year period from 2000 to 2025, capturing the evolution of AI-based fraud detection from early statistical methods to modern deep learning approaches.",
+    "section_reference": "Appendix A0: Search Protocol"
+  },
+  {
+    "question": "What is the citation threshold for including preprints?",
+    "options": [
+      "a) 10 citations",
+      "b) 20 citations",
+      "c) 50 citations",
+      "d) No threshold"
+    ],
+    "correct_answer": "b",
+    "explanation": "Preprints (arXiv, SSRN) were included only if they had at least 20 citations, ensuring they represent influential work despite not being peer-reviewed. This balances currency with quality.",
+    "section_reference": "Appendix A0: Inclusion Criteria"
+  },
+  {
+    "question": "How many independent reviewers conducted the screening process?",
+    "options": [
+      "a) 1",
+      "b) 2",
+      "c) 3",
+      "d) 5"
+    ],
+    "correct_answer": "b",
+    "explanation": "Two independent reviewers conducted title/abstract screening and full-text assessment. Disagreements were resolved through discussion or consultation with a third reviewer, following best practices for systematic reviews.",
+    "section_reference": "Appendix A0: Quality Assurance"
+  },
+  {
+    "question": "What technique identified additional studies beyond database searches?",
+    "options": [
+      "a) Expert consultation",
+      "b) Social media",
+      "c) Conference attendance",
+      "d) Snowballing"
+    ],
+    "correct_answer": "d",
+    "explanation": "Backward snowballing (reviewing reference lists) and forward snowballing (checking citations of key papers) identified additional relevant studies missed by database searches, ensuring comprehensive coverage.",
+    "section_reference": "Appendix A0: Supplementary Search"
+  }
+]

@@ -1,0 +1,52 @@
+name: Validate Quizzes
+
+on:
+  push:
+    paths:
+      - '**/questions.json'
+  pull_request:
+    paths:
+      - '**/questions.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate quiz JSON files
+        run: |
+          python3 -c "
+          import json, glob, sys
+          errors = 0
+          for f in sorted(glob.glob('**/questions.json', recursive=True)):
+              try:
+                  with open(f) as fh:
+                      data = json.load(fh)
+                  if not isinstance(data, list):
+                      print(f'ERROR: {f} is not a JSON array')
+                      errors += 1
+                      continue
+                  for i, q in enumerate(data):
+                      for field in ['question', 'options', 'correct_answer']:
+                          if field not in q:
+                              print(f'ERROR: {f} question {i} missing field: {field}')
+                              errors += 1
+                      if 'options' in q and not isinstance(q['options'], list):
+                          print(f'ERROR: {f} question {i} options is not a list')
+                          errors += 1
+                  print(f'OK: {f} ({len(data)} questions)')
+              except json.JSONDecodeError as e:
+                  print(f'ERROR: {f} invalid JSON: {e}')
+                  errors += 1
+          if errors:
+              print(f'\\n{errors} errors found')
+              sys.exit(1)
+          print('\\nAll quiz files valid')
+          "

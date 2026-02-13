@@ -1,0 +1,359 @@
+% ============================================================
+%  Slide Deck 8 -- Reproducibility Statement
+%  AI-Based Detection of Hedge Fund Fraud
+% ============================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Color definitions ----
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255,127,14}
+\definecolor{mlgreen}{RGB}{44,160,44}
+\definecolor{mlred}{RGB}{214,39,40}
+\definecolor{mlgray}{RGB}{127,127,127}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{midgray}{RGB}{180,180,180}
+
+% ---- Apply custom colors to Madrid theme ----
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% ---- Navigation / itemize ----
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% ---- Custom commands ----
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+\newcommand{\chartplaceholder}[2][5cm]{%
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth, max height=#1}
+\framebox[\textwidth][c]{%
+\rule{0pt}{#1}%
+\textcolor{midgray}{[#2]}%
+}
+\end{adjustbox}
+\end{center}
+}
+
+% ---- Notation ----
+\input{../notation}
+
+% ---- Title metadata ----
+\title{AI-Based Detection of Hedge Fund Fraud}
+\subtitle{Section 8 -- Reproducibility Statement}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+% ============================================================
+\begin{document}
+
+% ----------------------------------------------------------
+% SLIDE 1 -- Title
+% ----------------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 2 -- Outline
+% ----------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\compactlist
+\item Literature Search Protocol (SALSA Methodology)
+\item Search Funnel: 500 $\to$ 120 $\to$ \systematicpapers{}
+\item Search Funnel Chart
+\item Data Sources: Commercial Databases and Public Filings
+\item Database Coverage Chart
+\item Limitations: Proprietary Data and Licensing Constraints
+\item Code and Implementation References
+\item OP1 as Critical Enabler for Reproducibility
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 3 -- Literature Search Protocol
+% ----------------------------------------------------------
+\begin{frame}{Literature Search Protocol}
+\begin{block}{Methodology}
+Systematic search protocol informed by the \textbf{SALSA} (Search, AppraisaL, Synthesis, and Analysis) methodology (Grant \& Booth, 2009).
+\end{block}
+\vspace{2mm}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Five Scholarly Databases}
+\begin{enumerate}\compactlist
+\item Scopus
+\item Web of Science
+\item IEEE Xplore
+\item Social Science Research Network (SSRN)
+\item Google Scholar
+\end{enumerate}
+\vspace{2mm}
+\textbf{Search Period}: 2000--2025
+
+\column{0.48\textwidth}
+\textbf{Structured Boolean Query}
+\begin{itemize}\compactlist
+\item \textbf{Domain}: ``hedge fund'', ``alternative investment'', ``investment fund''
+\item \textbf{Fraud}: ``fraud'', ``manipulation'', ``anomaly''
+\item \textbf{Method}: ``machine learning'', ``artificial intelligence'', ``deep learning'', ``neural network''
+\item Searched across titles, abstracts, and keywords
+\end{itemize}
+\end{columns}
+\vspace{2mm}
+Additional: snowballing via reference lists of highly cited papers.
+\bottomnote{Source: Grant \& Booth (2009); paper Reproducibility Statement}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 4 -- Search Funnel
+% ----------------------------------------------------------
+\begin{frame}{Search Funnel: 500 $\to$ 120 $\to$ \systematicpapers{}}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{enumerate}\compactlist
+\item \textbf{Initial database searches}: $\sim$\textbf{500} potentially relevant publications
+\vspace{3mm}
+\item \textbf{Title and abstract screening}: reduced to \textbf{120} papers warranting full-text review
+\vspace{3mm}
+\item \textbf{Full-text review} against inclusion criteria:
+  \begin{itemize}\compactlist
+  \item Peer-reviewed or widely cited preprints
+  \item Addresses fraud/anomaly detection in investment funds
+  \item Uses AI/ML methods
+  \end{itemize}
+  $\Rightarrow$ \textbf{80 papers} met all criteria (core corpus)
+\vspace{3mm}
+\item \textbf{Contextual background}: +25 papers on financial regulation, general fraud detection, foundational ML
+\vspace{3mm}
+\item \textbf{Total systematically identified}: \textbf{\systematicpapers{} papers}
+\end{enumerate}
+
+\column{0.42\textwidth}
+\begin{block}{Qualitative Focus}
+The synthesis focuses on \textbf{methodological insights and contextual applicability} rather than exhaustive enumeration.
+\end{block}
+\vspace{3mm}
+\begin{block}{Inclusion Criteria}
+\begin{itemize}\compactlist
+\item Peer-reviewed publications or widely cited preprints
+\item Addresses fraud or anomaly detection
+\item Focus on investment funds
+\item Uses AI/ML methods
+\end{itemize}
+\end{block}
+\end{columns}
+\bottomnote{Source: Paper Reproducibility Statement}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 5 -- Search Funnel Chart
+% ----------------------------------------------------------
+\begin{frame}{Search Funnel: Visual}
+
+\chartplaceholder[5cm]{Chart: 01\_search\_funnel -- Funnel diagram showing literature screening stages: 500 initial results $\to$ 120 after title/abstract screening $\to$ 80 core papers after full-text review $\to$ 105 total with 25 contextual background papers added}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item Core corpus of 80 papers supplemented by 25 foundational/contextual references
+\item Full bibliography includes additional references cited for technical context
+\end{itemize}
+\bottomnote{Source: Paper Reproducibility Statement}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 6 -- Data Sources
+% ----------------------------------------------------------
+\begin{frame}{Data Sources: Commercial Databases and Public Filings}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Commercial Hedge Fund Databases}
+\begin{itemize}\compactlist
+\item \textbf{Lipper TASS} (now Refinitiv)
+\item \textbf{Hedge Fund Research (HFR)}
+\item \textbf{BarclayHedge}
+\item \textbf{Morningstar}
+\end{itemize}
+\vspace{2mm}
+Access requirements:
+\begin{itemize}\compactlist
+\item Institutional subscriptions
+\item Licensing restrictions prohibit redistribution
+\item Widely accessible via university libraries and commercial licenses
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Public Regulatory Filings}
+\begin{itemize}\compactlist
+\item \textbf{SEC \edgar{} System}:
+  \begin{itemize}\compactlist
+  \item Form ADV (adviser registration)
+  \item Form D (private offering)
+  \item Form 13F (quarterly holdings)
+  \end{itemize}
+\item Publicly accessible: \texttt{sec.gov/edgar}
+\item No restrictions on use
+\end{itemize}
+\vspace{2mm}
+\textbf{European Regulatory Data}
+\begin{itemize}\compactlist
+\item \aifmd{} data via national competent authorities
+\item Access procedures vary by jurisdiction
+\end{itemize}
+\end{columns}
+\bottomnote{Source: Paper Reproducibility Statement}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 7 -- Database Coverage Chart
+% ----------------------------------------------------------
+\begin{frame}{Database Coverage and Accessibility}
+
+\chartplaceholder[4.5cm]{Chart: 02\_database\_coverage -- Matrix or bar chart showing data sources (Lipper TASS, HFR, BarclayHedge, Morningstar, SEC EDGAR, AIFMD) mapped against accessibility level (public, institutional subscription, restricted) and data types available (returns, filings, holdings, enforcement labels)}
+
+\vspace{2mm}
+\begin{itemize}\compactlist
+\item \sec{} \edgar{} is the only \textbf{fully public} source with no access restrictions
+\item Commercial databases require institutional subscriptions but are widely available in academia
+\item Enforcement-labeled datasets are held by regulators and \textbf{not publicly accessible}
+\end{itemize}
+\bottomnote{Source: Paper Reproducibility Statement}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 8 -- Limitations
+% ----------------------------------------------------------
+\begin{frame}{Limitations: Proprietary Data and Licensing Constraints}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Proprietary Enforcement Datasets}
+\begin{itemize}\compactlist
+\item Several cited studies use \textbf{proprietary enforcement datasets} maintained by regulatory agencies
+\item Cannot be independently verified due to confidentiality restrictions
+\item We rely on published methodological descriptions
+\item Noted where data access limitations prevent full reproducibility
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Alternative Data Licensing}
+\begin{itemize}\compactlist
+\item Some referenced alternative data sources:
+  \begin{itemize}\compactlist
+  \item Satellite imagery
+  \item Geolocation analytics
+  \item Sentiment data
+  \end{itemize}
+\item Available only through \textbf{vendor-specific licenses}
+\item Cannot be redistributed
+\item We prioritize discussion of methods evaluable on \textbf{publicly accessible data}
+\end{itemize}
+\end{columns}
+\vspace{3mm}
+\begin{block}{Implication}
+Full end-to-end reproducibility of hedge fund fraud detection research remains constrained by \textbf{data access limitations endemic to the domain}.
+\end{block}
+\bottomnote{Source: Paper Reproducibility Statement}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 9 -- Code and Implementation
+% ----------------------------------------------------------
+\begin{frame}{Code and Implementation References}
+\begin{block}{Survey Paper: No Original Code}
+As a qualitative survey, no original computational experiments were conducted and no original code is provided.
+\end{block}
+\vspace{3mm}
+\textbf{Publicly Available Implementations of Reviewed Methods}
+\vspace{2mm}
+{\footnotesize
+\begin{center}
+\begin{tabular}{l l}
+\toprule
+\textbf{Method Category} & \textbf{Library / Framework} \\
+\midrule
+Classical ML (RF, GBM, SVM) & scikit-learn (Python), caret (R), XGBoost \\
+Deep learning (FFN, LSTM, autoencoder) & TensorFlow, PyTorch, Keras \\
+Graph neural networks & PyTorch Geometric, Deep Graph Library \\
+NLP / transformers & Hugging Face Transformers, spaCy \\
+Explainability (\shap{}, \lime{}) & shap (Python), lime (Python/R) \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+\vspace{3mm}
+\begin{itemize}\compactlist
+\item Where specific papers have released code, associated repositories are cited in the paper
+\item All canonical methods use \textbf{mature, well-documented} open-source ecosystems
+\end{itemize}
+\bottomnote{Source: Paper Reproducibility Statement}
+\end{frame}
+
+% ----------------------------------------------------------
+% SLIDE 10 -- OP1 as Critical Enabler
+% ----------------------------------------------------------
+\begin{frame}{OP1: The Critical Enabler for Reproducibility}
+\begin{block}{The Fundamental Bottleneck}
+Until public benchmark datasets exist (OP1), full end-to-end reproducibility of hedge fund fraud detection research will remain \textbf{constrained by data access limitations endemic to the domain}.
+\end{block}
+\vspace{3mm}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{What OP1 Would Unlock}
+\begin{itemize}\compactlist
+\item \textbf{Reproducible comparisons} across studies
+\item Standardized evaluation protocols
+\item Cross-method benchmarking on common data
+\item Progress measurement for the field
+\item \textbf{Accelerated methodological advancement} (as demonstrated by benchmarks in credit card fraud, image classification, NLP)
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Two-Track Path Forward}
+\begin{enumerate}\compactlist
+\item \textcolor{mlblue}{\textbf{Synthetic benchmarks}}: regime-switching models with injected fraud patterns, calibrated to real distributions
+\item \textcolor{mlblue}{\textbf{Anonymized regulatory data}}: differential privacy protocols enabling regulators to release sanitized enforcement-labeled datasets
+\end{enumerate}
+\vspace{3mm}
+\textcolor{mlblue}{Researchers are encouraged to consult the full research agenda (Section 6) for detailed approaches.}
+\end{columns}
+\bottomnote{Source: Paper Reproducibility Statement; Section 6.1.1 (OP1)}
+\end{frame}
+
+\end{document}

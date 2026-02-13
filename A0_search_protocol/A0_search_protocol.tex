@@ -1,0 +1,420 @@
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255,127,14}
+\definecolor{mlgreen}{RGB}{44,160,44}
+\definecolor{mlred}{RGB}{214,39,40}
+\definecolor{mlgray}{RGB}{127,127,127}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{midgray}{RGB}{180,180,180}
+
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+\newcommand{\bottomnote}[1]{\vfill\vspace{-2mm}\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}\vspace{1mm}\footnotesize\textbf{#1}}
+\newcommand{\compactlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\setlength{\parsep}{0pt}}
+\newcommand{\chartplaceholder}[2][5cm]{\begin{center}\begin{adjustbox}{max width=0.95\textwidth, max height=#1}\framebox[\textwidth][c]{\rule{0pt}{#1}\textcolor{midgray}{[#2]}}\end{adjustbox}\end{center}}
+
+\input{../notation}
+
+\title{Appendix A: Systematic Search Protocol}
+\subtitle{AI-Based Detection of Hedge Fund Fraud}
+\author{Systematic Literature Review Methodology}
+\date{}
+
+\begin{document}
+
+% ==================== SLIDE 1: Title ====================
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ==================== SLIDE 2: SALSA Methodology ====================
+\begin{frame}{SALSA Methodology for Systematic Review}
+
+\begin{block}{Framework}
+SALSA methodology adapted from clinical research to accommodate interdisciplinary AI/ML applications in financial fraud detection.
+\end{block}
+
+\vspace{3mm}
+
+\begin{columns}[T]
+
+\column{0.24\textwidth}
+\begin{block}{Search}
+\compactlist
+\begin{itemize}
+    \item Define search queries
+    \item Select databases
+    \item Execute searches
+    \item Track results
+\end{itemize}
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{AppraisaL}
+\compactlist
+\begin{itemize}
+    \item Screen titles/abstracts
+    \item Apply inclusion criteria
+    \item Full-text review
+    \item Quality assessment
+\end{itemize}
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{Synthesis}
+\compactlist
+\begin{itemize}
+    \item Extract key findings
+    \item Organize by themes
+    \item Identify patterns
+    \item Note gaps
+\end{itemize}
+\end{block}
+
+\column{0.24\textwidth}
+\begin{block}{Analysis}
+\compactlist
+\begin{itemize}
+    \item Compare methods
+    \item Evaluate effectiveness
+    \item Draw conclusions
+    \item Future directions
+\end{itemize}
+\end{block}
+
+\end{columns}
+
+\vspace{4mm}
+
+\begin{center}
+\textcolor{mlpurple}{\textbf{Ensures comprehensive coverage of AI-based hedge fund fraud detection literature}}
+\end{center}
+
+\bottomnote{Grant \& Booth (2009). SALSA framework for systematic literature review.}
+\end{frame}
+
+% ==================== SLIDE 3: Search Databases ====================
+\begin{frame}{Search Databases and Coverage}
+
+\begin{block}{Database Selection}
+Five major academic databases ensure comprehensive coverage of computer science and finance literature.
+\end{block}
+
+\vspace{2mm}
+
+\begin{table}
+\centering
+\footnotesize
+\begin{tabular}{@{}p{3cm}p{5.5cm}p{4cm}@{}}
+\toprule
+\textbf{Database} & \textbf{Coverage} & \textbf{Primary Focus} \\
+\midrule
+\textcolor{mlpurple}{\textbf{Scopus}} & Multidisciplinary abstracts and citations & Broad academic coverage \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Web of Science}} & Citation database across sciences & High-impact journals \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{IEEE Xplore}} & Computer science and engineering & AI/ML methodology \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{SSRN}} & Social science research network & Finance working papers \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Google Scholar}} & Supplementary coverage & Citation tracking, gray literature \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{3mm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Search Period:}
+\begin{itemize}\compactlist
+    \item 2000--2025 (25 years)
+    \item Emphasis on 2015--2025 (deep learning era)
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Rationale:}
+\begin{itemize}\compactlist
+    \item Captures modern AI/ML techniques
+    \item Includes foundational statistical methods
+\end{itemize}
+\end{columns}
+
+\bottomnote{Search conducted 2000--2025 with emphasis on deep learning period (2015--2025).}
+\end{frame}
+
+% ==================== SLIDE 4: Boolean Query Structure ====================
+\begin{frame}{Boolean Query Structure}
+
+\begin{block}{Query Design}
+Primary search query combines three conceptual blocks using Boolean operators to capture interdisciplinary literature.
+\end{block}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+
+\column{0.32\textwidth}
+\begin{block}{Block 1: Financial Domain}
+\compactlist
+\begin{itemize}
+    \item ``hedge fund''
+    \item ``investment fund''
+    \item ``alternative investment''
+\end{itemize}
+\vspace{1mm}
+\textcolor{mlpurple}{\textbf{OR}} operator
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Block 2: Fraud Terms}
+\compactlist
+\begin{itemize}
+    \item ``fraud''
+    \item ``manipulation''
+    \item ``anomaly''
+\end{itemize}
+\vspace{1mm}
+\textcolor{mlpurple}{\textbf{OR}} operator
+\end{block}
+
+\column{0.32\textwidth}
+\begin{block}{Block 3: AI/ML Methods}
+\compactlist
+\begin{itemize}
+    \item ``machine learning''
+    \item ``artificial intelligence''
+    \item ``deep learning''
+    \item ``neural network''
+\end{itemize}
+\textcolor{mlpurple}{\textbf{OR}} operator
+\end{block}
+
+\end{columns}
+
+\vspace{3mm}
+
+\begin{center}
+\fcolorbox{mlpurple}{mllavender4}{%
+\begin{minipage}{0.92\textwidth}
+\centering
+\textbf{Primary Query:} \\[1mm]
+(Block 1) \textcolor{mlpurple}{\textbf{AND}} (Block 2) \textcolor{mlpurple}{\textbf{AND}} (Block 3)
+\end{minipage}
+}
+\end{center}
+
+\vspace{2mm}
+
+\textbf{Secondary Query:} Broader terms to capture related research
+\begin{itemize}\compactlist
+    \item (``fund'' OR ``portfolio'') AND (``fraud detection'' OR ``anomaly detection'') AND (``classification'' OR ``prediction'')
+    \item Captures mutual fund and general portfolio fraud studies
+\end{itemize}
+
+\bottomnote{Boolean query designed to balance precision and recall across interdisciplinary literature.}
+\end{frame}
+
+% ==================== SLIDE 5: Boolean Query Visualization ====================
+\begin{frame}{Boolean Query Visualization}
+
+\chartplaceholder[10cm]{Venn diagram or flowchart showing the three conceptual blocks (Financial Domain, Fraud Terms, AI/ML Methods) and their intersection. Include example papers at each intersection point.}
+
+\bottomnote{Visual representation of systematic search query structure and result overlap.}
+\end{frame}
+
+% ==================== SLIDE 6: Inclusion and Exclusion Criteria ====================
+\begin{frame}{Inclusion and Exclusion Criteria}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+\begin{block}{Inclusion Criteria}
+\compactlist
+\begin{enumerate}
+    \item \textbf{Domain:} Fraud, manipulation, or anomaly detection in investment funds or alternative investments
+
+    \item \textbf{Methods:} Employed or substantively discussed AI/ML methods for detection, prediction, or classification
+
+    \item \textbf{Quality:} Peer-reviewed publications or widely cited preprints (minimum 20 citations)
+
+    \item \textbf{Language:} Published in English
+\end{enumerate}
+\end{block}
+
+\column{0.48\textwidth}
+\begin{block}{Exclusion Criteria}
+\compactlist
+\begin{enumerate}
+    \item \textbf{Pure Methodology:} Papers without financial application or validation
+
+    \item \textbf{Different Domain:} Studies focused exclusively on credit card, payment, or transaction-level fraud without fund-level components
+
+    \item \textbf{Duplicates:} Multiple publications reporting the same study across venues
+\end{enumerate}
+\end{block}
+
+\end{columns}
+
+\vspace{4mm}
+
+\begin{center}
+\fcolorbox{mlpurple}{mllavender3}{%
+\begin{minipage}{0.9\textwidth}
+\centering
+\textbf{Quality Threshold:} Peer-reviewed publications or preprints with at least 20 citations ensures rigor and impact while capturing emerging research.
+\end{minipage}
+}
+\end{center}
+
+\bottomnote{Criteria designed to ensure relevance, quality, and comprehensive coverage.}
+\end{frame}
+
+% ==================== SLIDE 7: Screening Process ====================
+\begin{frame}{Screening Process and Results}
+
+\begin{block}{Multi-Stage Screening}
+Two independent reviewers conducted screening with disagreements resolved through discussion and third-reviewer consultation.
+\end{block}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+\textbf{Screening Stages:}
+
+\begin{enumerate}\compactlist
+    \item \textbf{Database Search:} Initial queries across 5 databases
+    \vspace{1mm}
+
+    \item \textbf{Title/Abstract Screening:} Relevance assessment
+    \vspace{1mm}
+
+    \item \textbf{Full-Text Review:} Detailed examination against inclusion criteria
+    \vspace{1mm}
+
+    \item \textbf{Snowballing:} Manual review of highly cited paper references
+\end{enumerate}
+
+\vspace{3mm}
+
+\textbf{Quality Assurance:}
+\begin{itemize}\compactlist
+    \item Two independent reviewers
+    \item Disagreement resolution protocol
+    \item Third reviewer consultation as needed
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Quantitative Results:}
+
+\begin{center}
+\fcolorbox{mlpurple}{mllavender4}{%
+\begin{minipage}{0.9\linewidth}
+\centering
+\large
+\textcolor{mlpurple}{\textbf{500}} \\
+\footnotesize Initial search results \\[2mm]
+
+\textcolor{mlgray}{$\downarrow$ Title/abstract screening} \\[2mm]
+
+\textcolor{mlpurple}{\textbf{120}} \\
+\footnotesize Warranting full-text review \\[2mm]
+
+\textcolor{mlgray}{$\downarrow$ Full-text review} \\[2mm]
+
+\textcolor{mlpurple}{\textbf{80}} \\
+\footnotesize Core papers \\[2mm]
+
+\textcolor{mlgray}{$+$ Snowballing} \\[2mm]
+
+\textcolor{mlgreen}{\textbf{105}} \\
+\footnotesize \textbf{Total references}
+\end{minipage}
+}
+\end{center}
+
+\end{columns}
+
+\vspace{2mm}
+
+\bottomnote{Systematic screening process: 500 $\rightarrow$ 120 $\rightarrow$ 80 + 25 = 105 papers.}
+\end{frame}
+
+% ==================== SLIDE 8: Summary ====================
+\begin{frame}{Summary: Systematic Search Protocol}
+
+\begin{block}{Comprehensive Methodology}
+SALSA-based systematic review ensures comprehensive coverage while maintaining rigorous inclusion standards.
+\end{block}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+\textbf{Key Strengths:}
+\compactlist
+\begin{itemize}
+    \item \textcolor{mlgreen}{\textbf{Comprehensive:}} 5 databases, 25-year coverage
+    \item \textcolor{mlgreen}{\textbf{Rigorous:}} Independent dual review, quality thresholds
+    \item \textcolor{mlgreen}{\textbf{Interdisciplinary:}} AI/ML + finance literature
+    \item \textcolor{mlgreen}{\textbf{Transparent:}} Documented inclusion/exclusion criteria
+    \item \textcolor{mlgreen}{\textbf{Complete:}} Snowballing captures additional relevant work
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Final Corpus:}
+\compactlist
+\begin{itemize}
+    \item \textbf{80 core papers} on AI/ML hedge fund fraud detection
+    \item \textbf{25 contextual papers} on regulation, foundational methods
+    \item \textbf{105 total references} providing comprehensive coverage
+    \item Peer-reviewed publications and high-impact preprints
+    \item Balanced coverage of methods and applications
+\end{itemize}
+
+\end{columns}
+
+\vspace{4mm}
+
+\begin{center}
+\fcolorbox{mlpurple}{mllavender3}{%
+\begin{minipage}{0.9\textwidth}
+\centering
+\textbf{Outcome:} Systematic protocol ensures survey provides authoritative, comprehensive, and unbiased coverage of AI-based hedge fund fraud detection research.
+\end{minipage}
+}
+\end{center}
+
+\bottomnote{SALSA methodology ensures comprehensive, rigorous, and transparent literature coverage.}
+\end{frame}
+
+\end{document}

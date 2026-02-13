@@ -1,0 +1,51 @@
+name: Validate Charts
+
+on:
+  push:
+    paths:
+      - '**/*.py'
+      - 'charts.json'
+  pull_request:
+    paths:
+      - '**/*.py'
+      - 'charts.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run chart scripts
+        run: |
+          python3 -c "
+          import json, subprocess, sys, os
+          with open('charts.json') as f:
+              charts = json.load(f)
+          errors = 0
+          for chart in charts:
+              script = chart['script_path']
+              if not os.path.exists(script):
+                  print(f'MISSING: {script}')
+                  errors += 1
+                  continue
+              result = subprocess.run(['python3', script], capture_output=True, text=True, cwd=os.path.dirname(script) or '.')
+              if result.returncode != 0:
+                  print(f'FAIL: {script}')
+                  print(result.stderr[:500])
+                  errors += 1
+              else:
+                  print(f'OK: {script}')
+          if errors:
+              sys.exit(1)
+          print(f'\\nAll {len(charts)} chart scripts validated')
+          "

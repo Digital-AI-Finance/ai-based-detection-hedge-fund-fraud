@@ -1,0 +1,533 @@
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255,127,14}
+\definecolor{mlgreen}{RGB}{44,160,44}
+\definecolor{mlred}{RGB}{214,39,40}
+\definecolor{mlgray}{RGB}{127,127,127}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{midgray}{RGB}{180,180,180}
+
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+\newcommand{\bottomnote}[1]{\vfill\vspace{-2mm}\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}\vspace{1mm}\footnotesize\textbf{#1}}
+\newcommand{\compactlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\setlength{\parsep}{0pt}}
+\newcommand{\chartplaceholder}[2][5cm]{\begin{center}\begin{adjustbox}{max width=0.95\textwidth, max height=#1}\framebox[\textwidth][c]{\rule{0pt}{#1}\textcolor{midgray}{[#2]}}\end{adjustbox}\end{center}}
+
+\input{../notation}
+
+\title{Appendix B: Feature Engineering Details}
+\subtitle{AI-Based Detection of Hedge Fund Fraud}
+\author{Comprehensive Feature Specifications}
+\date{}
+
+\begin{document}
+
+% ==================== SLIDE 1: Title ====================
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ==================== SLIDE 2: Feature Overview ====================
+\begin{frame}{Feature Engineering Overview}
+
+\begin{block}{Critical Role}
+Feature quality and informativeness directly determine model performance in hedge fund fraud detection systems.
+\end{block}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+
+\column{0.58\textwidth}
+\textbf{Five Feature Categories:}
+
+\begin{enumerate}\compactlist
+    \item \textcolor{mlpurple}{\textbf{Statistical Features:}} Return properties, risk metrics, distributional characteristics
+    \vspace{1mm}
+
+    \item \textcolor{mlpurple}{\textbf{Benford Features:}} Conformity to mathematical laws of digit distributions
+    \vspace{1mm}
+
+    \item \textcolor{mlpurple}{\textbf{Textual Features:}} Disclosure characteristics, readability, sentiment
+    \vspace{1mm}
+
+    \item \textcolor{mlpurple}{\textbf{Network Features:}} Relationship structures, centrality measures
+    \vspace{1mm}
+
+    \item \textcolor{mlpurple}{\textbf{Temporal Features:}} Time-varying patterns, regime changes, calendar effects
+\end{enumerate}
+
+\column{0.38\textwidth}
+\begin{center}
+\fcolorbox{mlpurple}{mllavender4}{%
+\begin{minipage}{0.9\linewidth}
+\centering
+\textbf{Typical Feature Space} \\[2mm]
+\Large \textcolor{mlpurple}{\textbf{50--200}} \\[1mm]
+\normalsize features in practice \\[3mm]
+
+\footnotesize
+Dimensionality varies by:
+\begin{itemize}\compactlist
+    \item Data availability
+    \item Model complexity
+    \item Regulatory context
+    \item Interpretability needs
+\end{itemize}
+\end{minipage}
+}
+\end{center}
+\end{columns}
+
+\vspace{3mm}
+
+\begin{center}
+\textcolor{mlpurple}{\textbf{Multi-faceted approach captures different aspects of fund behavior to identify fraud patterns}}
+\end{center}
+
+\bottomnote{Feature engineering is the cornerstone of effective fraud detection systems.}
+\end{frame}
+
+% ==================== SLIDE 3: Statistical Features ====================
+\begin{frame}{Statistical Features}
+
+\begin{block}{Return-Based Characteristics}
+Statistical properties of return time series reveal anomalies indicative of manipulation or fraud.
+\end{block}
+
+\vspace{1mm}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{@{}p{4.5cm}p{5.5cm}p{3cm}@{}}
+\toprule
+\textbf{Feature} & \textbf{Formula/Description} & \textbf{Fraud Signal} \\
+\midrule
+\textcolor{mlpurple}{\textbf{First-order autocorrelation}} & $\rho_1 = \text{Corr}(r_t, r_{t-1})$ & High $\rho_1$ indicates return smoothing \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Sharpe ratio}} & $SR = \bar{r}/\sigma_r$ & Abnormally high SR suggests fabricated returns \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Maximum drawdown}} & $MDD = \max_{t}\left(\frac{\max_{s \leq t} P_s - P_t}{\max_{s \leq t} P_s}\right)$ & Unusually low MDD indicates smoothing \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Kurtosis}} & Excess kurtosis: $\text{Kurt}(r) - 3$ & Extreme kurtosis signals manipulation \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Skewness}} & Third moment of distribution & Asymmetry patterns reveal reporting bias \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Discontinuity at zero}} & Kink in return distribution at zero (Bollen-Pool) & Avoidance of negative returns \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Hurst exponent}} & $H$ via rescaled range (R/S) analysis & Long-range dependence, non-randomness \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{2mm}
+
+\textbf{Data Requirements:} Minimum 24--36 months of monthly return data for reliable estimation
+
+\bottomnote{Getmansky et al. (2004), Brown et al. (2009), Bollen \& Pool (2009), Diaz et al. (2013).}
+\end{frame}
+
+% ==================== SLIDE 4: Benford Features ====================
+\begin{frame}{Benford's Law Features}
+
+\begin{block}{Mathematical Law Conformity}
+Naturally occurring financial data follows Benford's Law; deviations suggest manipulation or fabrication.
+\end{block}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+\textbf{Benford's Law:}
+\begin{itemize}\compactlist
+    \item Leading digit distribution is logarithmic
+    \item Digit ``1'' appears ~30\% of the time
+    \item Digit ``9'' appears ~4.6\% of the time
+    \item Applies to many naturally occurring datasets
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Expected Probability:}
+\[
+P(d) = \log_{10}\left(1 + \frac{1}{d}\right)
+\]
+for first digit $d \in \{1, 2, \ldots, 9\}$
+
+\column{0.48\textwidth}
+\textbf{Feature Specifications:}
+
+\begin{table}
+\centering
+\footnotesize
+\begin{tabular}{@{}p{3.5cm}p{3cm}@{}}
+\toprule
+\textbf{Test} & \textbf{Formula} \\
+\midrule
+\textcolor{mlpurple}{\textbf{First-digit test}} & $\chi^2 = \sum_{d=1}^{9} \frac{(O_d - E_d)^2}{E_d}$ \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Second-digit test}} & Benford's law on second digit \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Summation test}} & Cumulative conformity across positions \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{2mm}
+
+\textbf{Applications:}
+\begin{itemize}\compactlist
+    \item Return series
+    \item NAV values
+    \item Fee disclosures
+    \item Transaction amounts
+\end{itemize}
+\end{columns}
+
+\vspace{2mm}
+
+\bottomnote{Amiram et al. (2015), Jorion et al. (2015). High $\chi^2$ indicates fabricated data.}
+\end{frame}
+
+% ==================== SLIDE 5: Textual Features ====================
+\begin{frame}{Textual Features}
+
+\begin{block}{Disclosure Analysis}
+Textual characteristics of regulatory filings, annual letters, and offering documents reveal deception patterns.
+\end{block}
+
+\vspace{1mm}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{@{}p{4cm}p{6cm}p{2.5cm}@{}}
+\toprule
+\textbf{Feature} & \textbf{Formula/Description} & \textbf{Fraud Signal} \\
+\midrule
+\textcolor{mlpurple}{\textbf{Fog index}} & $0.4[(w/s) + 100(c/w)]$ where $w$=words, $s$=sentences, $c$=complex words & High readability difficulty obscures risk \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{FinBERT sentiment}} & BERT-based financial sentiment score $\in [-1,1]$ & Overly positive sentiment masks problems \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Boilerplate deviation}} & $1 - \text{CosSim}(\text{doc}, \text{template})$ & Unusual language suggests concealment \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Topic modeling}} & LDA or BERT-based topic distributions & Topic shifts indicate strategic framing \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Disclosure length}} & Word count, section lengths & Excessive length obscures key information \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{2mm}
+
+\textbf{Data Sources:}
+\begin{itemize}\compactlist
+    \item Form ADV (U.S.), AIFMD disclosures (EU)
+    \item Annual investor letters
+    \item Offering memoranda and private placement documents
+\end{itemize}
+
+\vspace{1mm}
+
+\textbf{Preprocessing:} Tokenization, stopword removal, domain-specific term handling
+
+\bottomnote{Brown et al. (2020), Chen et al. (2023). Textual features capture linguistic deception cues.}
+\end{frame}
+
+% ==================== SLIDE 6: Network Features ====================
+\begin{frame}{Network Features}
+
+\begin{block}{Relationship Structures}
+Network topology of fund-service-provider relationships reveals suspicious patterns and fraud contagion.
+\end{block}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+\textbf{Network Structure:}
+\begin{itemize}\compactlist
+    \item \textbf{Nodes:} Funds, managers, auditors, administrators, prime brokers
+    \item \textbf{Edges:} Service relationships, ownership ties, board connections
+    \item \textbf{Graph type:} Undirected or directed depending on relationship
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Feature Specifications:}
+
+\begin{table}
+\centering
+\footnotesize
+\begin{tabular}{@{}p{4cm}p{2.5cm}@{}}
+\toprule
+\textbf{Feature} & \textbf{Formula} \\
+\midrule
+\textcolor{mlpurple}{\textbf{Degree centrality}} & $\sum_j A_{ij}$ \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Betweenness centrality}} & $\sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}$ \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Related-party count}} & Number of disclosed relationships \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\column{0.48\textwidth}
+\textbf{Fraud Signals:}
+\begin{itemize}\compactlist
+    \item \textcolor{mlred}{\textbf{Low degree:}} Isolated funds with few relationships
+    \item \textcolor{mlred}{\textbf{High clustering:}} Tight-knit groups suggest collusion
+    \item \textcolor{mlred}{\textbf{Self-custody:}} Fund controls its own assets
+    \item \textcolor{mlred}{\textbf{Related-party auditors:}} Conflicts of interest
+    \item \textcolor{mlred}{\textbf{Offshore domiciles:}} Opaque jurisdictions
+\end{itemize}
+
+\vspace{2mm}
+
+\textbf{Data Sources:}
+\begin{itemize}\compactlist
+    \item Regulatory databases
+    \item Commercial data vendors
+    \item Manual extraction from disclosures
+\end{itemize}
+
+\vspace{1mm}
+
+\textbf{Challenge:} Incomplete data due to selective disclosure
+
+\end{columns}
+
+\bottomnote{Zhang et al. (2022), Cassar et al. (2015). Network features capture relational fraud patterns.}
+\end{frame}
+
+% ==================== SLIDE 7: Temporal Features ====================
+\begin{frame}{Temporal Features}
+
+\begin{block}{Time-Varying Patterns}
+Temporal dynamics, regime changes, and calendar effects reveal behavioral anomalies over time.
+\end{block}
+
+\vspace{1mm}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{@{}p{4cm}p{6cm}p{2.5cm}@{}}
+\toprule
+\textbf{Feature} & \textbf{Description} & \textbf{Fraud Signal} \\
+\midrule
+\textcolor{mlpurple}{\textbf{HMM regime indicator}} & Binary state from Hidden Markov Model & Persistent ``good'' regime unrealistic \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Change-point score}} & Bayesian change-point detection probability & Abrupt performance shifts suspicious \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Calendar effects}} & Month-end, quarter-end, year-end patterns & Strategic timing of reported returns \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Volatility clustering}} & GARCH-based conditional volatility & Abnormal clustering patterns \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Trend strength}} & Moving average deviation & Unrealistic constant trends \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Periodicity}} & Fourier-based cycle detection & Artificial periodic patterns \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Rolling Window Computation:}
+\begin{itemize}\compactlist
+    \item Enable real-time detection
+    \item Maintain statistical power
+    \item Typical window: 24--60 months
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Temporal Modeling:}
+\begin{itemize}\compactlist
+    \item LSTMs capture sequential dependencies
+    \item HMMs identify regime switches
+    \item Bayesian methods detect change-points
+\end{itemize}
+\end{columns}
+
+\bottomnote{Bollen \& Pool (2014), Adams \& MacKay (2007). Temporal features reveal dynamic fraud patterns.}
+\end{frame}
+
+% ==================== SLIDE 8: Feature Table Visualization ====================
+\begin{frame}{Comprehensive Feature Summary}
+
+\chartplaceholder[10cm]{Table showing all feature categories (Statistical, Benford, Textual, Network, Temporal) with 3-5 example features per category, their formulas, typical values for legitimate vs. fraudulent funds, and data source requirements. Use color coding: mlgreen for low-fraud-risk values, mlred for high-fraud-risk values.}
+
+\bottomnote{Comprehensive feature engineering combines multiple information sources for robust fraud detection.}
+\end{frame}
+
+% ==================== SLIDE 9: Feature Selection Methods ====================
+\begin{frame}{Feature Selection and Dimensionality Reduction}
+
+\begin{block}{Managing High-Dimensional Feature Spaces}
+With 50--200 features, selection techniques are essential for model performance, interpretability, and regulatory acceptance.
+\end{block}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+\textbf{Feature Selection Methods:}
+
+\begin{enumerate}\compactlist
+    \item \textcolor{mlpurple}{\textbf{LASSO Regularization}}
+    \begin{itemize}\compactlist
+        \item L1 penalty: $\lambda \sum_j |\beta_j|$
+        \item Automatic feature selection
+        \item Interpretable linear models
+    \end{itemize}
+    \vspace{1mm}
+
+    \item \textcolor{mlpurple}{\textbf{Tree-Based Importance}}
+    \begin{itemize}\compactlist
+        \item Random Forest, XGBoost
+        \item Gini importance, permutation importance
+        \item Non-linear feature interactions
+    \end{itemize}
+    \vspace{1mm}
+
+    \item \textcolor{mlpurple}{\textbf{Mutual Information}}
+    \begin{itemize}\compactlist
+        \item Information-theoretic criterion
+        \item Captures non-linear dependencies
+        \item Suitable for neural networks
+    \end{itemize}
+\end{enumerate}
+
+\column{0.48\textwidth}
+\textbf{Dimensionality Reduction:}
+
+\begin{itemize}\compactlist
+    \item \textcolor{mlgray}{\textbf{PCA:}} Less common due to loss of interpretability
+    \item \textcolor{mlgray}{\textbf{Autoencoders:}} Rare in regulatory applications
+    \item \textcolor{mlgreen}{\textbf{Preference:}} Feature selection over reduction
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Why Avoid Dimensionality Reduction?}
+
+\begin{enumerate}\compactlist
+    \item \textbf{Interpretability:} Regulators require feature-level explanations
+    \item \textbf{Auditability:} Individual features must be traceable
+    \item \textbf{Legal requirements:} Explainability mandates (EU AI Act)
+    \item \textbf{Domain knowledge:} Selected features align with fraud theory
+\end{enumerate}
+
+\end{columns}
+
+\vspace{2mm}
+
+\begin{center}
+\fcolorbox{mlpurple}{mllavender3}{%
+\begin{minipage}{0.85\textwidth}
+\centering
+\textbf{Best Practice:} Combine domain expertise with data-driven selection for interpretable, high-performance models
+\end{minipage}
+}
+\end{center}
+
+\bottomnote{Feature selection maintains interpretability critical for regulatory applications.}
+\end{frame}
+
+% ==================== SLIDE 10: Data Source Requirements ====================
+\begin{frame}{Data Source Requirements by Category}
+
+\begin{block}{Data Availability and Quality}
+Feature construction depends on access to high-quality, comprehensive data from multiple sources.
+\end{block}
+
+\vspace{1mm}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{@{}p{3cm}p{5cm}p{4.5cm}@{}}
+\toprule
+\textbf{Category} & \textbf{Data Sources} & \textbf{Quality Challenges} \\
+\midrule
+\textcolor{mlpurple}{\textbf{Statistical}} &
+Monthly return series (24--36 months minimum) &
+\textcolor{mlred}{Backfill bias}, \textcolor{mlred}{survivorship bias}, missing data \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Benford}} &
+Returns, NAV values, fee disclosures &
+Rounding effects, small sample sizes \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Textual}} &
+Form ADV, AIFMD disclosures, annual letters, offering documents &
+Unstructured format, OCR errors, \textcolor{mlred}{incomplete filings} \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Network}} &
+Regulatory databases, commercial vendors, manual extraction &
+\textcolor{mlred}{Selective disclosure}, evolving relationships, incomplete coverage \\
+\addlinespace
+\textcolor{mlpurple}{\textbf{Temporal}} &
+Rolling return windows, market data &
+Requires long histories, computational complexity \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{2mm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Commercial Databases:}
+\begin{itemize}\compactlist
+    \item Hedge Fund Research (HFR)
+    \item Morningstar
+    \item Preqin
+    \item Bloomberg
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Regulatory Sources:}
+\begin{itemize}\compactlist
+    \item SEC EDGAR (Form ADV)
+    \item EU AIFMD registers
+    \item CFTC Form PF
+    \item National regulators
+\end{itemize}
+\end{columns}
+
+\bottomnote{Robust fraud detection requires multi-source data integration and quality control.}
+\end{frame}
+
+\end{document}

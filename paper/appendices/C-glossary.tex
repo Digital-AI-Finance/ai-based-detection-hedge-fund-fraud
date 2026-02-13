@@ -1,0 +1,69 @@
+% ==================== APPENDIX C: GLOSSARY OF TERMS ====================
+\section{Glossary of Terms}
+\label{app:glossary}
+
+\begin{description}[style=nextline]
+
+\item[Adversarial Training] A machine learning technique where models are trained on both genuine and intentionally perturbed examples to improve robustness against adversarial attacks.
+
+\item[AIFMD (Alternative Investment Fund Managers Directive)] European Union regulation requiring registration, disclosure, and oversight of alternative investment fund managers including hedge funds.
+
+\item[AUC (Area Under the Curve)] A performance metric for classification models measuring the area under the ROC curve; ranges from 0 to 1, with 0.5 indicating random performance and 1.0 perfect classification.
+
+\item[Autoencoder] A neural network architecture that learns compressed representations by training to reconstruct its input, commonly used for anomaly detection by identifying samples with high reconstruction error.
+
+\item[Backfill Bias] The artificial inflation of historical performance when funds selectively report past returns to databases only after establishing a track record.
+
+\item[Benford's Law] A mathematical principle stating that in many naturally occurring datasets, leading digits follow a logarithmic distribution with "1" appearing as the first digit about 30\% of the time; deviations suggest manipulation.
+
+\item[BERT (Bidirectional Encoder Representations from Transformers)] A transformer-based language model that generates contextualized word embeddings; FinBERT is a variant fine-tuned on financial text.
+
+\item[Class Imbalance] A dataset characteristic where one class (e.g., fraud cases) is substantially less frequent than others, requiring specialized sampling or algorithmic techniques for effective learning.
+
+\item[Concept Drift] The phenomenon where the statistical properties of the target variable change over time, requiring model retraining or adaptive learning strategies.
+
+\item[DBSCAN (Density-Based Spatial Clustering of Applications with Noise)] An unsupervised clustering algorithm that groups densely packed points and identifies outliers as potential anomalies.
+
+\item[Dodd-Frank Act] U.S. financial reform legislation enacted in 2010 requiring hedge fund registration with the SEC and periodic disclosure of positions and risk metrics.
+
+\item[Ensemble Methods] Machine learning techniques that combine multiple base models (e.g., decision trees) to improve predictive performance and robustness; examples include Random Forest and XGBoost.
+
+\item[Evasion Attack] An adversarial attack where fraudsters intentionally modify their behavior to avoid detection by a known fraud detection model.
+
+\item[F1 Score] The harmonic mean of precision and recall: $F_1 = 2 \cdot \frac{\text{precision} \cdot \text{recall}}{\text{precision} + \text{recall}}$; particularly useful for imbalanced datasets.
+
+\item[Form ADV] The SEC registration form for investment advisers in the United States, containing information about business practices, fee structures, conflicts of interest, and disciplinary history.
+
+\item[GAT (Graph Attention Network)] A graph neural network architecture that learns importance weights for neighboring nodes, enabling selective aggregation of information in network-structured data.
+
+\item[GCN (Graph Convolutional Network)] A neural network architecture that operates on graph-structured data by aggregating features from neighboring nodes through convolutional operations.
+
+\item[GNN (Graph Neural Network)] A class of deep learning models designed to process graph-structured data by learning representations that capture both node features and topological structure.
+
+\item[Gradient Boosting] An ensemble learning method that builds models sequentially, with each new model correcting errors of the previous ones; XGBoost and LightGBM are popular implementations.
+
+\item[Hedge Fund] A pooled investment vehicle that employs diverse strategies (long/short equity, global macro, event-driven) and typically has limited regulatory oversight and investor restrictions.
+
+\item[Isolation Forest] An anomaly detection algorithm that identifies outliers by measuring how easily samples can be isolated in randomly constructed decision trees.
+
+\item[LIME (Local Interpretable Model-Agnostic Explanations)] An explainability technique that approximates complex model predictions locally using interpretable linear models.
+
+\item[LSTM (Long Short-Term Memory)] A recurrent neural network architecture with gating mechanisms that can learn long-range temporal dependencies, often used for time series analysis.
+
+\item[NAV (Net Asset Value)] The total value of a fund's assets minus liabilities, typically calculated per share; the primary metric reported to investors.
+
+\item[Ponzi Scheme] A fraudulent investment operation that pays returns to earlier investors using capital from new investors rather than from legitimate profits.
+
+\item[Random Forest] An ensemble learning method that constructs multiple decision trees during training and outputs the mode (classification) or mean (regression) of individual tree predictions.
+
+\item[Serial Correlation] The correlation between time-series observations at different time lags; abnormally high serial correlation in hedge fund returns may indicate return smoothing.
+
+\item[SHAP (SHapley Additive exPlanations)] An explainability framework based on cooperative game theory that assigns each feature an importance value for a particular prediction.
+
+\item[SupTech (Supervisory Technology)] Technology-based solutions employed by financial regulators for data collection, risk assessment, and market surveillance.
+
+\item[Survivorship Bias] The distortion of performance statistics when failed or closed funds are excluded from databases, leading to overestimation of average returns.
+
+\item[XGBoost (eXtreme Gradient Boosting)] An optimized implementation of gradient boosting that uses regularization, parallel processing, and efficient tree construction; widely used in fraud detection competitions.
+
+\end{description}

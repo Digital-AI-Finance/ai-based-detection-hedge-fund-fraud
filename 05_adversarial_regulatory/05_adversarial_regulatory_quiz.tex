@@ -1,0 +1,229 @@
+\documentclass[8pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Color definitions
+\definecolor{mlblue}{RGB}{0,102,204}
+\definecolor{mlpurple}{RGB}{51,51,178}
+\definecolor{mllavender}{RGB}{173,173,224}
+\definecolor{mllavender2}{RGB}{193,193,232}
+\definecolor{mllavender3}{RGB}{204,204,235}
+\definecolor{mllavender4}{RGB}{214,214,239}
+\definecolor{mlorange}{RGB}{255, 127, 14}
+\definecolor{mlgreen}{RGB}{44, 160, 44}
+\definecolor{mlred}{RGB}{214, 39, 40}
+\definecolor{mlgray}{RGB}{127, 127, 127}
+
+% Additional colors
+\definecolor{lightgray}{RGB}{240, 240, 240}
+\definecolor{midgray}{RGB}{180, 180, 180}
+
+% Apply custom colors to Madrid theme
+\setbeamercolor{palette primary}{bg=mllavender3,fg=mlpurple}
+\setbeamercolor{palette secondary}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{palette tertiary}{bg=mllavender,fg=white}
+\setbeamercolor{palette quaternary}{bg=mlpurple,fg=white}
+
+\setbeamercolor{structure}{fg=mlpurple}
+\setbeamercolor{section in toc}{fg=mlpurple}
+\setbeamercolor{subsection in toc}{fg=mlblue}
+\setbeamercolor{title}{fg=mlpurple}
+\setbeamercolor{frametitle}{fg=mlpurple,bg=mllavender3}
+\setbeamercolor{block title}{bg=mllavender2,fg=mlpurple}
+\setbeamercolor{block body}{bg=mllavender4,fg=black}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Clean itemize/enumerate
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+% Reduce margins for more content space
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+
+% Command for bottom annotation
+\newcommand{\bottomnote}[1]{%
+\vfill
+\vspace{-2mm}
+\textcolor{mllavender2}{\rule{\textwidth}{0.4pt}}
+\vspace{1mm}
+\footnotesize
+\textbf{#1}
+}
+
+% Command for compact list spacing
+\newcommand{\compactlist}{%
+\setlength{\itemsep}{0pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+% Notation macros
+\input{../notation}
+
+\title{Quiz: Adversarial Robustness and Regulatory Readiness}
+\subtitle{Section 05 -- Digital-AI-Finance}
+\author{Joerg Osterrieder}
+\institute{Zurich University of Applied Sciences (ZHAW)}
+\date{2025}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Question 1: Attack Vectors}
+How many adversarial attack vectors are identified?
+
+\vspace{0.5cm}
+\begin{enumerate}[a)]
+\item 2
+\item 3
+\item 4
+\item 5
+\end{enumerate}
+
+\vspace{0.5cm}
+\pause
+\begin{block}{Answer}
+\textbf{c) 4}
+
+Four principal attack vectors are identified: data poisoning, evasion attacks, model extraction, and strategic timing and regime exploitation.
+\end{block}
+\bottomnote{Source: Section 5.1}
+\end{frame}
+
+\begin{frame}{Question 2: Mean AUC Degradation}
+What is the mean AUC degradation under adversarial attack?
+
+\vspace{0.5cm}
+\begin{enumerate}[a)]
+\item 5.3\%
+\item 8.2\%
+\item 10.6\%
+\item 15.4\%
+\end{enumerate}
+
+\vspace{0.5cm}
+\pause
+\begin{block}{Answer}
+\textbf{c) 10.6\%}
+
+Recent work on adversarial robustness in financial ML reports a mean \auc{} degradation of 10.6\% across surveyed detection systems under adversarial attack.
+\end{block}
+\bottomnote{Source: Section 5.1}
+\end{frame}
+
+\begin{frame}{Question 3: Adversarial Training Recovery}
+How much AUC does adversarial training recover?
+
+\vspace{0.5cm}
+\begin{enumerate}[a)]
+\item 30--40\%
+\item 45--55\%
+\item 60--70\%
+\item 80--90\%
+\end{enumerate}
+
+\vspace{0.5cm}
+\pause
+\begin{block}{Answer}
+\textbf{c) 60--70\%}
+
+Robust optimization applied to financial fraud detection models can recover 60--70\% of the \auc{} lost to adversarial attacks, reducing attack success rates from approximately 35\% to 5\%.
+\end{block}
+\bottomnote{Source: Section 5.2}
+\end{frame}
+
+\begin{frame}{Question 4: EU AI Act Transparency}
+Which EU AI Act article addresses transparency?
+
+\vspace{0.5cm}
+\begin{enumerate}[a)]
+\item Article 9
+\item Article 13
+\item Article 14
+\item Article 52
+\end{enumerate}
+
+\vspace{0.5cm}
+\pause
+\begin{block}{Answer}
+\textbf{b) Article 13}
+
+Article 13 of the EU AI Act mandates transparency: high-risk AI systems must be designed to enable users to interpret the system's output and use it appropriately.
+\end{block}
+\bottomnote{Source: Section 5.3}
+\end{frame}
+
+\begin{frame}{Question 5: EU AI Act Oversight}
+Which EU AI Act article addresses human oversight?
+
+\vspace{0.5cm}
+\begin{enumerate}[a)]
+\item Article 9
+\item Article 13
+\item Article 14
+\item Article 52
+\end{enumerate}
+
+\vspace{0.5cm}
+\pause
+\begin{block}{Answer}
+\textbf{c) Article 14}
+
+Article 14 of the EU AI Act requires human oversight: high-risk systems must allow effective oversight by natural persons, including the ability to override the system's output.
+\end{block}
+\bottomnote{Source: Section 5.3}
+\end{frame}
+
+\begin{frame}{Question 6: Institutional Preparedness}
+What percentage of institutions lack adversarial resilience policies?
+
+\vspace{0.5cm}
+\begin{enumerate}[a)]
+\item 45\%
+\item 58\%
+\item 68\%
+\item 78\%
+\end{enumerate}
+
+\vspace{0.5cm}
+\pause
+\begin{block}{Answer}
+\textbf{d) 78\%}
+
+A survey of financial institutions found that 78\% lacked formal adversarial resilience policies for their ML-based detection systems, suggesting a wide gap between threat landscape and preparedness.
+\end{block}
+\bottomnote{Source: Section 5.1}
+\end{frame}
+
+\begin{frame}{Question 7: Data Poisoning Impact}
+What is the data poisoning degradation range?
+
+\vspace{0.5cm}
+\begin{enumerate}[a)]
+\item 1--3\%
+\item 5--12\%
+\item 15--25\%
+\item 30--40\%
+\end{enumerate}
+
+\vspace{0.5cm}
+\pause
+\begin{block}{Answer}
+\textbf{b) 5--12\%}
+
+Data poisoning attacks can degrade model performance by 5--12\% even when the fraction of poisoned samples is small, particularly concerning given class imbalance amplifies the impact of corrupted labels.
+\end{block}
+\bottomnote{Source: Section 5.1}
+\end{frame}
+
+\end{document}

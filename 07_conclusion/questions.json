@@ -1,0 +1,62 @@
+[
+  {
+    "question": "Which methods offer the best balance of performance and interpretability?",
+    "options": [
+      "a) Deep neural networks",
+      "b) Ensemble methods",
+      "c) Logistic regression",
+      "d) Graph neural networks"
+    ],
+    "correct_answer": "b",
+    "explanation": "Random forests and gradient boosting provide the best balance, achieving high AUC (0.85--0.92) while maintaining interpretability through feature importance scores and SHAP values.",
+    "section_reference": "Section 7: Conclusion"
+  },
+  {
+    "question": "What are the three audience groups for the takeaways?",
+    "options": [
+      "a) Students, Teachers, Admins",
+      "b) Developers, Testers, Managers",
+      "c) Practitioners, Regulators, Researchers",
+      "d) Investors, Brokers, Auditors"
+    ],
+    "correct_answer": "c",
+    "explanation": "The conclusion provides targeted takeaways for: (1) Practitioners (fund managers, compliance officers), (2) Regulators (SEC, ESMA, FCA), and (3) Researchers (academics, data scientists).",
+    "section_reference": "Section 7: Takeaways by Audience"
+  },
+  {
+    "question": "What is the most critical enabler for field progress?",
+    "options": [
+      "a) Benchmark datasets",
+      "b) Better algorithms",
+      "c) More funding",
+      "d) Regulatory reform"
+    ],
+    "correct_answer": "a",
+    "explanation": "The conclusion emphasizes that creating shared, privacy-preserving benchmark datasets is the single most critical enabler. Without accessible data, researchers cannot compare methods or validate improvements.",
+    "section_reference": "Section 7: Key Takeaways"
+  },
+  {
+    "question": "What collaboration model is required for production deployment?",
+    "options": [
+      "a) Government only",
+      "b) Industry only",
+      "c) Academic only",
+      "d) Academic + Regulatory + Industry"
+    ],
+    "correct_answer": "d",
+    "explanation": "The conclusion stresses that production-grade fraud detection requires three-way collaboration: academics (methodology), regulators (data access, requirements), and industry (deployment, validation).",
+    "section_reference": "Section 7: Path Forward"
+  },
+  {
+    "question": "What paradigm shift is needed for adversarial fraud?",
+    "options": [
+      "a) Batch to real-time processing",
+      "b) Supervised to adversarial learning",
+      "c) Cloud to edge computing",
+      "d) Rule-based to machine learning"
+    ],
+    "correct_answer": "b",
+    "explanation": "The conclusion calls for a shift from static supervised learning to adversarial learning frameworks that can adapt to evolving fraud tactics, recognizing fraud detection as an arms race.",
+    "section_reference": "Section 7: Future Directions"
+  }
+]
