@@ -1,59 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Based Detection of Hedge Fund Fraud</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; color: #333; }
-        h1 { color: #3333B2; }
-        h2 { color: #0066CC; }
-        a { color: #0066CC; }
-        .key-number { display: inline-block; background: #CDCDE0; padding: 0.5rem 1rem; border-radius: 4px; margin: 0.25rem; font-weight: bold; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #CDCDE0; color: #3333B2; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI-Based Detection of Hedge Fund Fraud</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;background:#f6f8fa;color:#24292e;font-size:12px;line-height:1.4}
+a{color:#0366d6;text-decoration:none}
+.nav{background:#24292e;padding:6px 12px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.nav-title{color:#fff;font-weight:600;font-size:14px}
+.nav-links{display:flex;gap:16px;align-items:center}
+.nav-links a{color:#fff;font-size:11px;opacity:0.8}
+.nav-links a:hover{opacity:1}
+.wrap{display:flex;max-width:1800px;margin:0 auto}
+.side{width:180px;background:#ffffff;border-right:1px solid #e1e4e8;height:calc(100vh - 38px);overflow-y:auto;position:sticky;top:38px;flex-shrink:0}
+.side-head{padding:8px 10px;background:#f6f8fa;border-bottom:1px solid #e1e4e8;font-weight:600;font-size:11px}
+.side details{border-bottom:1px solid #f0f0f0}
+.side summary{padding:6px 10px;font-size:10px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.side summary::-webkit-details-marker{display:none}
+.side summary::after{content:"+";color:#586069;font-size:12px}
+.side details[open] summary::after{content:"-"}
+.side ul{list-style:none;padding:0 0 6px 0}
+.side li a{display:block;padding:4px 10px 4px 18px;color:#586069;font-size:10px}
+.side li a:hover{background:#f6f8fa;color:#0366d6}
+.p1 summary{border-left:3px solid #0066CC}
+.p2 summary{border-left:3px solid #3333B2}
+.p3 summary{border-left:3px solid #ef4444}
+.p4 summary{border-left:3px solid #22c55e}
+.pa summary{border-left:3px solid #9333ea}
+.main{flex:1;min-width:0;padding:10px}
+.hero{background:linear-gradient(135deg, #24292e 0%, #0066CC 100%);color:#fff;padding:12px 16px;border-radius:6px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.hero-left h1{font-size:18px;font-weight:700}
+.hero-left p{font-size:11px;opacity:0.8;margin-top:2px}
+.hero-stats{display:flex;gap:24px}
+.hero-stats span{text-align:center}
+.hero-stats b{display:block;font-size:20px}
+.hero-stats small{font-size:9px;opacity:0.7}
+.key-numbers{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;padding:10px 16px;background:#fff;border:1px solid #e1e4e8;border-radius:6px}
+.key-num{text-align:center;padding:6px 14px;background:#f6f8fa;border-radius:4px;border:1px solid #e1e4e8}
+.key-num b{display:block;font-size:15px;color:#0066CC}
+.key-num small{font-size:9px;color:#586069}
+.section{margin-bottom:16px}
+.section-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:6px 0;border-bottom:2px solid #e1e4e8}
+.section-head span{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.section-head.s1 span{background:#0066CC}
+.section-head.s2 span{background:#3333B2}
+.section-head.s3 span{background:#ef4444}
+.section-head.s4 span{background:#22c55e}
+.section-head.sa span{background:#9333ea}
+.section-head h2{font-size:13px;color:#24292e}
+.lgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}
+.lcard{display:block;background:#fff;border:1px solid #e1e4e8;border-radius:4px;padding:8px 10px;cursor:pointer;transition:all 0.15s;position:relative}
+.lcard:hover{border-color:#0366d6;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+.lcard-num{font-size:10px;font-weight:700;padding:2px 5px;border-radius:3px;margin-right:6px}
+.s1 .lcard-num{background:#dbeafe;color:#0066CC}
+.s2 .lcard-num{background:#e0e0f0;color:#3333B2}
+.s3 .lcard-num{background:#fee2e2;color:#ef4444}
+.s4 .lcard-num{background:#dcfce7;color:#22c55e}
+.sa .lcard-num{background:#f3e8ff;color:#9333ea}
+.lcard-title{font-size:11px;font-weight:500;color:#24292e}
+.lesson-section{margin-bottom:16px;background:#fff;border:1px solid #e1e4e8;border-radius:6px;padding:12px}
+.lesson-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.lesson-num{font-size:11px;font-weight:700;padding:4px 8px;border-radius:4px}
+.l1 .lesson-num{background:#dbeafe;color:#0066CC}
+.l2 .lesson-num{background:#e0e0f0;color:#3333B2}
+.l3 .lesson-num{background:#fee2e2;color:#ef4444}
+.l4 .lesson-num{background:#dcfce7;color:#22c55e}
+.la .lesson-num{background:#f3e8ff;color:#9333ea}
+.lesson-title{font-size:13px;font-weight:600;color:#24292e}
+.lesson-count{font-size:10px;color:#586069;margin-left:4px}
+.lesson-link{margin-left:auto;font-size:10px;color:#0366d6;padding:4px 8px;border:1px solid #0366d6;border-radius:4px}
+.lesson-link:hover{background:#0366d6;color:#fff}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.ccard{display:block;background:#f6f8fa;border:1px solid #e1e4e8;border-radius:4px;padding:6px;cursor:pointer;transition:all 0.15s;text-align:center}
+.ccard:hover{border-color:#0366d6;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+.ccard img{width:100%;height:80px;object-fit:contain;background:#fff;border-radius:3px;margin-bottom:4px}
+.ccard-name{font-size:9px;color:#24292e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.foot{text-align:center;padding:12px;font-size:10px;color:#586069;margin-top:12px}
+.foot a{margin:0 8px}
+@media(max-width:1400px){.lgrid{grid-template-columns:repeat(4,1fr)}.cgrid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
+@media(max-width:1000px){.lgrid{grid-template-columns:repeat(3,1fr)}.side{width:160px}}
+@media(max-width:800px){.wrap{flex-direction:column}.side{width:100%;height:auto;max-height:200px;position:relative;top:0}.lgrid{grid-template-columns:repeat(2,1fr)}}
+</style>
 </head>
 <body>
-    <h1>AI-Based Detection of Hedge Fund Fraud</h1>
-    <p><strong>A Systematic Survey and Research Agenda</strong></p>
-    <p>By Joerg Osterrieder, Zurich University of Applied Sciences</p>
 
-    <h2>Key Numbers</h2>
-    <div>
-        <span class="key-number">$4.5T AUM</span>
-        <span class="key-number">10.6% AUC Degradation</span>
-        <span class="key-number">10 Open Problems</span>
-        <span class="key-number">105 Papers Reviewed</span>
-    </div>
+<nav class="nav">
+<span class="nav-title">AI-Based Detection of Hedge Fund Fraud</span>
+<div class="nav-links">
+<a href="#sections">Sections</a>
+<a href="#quizzes">Quizzes</a>
+<a href="#charts">Charts</a>
+<a href="paper/main.tex">Paper</a>
+<a href="https://github.com/Digital-AI-Finance/ai-based-detection-hedge-fund-fraud">GitHub</a>
+</div>
+</nav>
 
-    <h2>Contributions</h2>
-    <ol>
-        <li><strong>C1:</strong> Detection Pipeline Taxonomy (5 stages)</li>
-        <li><strong>C2:</strong> Adversarial and Regulatory Readiness Assessment</li>
-        <li><strong>C3:</strong> Research Roadmap (10 open problems)</li>
-    </ol>
+<div class="wrap">
+<aside class="side">
+<div class="side-head">Navigation</div>
+<details class="p1" open><summary>I. Foundations</summary><ul>
+<li><a href="#S01">01 Introduction</a></li>
+<li><a href="#S02">02 Background</a></li>
+</ul></details>
+<details class="p2" open><summary>II. Methods</summary><ul>
+<li><a href="#S03">03 Detection Pipeline</a></li>
+<li><a href="#S04">04 Literature Review</a></li>
+</ul></details>
+<details class="p3" open><summary>III. Assessment</summary><ul>
+<li><a href="#S05">05 Adversarial &amp; Regulatory</a></li>
+<li><a href="#S06">06 Research Agenda</a></li>
+</ul></details>
+<details class="p4" open><summary>IV. Synthesis</summary><ul>
+<li><a href="#S07">07 Conclusion</a></li>
+<li><a href="#S08">08 Reproducibility</a></li>
+</ul></details>
+<details class="pa" open><summary>Appendices</summary><ul>
+<li><a href="#SA0">A0 Search Protocol</a></li>
+<li><a href="#SA1">A1 Feature Engineering</a></li>
+<li><a href="#SA2">A2 Glossary</a></li>
+</ul></details>
+</aside>
 
-    <h2>Repository</h2>
-    <p><a href="https://github.com/Digital-AI-Finance/ai-based-detection-hedge-fund-fraud">View on GitHub</a></p>
+<main class="main">
 
-    <h2>Sections</h2>
-    <table>
-        <tr><th>#</th><th>Section</th><th>Slides</th><th>Charts</th></tr>
-        <tr><td>01</td><td>Introduction</td><td>18 slides</td><td>2</td></tr>
-        <tr><td>02</td><td>Background</td><td>22 slides</td><td>3</td></tr>
-        <tr><td>03</td><td>Detection Pipeline (C1)</td><td>24 slides</td><td>3</td></tr>
-        <tr><td>04</td><td>Literature Review</td><td>18 slides</td><td>2</td></tr>
-        <tr><td>05</td><td>Adversarial & Regulatory (C2)</td><td>22 slides</td><td>3</td></tr>
-        <tr><td>06</td><td>Research Agenda (C3)</td><td>20 slides</td><td>2</td></tr>
-        <tr><td>07</td><td>Conclusion</td><td>16 slides</td><td>2</td></tr>
-        <tr><td>08</td><td>Reproducibility</td><td>10 slides</td><td>2</td></tr>
-        <tr><td>A0</td><td>Search Protocol</td><td>8 slides</td><td>1</td></tr>
-        <tr><td>A1</td><td>Feature Engineering</td><td>10 slides</td><td>1</td></tr>
-        <tr><td>A2</td><td>Glossary</td><td>6 slides</td><td>--</td></tr>
-    </table>
+<!-- Hero -->
+<div class="hero">
+<div class="hero-left"><h1>AI-Based Detection of Hedge Fund Fraud</h1><p>A Qualitative Survey &mdash; Companion Repository</p></div>
+<div class="hero-stats"><span><b>11</b><small>Sections</small></span><span><b>21</b><small>Charts</small></span><span><b>61</b><small>Questions</small></span></div>
+</div>
 
-    <p style="margin-top: 2rem; color: #666;">&copy; Joerg Osterrieder 2025 | MIT License</p>
+<!-- Key Numbers -->
+<div class="key-numbers">
+<div class="key-num"><b>$4.5T</b><small>AUM</small></div>
+<div class="key-num"><b>10.6%</b><small>AUC Degradation</small></div>
+<div class="key-num"><b>10</b><small>Open Problems</small></div>
+<div class="key-num"><b>105</b><small>Papers Reviewed</small></div>
+<div class="key-num"><b>F1 &asymp; 0.88</b><small>Best Reported</small></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTIONS                                                      -->
+<!-- ============================================================ -->
+<section class="section" id="sections">
+
+<!-- Part I -->
+<div class="section-head s1"><span>I</span><h2>Foundations</h2></div>
+<div class="lgrid s1">
+<a class="lcard" href="01_introduction/01_introduction.pdf"><span class="lcard-num">01</span><span class="lcard-title">Introduction</span></a>
+<a class="lcard" href="02_background/02_background.pdf"><span class="lcard-num">02</span><span class="lcard-title">Background</span></a>
+</div>
+
+<!-- Part II -->
+<div class="section-head s2"><span>II</span><h2>Methods</h2></div>
+<div class="lgrid s2">
+<a class="lcard" href="03_detection_pipeline/03_detection_pipeline.pdf"><span class="lcard-num">03</span><span class="lcard-title">Detection Pipeline</span></a>
+<a class="lcard" href="04_literature_review/04_literature_review.pdf"><span class="lcard-num">04</span><span class="lcard-title">Literature Review</span></a>
+</div>
+
+<!-- Part III -->
+<div class="section-head s3"><span>III</span><h2>Assessment</h2></div>
+<div class="lgrid s3">
+<a class="lcard" href="05_adversarial_regulatory/05_adversarial_regulatory.pdf"><span class="lcard-num">05</span><span class="lcard-title">Adversarial &amp; Regulatory</span></a>
+<a class="lcard" href="06_research_agenda/06_research_agenda.pdf"><span class="lcard-num">06</span><span class="lcard-title">Research Agenda</span></a>
+</div>
+
+<!-- Part IV -->
+<div class="section-head s4"><span>IV</span><h2>Synthesis</h2></div>
+<div class="lgrid s4">
+<a class="lcard" href="07_conclusion/07_conclusion.pdf"><span class="lcard-num">07</span><span class="lcard-title">Conclusion</span></a>
+<a class="lcard" href="08_reproducibility/08_reproducibility.pdf"><span class="lcard-num">08</span><span class="lcard-title">Reproducibility</span></a>
+</div>
+
+<!-- Appendices -->
+<div class="section-head sa"><span>A</span><h2>Appendices</h2></div>
+<div class="lgrid sa">
+<a class="lcard" href="A0_search_protocol/A0_search_protocol.pdf"><span class="lcard-num">A0</span><span class="lcard-title">Search Protocol</span></a>
+<a class="lcard" href="A1_feature_engineering/A1_feature_engineering.pdf"><span class="lcard-num">A1</span><span class="lcard-title">Feature Engineering</span></a>
+<a class="lcard" href="A2_glossary/A2_glossary.pdf"><span class="lcard-num">A2</span><span class="lcard-title">Glossary</span></a>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- QUIZZES                                                       -->
+<!-- ============================================================ -->
+<section class="section" id="quizzes">
+<div class="section-head" style="border-color:#8b5cf6"><span style="background:#8b5cf6">Q</span><h2>Quiz PDFs (61 questions)</h2></div>
+<div class="lgrid" style="grid-template-columns:repeat(4,1fr)">
+
+<a class="lcard" href="01_introduction/01_introduction_quiz.pdf" style="border-left:3px solid #0066CC;background:linear-gradient(135deg,#f0f7ff,#dbeafe)"><span class="lcard-num" style="background:#0066CC;color:white">Q01</span><span class="lcard-title">Introduction</span><div style="font-size:9px;color:#0066CC;margin-top:4px;font-weight:600">6 questions</div></a>
+
+<a class="lcard" href="02_background/02_background_quiz.pdf" style="border-left:3px solid #0066CC;background:linear-gradient(135deg,#f0f7ff,#dbeafe)"><span class="lcard-num" style="background:#0066CC;color:white">Q02</span><span class="lcard-title">Background</span><div style="font-size:9px;color:#0066CC;margin-top:4px;font-weight:600">8 questions</div></a>
+
+<a class="lcard" href="03_detection_pipeline/03_detection_pipeline_quiz.pdf" style="border-left:3px solid #3333B2;background:linear-gradient(135deg,#f0f0fa,#e0e0f0)"><span class="lcard-num" style="background:#3333B2;color:white">Q03</span><span class="lcard-title">Detection Pipeline</span><div style="font-size:9px;color:#3333B2;margin-top:4px;font-weight:600">7 questions</div></a>
+
+<a class="lcard" href="04_literature_review/04_literature_review_quiz.pdf" style="border-left:3px solid #3333B2;background:linear-gradient(135deg,#f0f0fa,#e0e0f0)"><span class="lcard-num" style="background:#3333B2;color:white">Q04</span><span class="lcard-title">Literature Review</span><div style="font-size:9px;color:#3333B2;margin-top:4px;font-weight:600">6 questions</div></a>
+
+<a class="lcard" href="05_adversarial_regulatory/05_adversarial_regulatory_quiz.pdf" style="border-left:3px solid #ef4444;background:linear-gradient(135deg,#fef2f2,#fee2e2)"><span class="lcard-num" style="background:#ef4444;color:white">Q05</span><span class="lcard-title">Adversarial &amp; Regulatory</span><div style="font-size:9px;color:#ef4444;margin-top:4px;font-weight:600">7 questions</div></a>
+
+<a class="lcard" href="06_research_agenda/06_research_agenda_quiz.pdf" style="border-left:3px solid #ef4444;background:linear-gradient(135deg,#fef2f2,#fee2e2)"><span class="lcard-num" style="background:#ef4444;color:white">Q06</span><span class="lcard-title">Research Agenda</span><div style="font-size:9px;color:#ef4444;margin-top:4px;font-weight:600">8 questions</div></a>
+
+<a class="lcard" href="07_conclusion/07_conclusion_quiz.pdf" style="border-left:3px solid #22c55e;background:linear-gradient(135deg,#f0fdf4,#dcfce7)"><span class="lcard-num" style="background:#22c55e;color:white">Q07</span><span class="lcard-title">Conclusion</span><div style="font-size:9px;color:#166534;margin-top:4px;font-weight:600">5 questions</div></a>
+
+<a class="lcard" href="08_reproducibility/08_reproducibility_quiz.pdf" style="border-left:3px solid #22c55e;background:linear-gradient(135deg,#f0fdf4,#dcfce7)"><span class="lcard-num" style="background:#22c55e;color:white">Q08</span><span class="lcard-title">Reproducibility</span><div style="font-size:9px;color:#166534;margin-top:4px;font-weight:600">5 questions</div></a>
+
+<a class="lcard" href="A0_search_protocol/A0_search_protocol_quiz.pdf" style="border-left:3px solid #9333ea;background:linear-gradient(135deg,#faf5ff,#f3e8ff)"><span class="lcard-num" style="background:#9333ea;color:white">QA0</span><span class="lcard-title">Search Protocol</span><div style="font-size:9px;color:#7e22ce;margin-top:4px;font-weight:600">4 questions</div></a>
+
+<a class="lcard" href="A1_feature_engineering/A1_feature_engineering_quiz.pdf" style="border-left:3px solid #9333ea;background:linear-gradient(135deg,#faf5ff,#f3e8ff)"><span class="lcard-num" style="background:#9333ea;color:white">QA1</span><span class="lcard-title">Feature Engineering</span><div style="font-size:9px;color:#7e22ce;margin-top:4px;font-weight:600">5 questions</div></a>
+
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHARTS                                                        -->
+<!-- ============================================================ -->
+<section class="section" id="charts">
+<div class="section-head s1"><span>I</span><h2>All Charts (21)</h2></div>
+
+<!-- Section 01 Introduction (2 charts) -->
+<div class="lesson-section l1" id="S01">
+<div class="lesson-head"><span class="lesson-num">01</span><span class="lesson-title">Introduction</span><span class="lesson-count">(2 charts)</span><a class="lesson-link" href="01_introduction/01_introduction.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="01_introduction/01_survey_comparison/01_survey_comparison.pdf"><img src="01_introduction/01_survey_comparison/thumb.png" alt="Survey Comparison"><span class="ccard-name">Survey Comparison</span></a>
+<a class="ccard" href="01_introduction/02_hedge_fund_growth/02_hedge_fund_growth.pdf"><img src="01_introduction/02_hedge_fund_growth/thumb.png" alt="AUM Growth"><span class="ccard-name">AUM Growth</span></a>
+</div>
+</div>
+
+<!-- Section 02 Background (3 charts) -->
+<div class="lesson-section l1" id="S02">
+<div class="lesson-head"><span class="lesson-num">02</span><span class="lesson-title">Background</span><span class="lesson-count">(3 charts)</span><a class="lesson-link" href="02_background/02_background.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="02_background/01_fraud_taxonomy/01_fraud_taxonomy.pdf"><img src="02_background/01_fraud_taxonomy/thumb.png" alt="Fraud Taxonomy"><span class="ccard-name">Fraud Taxonomy</span></a>
+<a class="ccard" href="02_background/02_data_ecosystem/02_data_ecosystem.pdf"><img src="02_background/02_data_ecosystem/thumb.png" alt="Data Ecosystem"><span class="ccard-name">Data Ecosystem</span></a>
+<a class="ccard" href="02_background/03_regulatory_landscape/03_regulatory_landscape.pdf"><img src="02_background/03_regulatory_landscape/thumb.png" alt="Regulatory Landscape"><span class="ccard-name">Regulatory Landscape</span></a>
+</div>
+</div>
+
+<!-- Section 03 Detection Pipeline (3 charts) -->
+<div class="lesson-section l2" id="S03">
+<div class="lesson-head"><span class="lesson-num">03</span><span class="lesson-title">Detection Pipeline</span><span class="lesson-count">(3 charts)</span><a class="lesson-link" href="03_detection_pipeline/03_detection_pipeline.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="03_detection_pipeline/01_pipeline_architecture/01_pipeline_architecture.pdf"><img src="03_detection_pipeline/01_pipeline_architecture/thumb.png" alt="Pipeline Architecture"><span class="ccard-name">Pipeline Architecture</span></a>
+<a class="ccard" href="03_detection_pipeline/02_feature_families/02_feature_families.pdf"><img src="03_detection_pipeline/02_feature_families/thumb.png" alt="Feature Families"><span class="ccard-name">Feature Families</span></a>
+<a class="ccard" href="03_detection_pipeline/03_model_families/03_model_families.pdf"><img src="03_detection_pipeline/03_model_families/thumb.png" alt="Model Families"><span class="ccard-name">Model Families</span></a>
+</div>
+</div>
+
+<!-- Section 04 Literature Review (2 charts) -->
+<div class="lesson-section l2" id="S04">
+<div class="lesson-head"><span class="lesson-num">04</span><span class="lesson-title">Literature Review</span><span class="lesson-count">(2 charts)</span><a class="lesson-link" href="04_literature_review/04_literature_review.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="04_literature_review/01_method_families/01_method_families.pdf"><img src="04_literature_review/01_method_families/thumb.png" alt="Method Families"><span class="ccard-name">Method Families</span></a>
+<a class="ccard" href="04_literature_review/02_literature_gaps/02_literature_gaps.pdf"><img src="04_literature_review/02_literature_gaps/thumb.png" alt="Literature Gaps"><span class="ccard-name">Literature Gaps</span></a>
+</div>
+</div>
+
+<!-- Section 05 Adversarial & Regulatory (3 charts) -->
+<div class="lesson-section l3" id="S05">
+<div class="lesson-head"><span class="lesson-num">05</span><span class="lesson-title">Adversarial &amp; Regulatory</span><span class="lesson-count">(3 charts)</span><a class="lesson-link" href="05_adversarial_regulatory/05_adversarial_regulatory.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="05_adversarial_regulatory/01_attack_vectors/01_attack_vectors.pdf"><img src="05_adversarial_regulatory/01_attack_vectors/thumb.png" alt="Attack Vectors"><span class="ccard-name">Attack Vectors</span></a>
+<a class="ccard" href="05_adversarial_regulatory/02_readiness_heatmap/02_readiness_heatmap.pdf"><img src="05_adversarial_regulatory/02_readiness_heatmap/thumb.png" alt="Readiness Heatmap"><span class="ccard-name">Readiness Heatmap</span></a>
+<a class="ccard" href="05_adversarial_regulatory/03_explainability_tradeoff/03_explainability_tradeoff.pdf"><img src="05_adversarial_regulatory/03_explainability_tradeoff/thumb.png" alt="Explainability Tradeoff"><span class="ccard-name">Explainability Tradeoff</span></a>
+</div>
+</div>
+
+<!-- Section 06 Research Agenda (2 charts) -->
+<div class="lesson-section l3" id="S06">
+<div class="lesson-head"><span class="lesson-num">06</span><span class="lesson-title">Research Agenda</span><span class="lesson-count">(2 charts)</span><a class="lesson-link" href="06_research_agenda/06_research_agenda.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="06_research_agenda/01_open_problems_map/01_open_problems_map.pdf"><img src="06_research_agenda/01_open_problems_map/thumb.png" alt="Open Problems Map"><span class="ccard-name">Open Problems Map</span></a>
+<a class="ccard" href="06_research_agenda/02_priority_matrix/02_priority_matrix.pdf"><img src="06_research_agenda/02_priority_matrix/thumb.png" alt="Priority Matrix"><span class="ccard-name">Priority Matrix</span></a>
+</div>
+</div>
+
+<!-- Section 07 Conclusion (2 charts) -->
+<div class="lesson-section l4" id="S07">
+<div class="lesson-head"><span class="lesson-num">07</span><span class="lesson-title">Conclusion</span><span class="lesson-count">(2 charts)</span><a class="lesson-link" href="07_conclusion/07_conclusion.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="07_conclusion/01_contributions_summary/01_contributions_summary.pdf"><img src="07_conclusion/01_contributions_summary/thumb.png" alt="Contributions Summary"><span class="ccard-name">Contributions Summary</span></a>
+<a class="ccard" href="07_conclusion/02_takeaways_by_audience/02_takeaways_by_audience.pdf"><img src="07_conclusion/02_takeaways_by_audience/thumb.png" alt="Takeaways by Audience"><span class="ccard-name">Takeaways by Audience</span></a>
+</div>
+</div>
+
+<!-- Section 08 Reproducibility (2 charts) -->
+<div class="lesson-section l4" id="S08">
+<div class="lesson-head"><span class="lesson-num">08</span><span class="lesson-title">Reproducibility</span><span class="lesson-count">(2 charts)</span><a class="lesson-link" href="08_reproducibility/08_reproducibility.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="08_reproducibility/01_search_funnel/01_search_funnel.pdf"><img src="08_reproducibility/01_search_funnel/thumb.png" alt="Search Funnel"><span class="ccard-name">Search Funnel</span></a>
+<a class="ccard" href="08_reproducibility/02_database_coverage/02_database_coverage.pdf"><img src="08_reproducibility/02_database_coverage/thumb.png" alt="Database Coverage"><span class="ccard-name">Database Coverage</span></a>
+</div>
+</div>
+
+<!-- Appendix A0 (1 chart) -->
+<div class="lesson-section la" id="SA0">
+<div class="lesson-head"><span class="lesson-num">A0</span><span class="lesson-title">Search Protocol</span><span class="lesson-count">(1 chart)</span><a class="lesson-link" href="A0_search_protocol/A0_search_protocol.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="A0_search_protocol/01_boolean_query/01_boolean_query.pdf"><img src="A0_search_protocol/01_boolean_query/thumb.png" alt="Boolean Query"><span class="ccard-name">Boolean Query</span></a>
+</div>
+</div>
+
+<!-- Appendix A1 (1 chart) -->
+<div class="lesson-section la" id="SA1">
+<div class="lesson-head"><span class="lesson-num">A1</span><span class="lesson-title">Feature Engineering</span><span class="lesson-count">(1 chart)</span><a class="lesson-link" href="A1_feature_engineering/A1_feature_engineering.pdf">View Slides</a></div>
+<div class="cgrid">
+<a class="ccard" href="A1_feature_engineering/01_feature_table/01_feature_table.pdf"><img src="A1_feature_engineering/01_feature_table/thumb.png" alt="Feature Table"><span class="ccard-name">Feature Table</span></a>
+</div>
+</div>
+
+<!-- Appendix A2 (no charts) -->
+<div class="lesson-section la" id="SA2">
+<div class="lesson-head"><span class="lesson-num">A2</span><span class="lesson-title">Glossary</span><span class="lesson-count">(0 charts)</span><a class="lesson-link" href="A2_glossary/A2_glossary.pdf">View Slides</a></div>
+</div>
+
+</section>
+
+<!-- Footer -->
+<div class="foot"><a href="https://github.com/Digital-AI-Finance/ai-based-detection-hedge-fund-fraud">GitHub</a>|<a href="https://github.com/Digital-AI-Finance/ai-based-detection-hedge-fund-fraud/archive/refs/heads/main.zip">Download</a>| Digital-AI-Finance | MIT License | Companion to &ldquo;AI-Based Detection of Hedge Fund Fraud: A Qualitative Survey&rdquo;</div>
+
+</main>
+</div>
+
 </body>
 </html>
